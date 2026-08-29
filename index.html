@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no"/>
-<meta name="theme-color" content="#061016"/>
+<meta name="theme-color" content="#0F1419"/>
 <title>Coastal Grade · PVR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -11,8 +11,18 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <style>
 :root{
-  --bg:#061016;
+  --bg:#0F1419;
   --bg-deep:#03080c;
+  --coral:#FF6B47;
+  --gold:#FFD166;
+  --teal:#4A9D9C;
+  --purple:#A78BFA;
+  --green:#3FB950;
+  --coral-d:rgba(255,107,71,.16);
+  --gold-d:rgba(255,209,102,.16);
+  --teal-d:rgba(74,157,156,.16);
+  --purple-d:rgba(167,139,250,.16);
+  --green-d:rgba(63,185,80,.16);
   --map-bg:#08141c;
   --sticky:#08181f;
   --toast:#12303a;
@@ -132,8 +142,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .count-pill{position:absolute;top:calc(100px + var(--st));right:calc(14px + var(--sr));z-index:800;font-size:11px;color:var(--foam);background:var(--sheet-78);border:1px solid var(--line);border-radius:var(--radius-chip);padding:5px 9px}
 
 .dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--accent-35),0 0 12px var(--accent-35);background:var(--mint);transform:translate(-7px,-7px)}
-.dot.unknown{background:var(--unk);box-shadow:0 0 0 1px var(--unk-ring),0 0 8px var(--unk-glow)}
-.dot.primary{background:var(--sand);width:16px;height:16px;transform:translate(-8px,-8px);box-shadow:0 0 0 1px var(--warn-45),0 0 14px var(--warn-45)}
+.dot.unknown{background:var(--purple);box-shadow:0 0 0 1px rgba(167,139,250,.4),0 0 8px rgba(167,139,250,.3)}
+.dot.primary{background:var(--coral);width:16px;height:16px;transform:translate(-8px,-8px);box-shadow:0 0 0 1px rgba(255,107,71,.45),0 0 14px rgba(255,107,71,.45)}
 .dot.locked{opacity:.72}
 .dot.sel{box-shadow:0 0 0 3px var(--accent-55),0 0 18px var(--accent-7)}
 .dot.boat{border-radius:4px}
@@ -153,13 +163,13 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .go-compare:disabled{opacity:.35;cursor:default}
 .clear-compare{background:transparent;color:var(--dim);padding:10px 6px}
 
-.sheet{position:absolute;left:0;right:0;bottom:0;top:auto;z-index:900;background:var(--sheet);border-top:1px solid var(--line);border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;backdrop-filter:blur(16px);transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.8,.2,1),height .32s cubic-bezier(.2,.8,.2,1),top .32s cubic-bezier(.2,.8,.2,1),border-radius .32s cubic-bezier(.2,.8,.2,1);height:64dvh;max-height:none;display:flex;flex-direction:column;box-shadow:0 -20px 60px var(--shadow);pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;top:auto;z-index:900;background:var(--sheet);border-top:1px solid var(--line);border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;backdrop-filter:blur(16px);transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.8,.2,1),height .32s cubic-bezier(.2,.8,.2,1),top .32s cubic-bezier(.2,.8,.2,1),border-radius .32s cubic-bezier(.2,.8,.2,1);height:64dvh;max-height:none;display:flex;flex-direction:column;min-width:0;box-shadow:0 -20px 60px var(--shadow);pointer-events:auto}
 .sheet.open{transform:translateY(0)}
 .sheet.snap-full{top:var(--st);bottom:0;height:auto;max-height:none;border-radius:0}
 .sheet.dragging{transition:none}
 .handle-hit{display:flex;align-items:center;justify-content:center;height:44px;min-height:44px;width:100%;flex-shrink:0;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
 .handle{width:42px;height:4px;border-radius:4px;background:var(--white-18);pointer-events:none}
-.sheet-scroll{overflow:auto;padding:0 16px calc(var(--dock-h) + 24px + var(--sb));flex:1;min-height:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior:contain}
+.sheet-scroll{overflow-x:hidden;overflow-y:auto;padding:0 16px calc(var(--dock-h) + 24px + var(--sb));flex:1;min-height:0;min-width:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior:contain}
 .sheet.snap-full .sheet-scroll{padding-bottom:calc(24px + var(--sb))}
 .compare-dock.tucked{transform:translateY(calc(100% + 32px));pointer-events:none;z-index:800}
 .sheet-scroll::-webkit-scrollbar{width:0;height:0;display:none}
@@ -185,7 +195,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .chip.rumor{background:var(--rumor-12);color:var(--rumor);border-color:var(--rumor-3)}
 .chip.dispute{background:var(--uc-14);color:var(--uc);border-color:var(--uc-4)}
 .chip.none{color:var(--muted);background:var(--white-03);border-color:var(--line);font-weight:500;letter-spacing:0}
-.chip.primary{background:var(--sand-d);color:var(--sand);border-color:var(--warn-3)}
+.chip.primary{background:var(--coral-d);color:var(--coral);border-color:rgba(255,107,71,.35)}
 .chip.priced{background:var(--mint-d);color:var(--mint);border-color:var(--accent-3)}
 .chip.unknown{background:var(--white-04);color:var(--muted);border-color:var(--line)}
 .chip.lock{background:var(--white-04);color:var(--dim);border-color:var(--line)}
@@ -212,18 +222,63 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .sort-chip.on{background:var(--sand-d);color:var(--sand);border-color:var(--warn-3)}
 .sort-row{display:flex;gap:6px;margin-bottom:12px}
 
-.rank-line{display:flex;align-items:stretch;gap:4px;border-bottom:1px solid var(--line)}
-.rank-line .icon-btn{align-self:center;flex-shrink:0}
-.rank-row{display:grid;grid-template-columns:28px 1fr auto;gap:8px 10px;align-items:center;padding:10px 4px;border-bottom:0;min-height:52px;cursor:pointer;width:100%;text-align:left;background:transparent;border-left:0;border-right:0;border-top:0;color:inherit;font:inherit}
+.rank-table{margin:0 0 12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;-webkit-overflow-scrolling:touch;min-width:0}
+.rank-table::-webkit-scrollbar{height:4px}
+.rank-cagr-h,.rank-cagr,.rank-tier-h,.rank-tier{display:none}
+.rank-table{width:100%;max-width:100%}
+.rank-cols,.rank-row{display:grid;grid-template-columns:24px minmax(0,1fr) 54px 44px 40px;gap:4px 6px;align-items:center;min-width:0;width:100%}
+.rank-head{font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:6px 2px 8px;padding-right:48px;border-bottom:1px solid var(--line);margin-bottom:0;min-width:0;box-sizing:border-box;width:100%}
+.rank-head span{white-space:nowrap}
+.rank-head span:last-child{letter-spacing:0}
+.rank-line{display:flex;align-items:stretch;gap:4px;border-bottom:1px solid var(--line);min-width:0;width:100%}
+.rank-line .icon-btn{align-self:center;flex-shrink:0;width:44px;height:44px}
+.rank-row{padding:10px 2px;border-bottom:0;min-height:52px;cursor:pointer;flex:1 1 auto;width:auto;min-width:0;text-align:left;background:transparent;border-left:0;border-right:0;border-top:0;color:inherit;font:inherit}
+.rank-vs{font-size:10.5px;text-align:right;white-space:nowrap;overflow:visible}
+.rank-score{font-weight:700;font-size:13px;text-align:right;min-width:0;overflow:visible;white-space:nowrap;color:var(--green)}
+.rank-usd{text-align:right;white-space:nowrap}
+.rank-samples{flex-basis:100%;font-size:10px;font-weight:500;color:var(--dim);white-space:normal;line-height:1.3;margin-top:2px}
+.tier-pip{display:inline-block;width:7px;height:7px;border-radius:99px;flex-shrink:0;background:var(--teal)}
+.tier-pip.tier-primary{background:var(--coral)}
+.tier-pip.tier-priced{background:var(--teal)}
+.tier-pip.tier-unknown{background:var(--purple)}
+.chip.tier-primary{background:var(--coral-d);color:var(--coral);border-color:rgba(255,107,71,.35)}
+.chip.tier-secondary{background:var(--teal-d);color:var(--teal);border-color:rgba(74,157,156,.35)}
+.chip.tier-watch{background:var(--purple-d);color:var(--purple);border-color:rgba(167,139,250,.35)}
+.filter-chip[data-fil="primary"]{color:var(--coral);border-color:rgba(255,107,71,.35)}
+.filter-chip[data-fil="primary"].on{background:var(--coral-d);color:var(--coral);border-color:rgba(255,107,71,.5)}
+.filter-chip[data-fil="priced"]{color:var(--teal);border-color:rgba(74,157,156,.35)}
+.filter-chip[data-fil="priced"].on{background:var(--teal-d);color:var(--teal);border-color:rgba(74,157,156,.5)}
+.filter-chip[data-fil="unknown"]{color:var(--purple);border-color:rgba(167,139,250,.35)}
+.filter-chip[data-fil="unknown"].on{background:var(--purple-d);color:var(--purple);border-color:rgba(167,139,250,.5)}
+.scen-row,.proj-row{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.scen-chip,.proj-chip{border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:var(--radius-chip);padding:10px 12px;font:600 11px/1 var(--font-body);cursor:pointer;min-height:44px;white-space:nowrap}
+.scen-chip[data-scen="conservative"]{color:var(--teal);border-color:rgba(74,157,156,.4)}
+.scen-chip[data-scen="conservative"].on{background:var(--teal-d)}
+.scen-chip[data-scen="base"]{color:var(--coral);border-color:rgba(255,107,71,.4)}
+.scen-chip[data-scen="base"].on{background:var(--coral-d)}
+.scen-chip[data-scen="abundance"]{color:var(--gold);border-color:rgba(255,209,102,.4)}
+.scen-chip[data-scen="abundance"].on{background:var(--gold-d)}
+.scen-chip[data-scen="custom"]{color:var(--purple);border-color:rgba(167,139,250,.4)}
+.scen-chip[data-scen="custom"].on{background:var(--purple-d)}
+.proj-chip.on{background:var(--white-06);color:var(--foam);border-color:var(--line)}
+.dock-chip.slot-0{border-color:var(--accent)}
+.dock-chip.slot-1{border-color:var(--coral)}
+.dock-chip.slot-2{border-color:var(--gold)}
+.dock-chip.slot-3{border-color:var(--purple)}
+.filter-chip.on[data-pick].slot-0{background:var(--accent-d);color:var(--accent);border-color:var(--accent)}
+.filter-chip.on[data-pick].slot-1{background:var(--coral-d);color:var(--coral);border-color:var(--coral)}
+.filter-chip.on[data-pick].slot-2{background:var(--gold-d);color:var(--gold);border-color:var(--gold)}
+.filter-chip.on[data-pick].slot-3{background:var(--purple-d);color:var(--purple);border-color:var(--purple)}
 .rank-num{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;font-weight:600}
-.rank-name{font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rank-name{font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;overflow:hidden}
 .rank-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:11px;color:var(--dim);grid-column:2 / -1}
 .rank-usd{font-variant-numeric:tabular-nums;font-weight:700;color:var(--foam);font-size:13px}
 .rank-usd.unk{color:var(--muted);font-style:italic;font-weight:500}
 .vs{font-variant-numeric:tabular-nums}
-.vs.pos{color:var(--mint)}
-.vs.neg{color:var(--sand)}
-.score-col{color:var(--muted);font-variant-numeric:tabular-nums}
+.vs.pos{color:var(--coral)}
+.vs.neg{color:var(--green)}
+.score-col,.partial-score{color:var(--coral);font-variant-numeric:tabular-nums}
+.rank-score{color:var(--green);font-variant-numeric:tabular-nums}
 .group-h{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
 .lock-ico{font-size:10px;color:var(--dim)}
 
@@ -291,12 +346,28 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   width:44px;height:44px;min-width:44px;min-height:44px;border:2px solid var(--accent-ink);
   border-radius:50%;background:var(--accent);box-sizing:border-box;cursor:pointer
 }
+.price-ctrl.custom input[type=range]::-webkit-slider-thumb{background:var(--purple);border-color:#1a1224}
+.price-ctrl.custom input[type=range]::-moz-range-thumb{background:var(--purple);border-color:#1a1224}
+.rank-head span:nth-child(n+4){text-align:right}
+.thesis{letter-spacing:.1em;text-transform:uppercase}
 
 .spider-empty{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
-.chart-wrap{height:200px;position:relative;margin:4px 0 8px;width:100%}
-.chart-wrap canvas{display:block;width:100%;height:100%}
+.chart-wrap{height:250px;position:relative;margin:4px 0 8px;width:100%;overflow:visible}
+.chart-wrap-cmp{height:260px}
+.chart-wrap-sm{height:188px}
+.chart-wrap canvas{display:block;width:100%;height:100%;pointer-events:none}
+.radar-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin:0 0 8px;font-size:11px;color:var(--foam);font-weight:600}
+.radar-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 .radar-hits{position:absolute;inset:0;pointer-events:none}
-.radar-hit{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;border:0;background:transparent;padding:0;margin:0;cursor:pointer;pointer-events:auto;transform:translate(-50%,-50%);appearance:none;-webkit-appearance:none;opacity:0}
+.radar-hit{position:absolute;min-width:44px;min-height:44px;border:0;background:transparent;padding:6px 4px;margin:0;cursor:pointer;pointer-events:auto;appearance:none;-webkit-appearance:none;color:var(--radar-ink);font:600 10px/1.15 var(--font-body);white-space:nowrap;text-align:center;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%)}
+.radar-hit.unk{color:var(--muted);opacity:.55}
+.peer-bars{margin:0 0 16px}
+.peer-bar-row{display:grid;grid-template-columns:minmax(92px,34%) 1fr auto;gap:8px;align-items:center;min-height:44px;font-size:12px}
+.peer-bar-name{color:var(--dim);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.peer-bar-row.on .peer-bar-name{color:var(--foam);font-weight:700}
+.peer-bar-track{height:10px;background:var(--white-06);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.peer-bar-fill{display:block;height:100%;border-radius:99px;min-width:0}
+.peer-bar-val{font-variant-numeric:tabular-nums;font-weight:600;color:var(--foam);font-size:12px;text-align:right;min-width:64px}
 #openSettings{padding:0;width:44px;height:44px;min-width:44px;min-height:44px}
 #openSettings svg{display:block;width:18px;height:18px}
 .chip.partial{background:var(--sand-d);color:var(--sand);border-color:var(--warn-3);font-weight:600}
@@ -334,13 +405,21 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .coming-now-lab{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--foam)}
 
 .homes-shelf{margin:0 0 16px}
-.home-card{border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden;background:var(--white-03)}
-.home-photo{height:112px;background:linear-gradient(145deg,var(--accent-1),var(--sheet-92) 55%,var(--warn-08));display:grid;place-items:center;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.homes-list{display:grid;gap:10px}
+.home-card{border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden;background:var(--white-03);color:inherit;text-decoration:none;display:block}
+a.home-card:hover{border-color:var(--accent-3)}
+.home-photo{position:relative;height:112px;overflow:hidden;background:linear-gradient(145deg,var(--accent-1),var(--sheet-92) 55%,var(--warn-08));display:grid;place-items:center;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.home-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .home-body{padding:12px}
 .home-title{font-weight:600;color:var(--muted);font-size:14px}
+.homes-list .home-title{color:var(--foam)}
 .home-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+.homes-list .home-meta{color:var(--dim)}
+.home-sale{font-weight:700;color:var(--foam);font-variant-numeric:tabular-nums}
 .home-card .chip{opacity:.55}
+.homes-list .home-card .chip{opacity:1}
 .home-empty{font-size:12.5px;color:var(--foam);margin:10px 0 0;line-height:1.4}
+.homes-shelf > .home-empty{margin:8px 0 0}
 
 .define-layer{position:absolute;left:0;right:0;top:0;bottom:calc(var(--dock-h) + 8px);z-index:940;display:grid;place-items:center;padding:16px 14px 12px;background:var(--overlay-soft);overflow:auto;pointer-events:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .sheet.snap-full ~ .define-layer{bottom:0;padding-top:max(16px, var(--st))}
@@ -356,12 +435,12 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .define-card .x{position:absolute;top:10px;right:10px}
 
 @media (min-width:900px){
-  #app{display:grid;grid-template-columns:minmax(0,1fr) var(--rail-w);max-width:none;grid-template-rows:100dvh}
+  #app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,var(--rail-w));max-width:none;grid-template-rows:100dvh}
   #stage{position:relative;height:100dvh;min-width:0}
   .drive{right:12px;left:12px;max-width:420px}
   #openList{display:none}
-  #rail{position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-left:1px solid var(--line);z-index:2}
-  .sheet{position:relative;bottom:auto;top:auto;transform:none;max-height:none;height:auto;flex:1;min-height:0;border-radius:0;border:0;box-shadow:none}
+  #rail{position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-left:1px solid var(--line);z-index:2;min-width:0;overflow:hidden}
+  .sheet{position:relative;bottom:auto;top:auto;transform:none;max-height:none;height:auto;flex:1;min-height:0;min-width:0;border-radius:0;border:0;box-shadow:none}
   .sheet.open,.sheet.snap-full,.sheet.dragging{transform:none;max-height:none;height:auto;top:auto;bottom:auto;border-radius:0}
   .handle-hit,.handle{display:none}
   .sheet-scroll{padding:14px 16px 16px}
@@ -371,9 +450,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   .sheet.snap-full ~ .define-layer{bottom:0;padding-top:16px}
   .map-credit{bottom:14px;right:14px}
   .toast{left:auto;right:calc(var(--rail-w) + 16px);transform:none;bottom:24px}
-  .rank-line{display:flex;align-items:stretch;gap:4px;border-bottom:1px solid var(--line)}
-.rank-line .icon-btn{align-self:center;flex-shrink:0}
-.rank-row{grid-template-columns:28px 1fr auto}
+  .rank-line{min-width:0;width:100%}
+  .rank-row,.rank-cols{grid-template-columns:26px minmax(0,1fr) 58px 48px 44px;min-width:0}
 }
 </style>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -433,7 +511,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     "pv-5dedic": "5 de Dic",
     "boca": "Boca",
     "la-cruz": "La Cruz",
-    "cabo-medano": "Cabo Médano"
+    "cabo-medano": "Cabo Médano",
+    "el-anclote": "El Anclote",
+    "punta-mita-inside": "Inside"
   };
   const STAGE_CHIP = {
     open: "open",
@@ -477,12 +557,14 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     plan: readStoredPlan(),
     unit: readStoredUnit(),
     listFilter: "all",
-    listSort: "price",
+    listSort: "score",
     comingFilter: "all",
     proId: null,
     horizon: 5,
-    growthR: 0.08,
-    playYear: 2026
+    cmpYears: 5,
+    growthR: 0.12,
+    playYear: 2026,
+    scenOn: { conservative: true, base: true, abundance: true, custom: true }
   };
 
   let DATASET = null;
@@ -496,7 +578,16 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   let SCORES_META = null;
   let SERIES = {};
   let GATES = null;
+  let HOMES = null;
+  let ANCLOTE = null;
   const NOW_YEAR = 2026;
+  /* assumption rates: Conservative 4% / Base 8% / Abundance 12% — not JSX seeds or CAGRs */
+  const R_CONSERVATIVE = 0.07;
+  const R_BASE = 0.10;
+  const R_ABUNDANCE = 0.14;
+  const PEER_BAR_IDS = ["cabo-medano", "conchas-chinas", "sayulita", "punta-mita"];
+  const OVERLAY_TOKENS = ["--accent", "--coral", "--gold", "--purple"];
+  const OVERLAY_FALLBACK = ["#3eebc9", "#FF6B47", "#FFD166", "#A78BFA"];
   let markers = {};
   let map, radius;
 
@@ -551,6 +642,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
   function unlocked(id) {
     if (preview || getPlan() === "pro") return !!town(id);
+    if (id === "punta-mita-inside" || id === "el-anclote") return FREE.indexOf("punta-mita") !== -1;
     return FREE.indexOf(id) !== -1;
   }
 
@@ -587,25 +679,150 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     return getComputedStyle(document.documentElement).getPropertyValue(token).trim();
   }
 
-  function scoreRow(t) {
-    return t && SCORES[t.id] ? SCORES[t.id] : null;
+  function withAlpha(color, a) {
+    const c = (color || "").trim();
+    const hex = /^#?([0-9a-fA-F]{6})$/.exec(c);
+    if (hex) {
+      const n = parseInt(hex[1], 16);
+      return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+    }
+    const rgb = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i.exec(c);
+    if (rgb) return "rgba(" + rgb[1] + "," + rgb[2] + "," + rgb[3] + "," + a + ")";
+    return c;
   }
 
-  function scoreOf(t) {
-    const row = scoreRow(t);
+  function overlayColor(i) {
+    const stroke = brandColor(OVERLAY_TOKENS[i % 4]) || OVERLAY_FALLBACK[i % 4];
+    return { stroke: stroke, fill: withAlpha(stroke, 0.22) };
+  }
+
+  function overlayVar(i) {
+    return "var(" + OVERLAY_TOKENS[i % 4] + ")";
+  }
+
+  function scoreRowById(id) {
+    return id && SCORES[id] ? SCORES[id] : null;
+  }
+
+  function scoreRow(t) {
+    if (t == null) return null;
+    if (typeof t === "string") return scoreRowById(t);
+    return scoreRowById(t.id);
+  }
+
+  function hasHomiaHeadline(row) {
+    return !!(row && row.usd_m2 && row.usd_m2.headline != null);
+  }
+
+  function overallOfRow(row) {
     if (!row || !row.composite || row.composite.overall == null) return null;
+    if (row.id === "punta-mita" || row.id === "punta-mita-inside") return null;
+    if (!hasHomiaHeadline(row)) return null;
     return row.composite.overall;
   }
 
-  function fmt10(n) {
-    if (n == null) return null;
-    return (Number(n) / 10).toFixed(1);
+  function scoreOf(t) {
+    return overallOfRow(scoreRow(t));
+  }
+
+  function fileRankOf(t) {
+    const row = scoreRow(t);
+    if (!row || row.rank == null) return null;
+    const n = Number(row.rank);
+    return isFinite(n) ? n : null;
+  }
+
+  function isRankedTown(t) {
+    if (!t || t.id === "punta-mita" || t.id === "punta-mita-inside") return false;
+    const row = scoreRow(t);
+    if (row && row.rank != null) return true;
+    const ids = (SCORES_META && SCORES_META.ranked_markets) || [];
+    return ids.indexOf(t.id) !== -1;
+  }
+
+  function isCompleteRow(row) {
+    if (!row || !row.composite) return false;
+    return !!(row.composite.complete || row.composite.axes_scored === 7);
+  }
+
+  function axesScoredOf(row) {
+    if (!row || !row.composite || row.composite.axes_scored == null) return 0;
+    return row.composite.axes_scored;
+  }
+
+  function fmtAxis(n) {
+    if (n == null || n !== n) return null;
+    return Number(n).toFixed(1);
+  }
+
+  function fmtOverall(n) {
+    if (n == null || n !== n) return null;
+    return String(Math.round(Number(n)));
   }
 
   function axisScore(row, key) {
     const a = row && row.axes && row.axes[key];
-    if (!a || a.status === "unknown" || a.score == null) return null;
-    return a.score;
+    if (!a || a.status !== "scored") return null;
+    const v = a.score_0_10;
+    if (v == null) return null;
+    const n = Number(v);
+    return isFinite(n) ? n : null;
+  }
+
+  function completenessChip(row) {
+    if (!row || !row.composite) return "";
+    if (isCompleteRow(row)) return '<span class="chip priced">7 of 7</span>';
+    const n = axesScoredOf(row);
+    return '<span class="chip partial">Partial \u00b7 ' + n + " of 7</span>";
+  }
+
+  function gradeHeading(row) {
+    if (isCompleteRow(row)) return "Coastal Grade \u00b7 7 of 7";
+    return "Partial grade \u00b7 " + axesScoredOf(row) + " of 7";
+  }
+
+  function coverageCaption(row) {
+    if (!row || !row.composite) {
+      return "Unknown axes dropped, not zeroed. Prefer UNKNOWN over a guessed town delta.";
+    }
+    if (isCompleteRow(row)) return "7 of 7 axes scored.";
+    const unk = row.composite.unknown_axes || [];
+    const names = unk.map(function (k) {
+      const ax = RADAR_AXES.find(function (a) { return a.key === k; });
+      return ax ? ax.label : k;
+    });
+    const n = axesScoredOf(row);
+    return "Partial \u00b7 " + n + " of 7. " +
+      (names.length ? names.join(" \u00b7 ") + " unknown \u2014 dropped, not zeroed. " : "") +
+      "Prefer UNKNOWN over a guessed town delta.";
+  }
+
+  function spiderLabel(id, row) {
+    if (id === "punta-mita-inside") return "Inside";
+    if (id === "el-anclote") return "El Anclote";
+    if (id === "punta-mita") return "Punta Mita mixed";
+    const t = town(id);
+    if (t) return shortName(t);
+    return (row && row.name) || id;
+  }
+
+  function expandSpiderIds(ids) {
+    const out = [];
+    const seen = {};
+    function push(id) {
+      if (!id || seen[id] || id === "punta-mita") return;
+      seen[id] = true;
+      out.push(id);
+    }
+    (ids || []).forEach(function (id) {
+      if (id === "punta-mita") {
+        push("punta-mita-inside");
+        push("el-anclote");
+      } else {
+        push(id);
+      }
+    });
+    return out;
   }
 
   function shortName(t) {
@@ -622,6 +839,43 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     if (h != null && (t.peer || t.off_map)) return "primary";
     if (h != null) return "priced";
     return "unknown";
+  }
+
+  function storyTier(t) {
+    const k = tierOf(t);
+    if (k === "primary") return { id: "primary", label: "PRIMARY" };
+    if (k === "priced") return { id: "secondary", label: "SECONDARY" };
+    return { id: "watch", label: "WATCH" };
+  }
+
+  function tierChipHtml(t) {
+    const st = storyTier(t);
+    return '<span class="chip tier-' + st.id + '">' + st.label + "</span>";
+  }
+
+  function cagrOf(t) {
+    if (!t) return null;
+    const e = seriesEntry(t.id);
+    return e && e.cagr != null && isFinite(e.cagr) ? e.cagr : null;
+  }
+
+  function fmtCagr(r) {
+    if (r == null || !isFinite(r)) return "\u2014";
+    const pct = r * 100;
+    const sign = pct < 0 ? "\u2212" : "";
+    return sign + Math.abs(pct).toFixed(1) + "%";
+  }
+
+  function fmtRank(n) {
+    const v = Number(n);
+    if (!isFinite(v) || v < 1) return "\u2014";
+    return v < 10 ? "0" + v : String(v);
+  }
+
+  function pctLabel(r) {
+    const pct = Number(r) * 100;
+    if (!isFinite(pct)) return "\u2014";
+    return pct.toFixed(1) + "%";
   }
 
   function toDisplay(usd_m2) {
@@ -655,6 +909,18 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       text: sign + "$" + money + " · " + sign + Math.abs(pct) + "%",
       cls: raw > 0 ? "pos" : "neg"
     };
+  }
+
+  function vsPctFmt(a, b) {
+    if (a == null || b == null) return { text: "\u2014", cls: "" };
+    const da = toDisplay(a);
+    const db = toDisplay(b);
+    if (da == null || db == null || !db) return { text: "\u2014", cls: "" };
+    const raw = da - db;
+    const pct = Math.round((raw / db) * 100);
+    if (pct === 0) return { text: "0%", cls: "" };
+    const sign = pct > 0 ? "+" : "\u2212";
+    return { text: sign + Math.abs(pct) + "%", cls: raw > 0 ? "pos" : "neg" };
   }
 
   function driveLabel(t) {
@@ -695,13 +961,56 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     return d.low <= state.minutes;
   }
 
+  function stubTownFromScore(id) {
+    const row = scoreRow(id);
+    if (!row) return null;
+    return {
+      id: row.id,
+      name: row.name || id,
+      usd_m2: row.usd_m2 || null,
+      peer: !!row.peer,
+      off_map: false,
+      rank_only: true,
+      catalysts: [],
+      hurricane: { note: null }
+    };
+  }
+
   function town(id) {
+    if (!id) return null;
     if (CABO && CABO.id === id) return CABO;
-    return TOWNS.find(function (t) { return t.id === id; });
+    if (ANCLOTE && ANCLOTE.id === id) return ANCLOTE;
+    const found = TOWNS.find(function (t) { return t.id === id; });
+    if (found) return found;
+    return stubTownFromScore(id);
   }
 
   function allPlaces() {
-    return CABO ? TOWNS.concat([CABO]) : TOWNS.slice();
+    const list = CABO ? TOWNS.concat([CABO]) : TOWNS.slice();
+    if (ANCLOTE) {
+      const i = list.findIndex(function (t) { return t.id === "punta-mita"; });
+      if (i >= 0) list.splice(i + 1, 0, ANCLOTE);
+      else list.push(ANCLOTE);
+    }
+    return list;
+  }
+
+  function buildAnclote() {
+    const row = scoreRowById("el-anclote");
+    if (!row) { ANCLOTE = null; return; }
+    const pm = TOWNS.find(function (t) { return t.id === "punta-mita"; });
+    ANCLOTE = {
+      id: "el-anclote",
+      name: "El Anclote",
+      usd_m2: row.usd_m2 || null,
+      peer: false,
+      off_map: false,
+      rank_only: true,
+      catalysts: [],
+      hurricane: (pm && pm.hurricane) || { note: null },
+      drive_min_to_pvr: (pm && pm.drive_min_to_pvr) || { low: 40, high: 50, basis: "estimated" },
+      access: pm && pm.access
+    };
   }
 
   function catalystObjs(t) {
@@ -846,11 +1155,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     },
     score: {
       name: "Score",
-      mean: "This is a PARTIAL grade. 55/100 weight unknown (hurricane, safety, water, beach). Composite renormalized on catalysts + runway + timezone only. Do not invent a single complete score.",
+      mean: "Coastal Grade overall is 0–100 from seven 0–10 arms. Unknown arms are dropped, not zeroed. A known empty catalyst catalog scores 0.",
       grade: [
-        "v1 composite is partial: hurricane, safety, potable water, and beach/sargassum are unknown for every priced town (55 of 100 weight dropped). Do not present overall as a complete Coastal Grade.",
-        "Weights used: 45 (future catalysts, price runway vs peers, timezone overlap). Weights dropped: 55.",
-        "Never present this number as a complete Coastal Grade."
+        "Overall is an integer 0–100. Arms display to one decimal on a 0–10 scale.",
+        "7 of 7 towns use all seven weights. Partial grades drop unknown arms and renormalize. Prefer UNKNOWN over a guessed town water or hurricane delta.",
+        "Punta Mita mixed 5196 is the peer pin only — not one gated-split market. Overlay inside + El Anclote."
       ]
     }
   };
@@ -888,7 +1197,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   }
 
   function thisStorm(t) {
-    if (t.hurricane && t.hurricane.note) return t.hurricane.note;
+    const why = axisWhy(t, "hurricane_history_and_damage");
+    if (why && why !== "unknown \u2014 not invented") return why;
+    if (t && t.hurricane && t.hurricane.note) return t.hurricane.note;
     return "unknown \u2014 not invented";
   }
 
@@ -953,8 +1264,21 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     }
     if (id === "score") {
       const row = scoreRow(t);
-      if (!row || !row.composite || row.composite.overall == null) return "\u2014";
-      return fmt10(row.composite.overall) + " \u00b7 Partial \u00b7 3 of 7 axes";
+      if (t.id === "punta-mita") {
+        const inside = scoreRow("punta-mita-inside");
+        const out = scoreRow("el-anclote");
+        const outOv = overallOfRow(out);
+        const inN = axesScoredOf(inside);
+        const outN = axesScoredOf(out);
+        const inChip = isCompleteRow(inside) ? "7 of 7" : ("Partial \u00b7 " + inN + " of 7");
+        const outChip = isCompleteRow(out) ? "7 of 7" : ("Partial \u00b7 " + outN + " of 7");
+        const outLab = outOv == null ? "" : (fmtOverall(outOv) + " ");
+        return "Peer pin 5196 \u2014 not a ranked market. Overlay inside \u00b7 " + inChip + " (no overall \u2014 no Homia headline) + El Anclote " + outLab + "(" + outChip + "). Hacienda 12589 n=3 and Las Terrazas 5992 n=2 are samples, not averaged.";
+      }
+      const ov = overallOfRow(row);
+      if (ov == null) return "\u2014";
+      if (isCompleteRow(row)) return fmtOverall(ov) + " \u00b7 7 of 7";
+      return fmtOverall(ov) + " \u00b7 Partial \u00b7 " + axesScoredOf(row) + " of 7";
     }
     return "unknown \u2014 not invented";
   }
@@ -1022,30 +1346,147 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   ];
   let sheetSnap = "peek";
 
-  function partialChip() {
-    return '<span class="chip partial">Partial \u00b7 3 of 7 axes</span>';
-  }
-
   function axisDefsHtml() {
     return AXIS_IDS.map(function (id) {
       return '<button type="button" class="filter-chip" data-axis="' + id + '" aria-haspopup="dialog">' + esc(AXES[id].name) + "</button>";
     }).join("");
   }
 
-  function partialGradeHtml(t) {
-    const row = scoreRow(t);
-    if (!row) return '<p class="spider-empty">no spider \u2014 unknown ' + unitLabel() + "</p>";
-    const overall = row.composite && row.composite.overall;
-    const warn = (SCORES_META && SCORES_META.coverage_warning) ||
-      "Partial grade. 55/100 weight unknown. Do not present as a complete Coastal Grade.";
-    return '<div class="spider-block"><div class="group-h">Partial grade \u00b7 3 of 7 axes</div>' +
-      '<div class="partial-head"><button type="button" class="score-tap" data-metric="score" aria-haspopup="dialog">' +
-      '<span class="partial-score">' + (overall == null ? "\u2014" : esc(fmt10(overall))) + "</span>" +
-      partialChip() + "</button></div>" +
-      '<div class="chart-wrap"><canvas id="radar" aria-label="Partial grade radar"></canvas><div class="radar-hits" id="radarHits"></div></div>' +
-      '<p class="caption">Partial \u00b7 3 of 7. ' + esc(warn) + "</p></div>";
+  function spiderCaption(ids, series) {
+    const hasPm = (ids || []).indexOf("punta-mita") !== -1
+      || (ids || []).indexOf("punta-mita-inside") !== -1
+      || (ids || []).indexOf("el-anclote") !== -1
+      || (series || []).some(function (s) { return s.id === "punta-mita-inside" || s.id === "el-anclote"; });
+    if (hasPm) {
+      function bit(id) {
+        const srow = (series || []).filter(function (x) { return x.id === id; })[0];
+        const row = srow ? srow.row : scoreRow(id);
+        if (!row || !row.composite) return null;
+        const ov = overallOfRow(row);
+        const cov = isCompleteRow(row) ? "7 of 7" : ("Partial \u00b7 " + axesScoredOf(row) + " of 7");
+        if (ov == null) return spiderLabel(id, row) + " \u00b7 " + cov;
+        return spiderLabel(id, row) + " " + fmtOverall(ov) + " \u00b7 " + cov;
+      }
+      const parts = [bit("punta-mita-inside"), bit("el-anclote")].filter(Boolean);
+      return "Mixed 5196 is the peer pin, not a gated-split market. Overlay: " +
+        parts.join(" + ") + ". Unknown arms are not plotted at 0.";
+    }
+    const row = series && series[0] && series[0].row;
+    return coverageCaption(row);
   }
 
+  function spiderSeriesFromIds(ids) {
+    const expanded = expandSpiderIds(ids);
+    const series = [];
+    expanded.forEach(function (id, i) {
+      const row = scoreRow(id);
+      if (!row || !row.axes) return;
+      series.push({
+        id: id,
+        row: row,
+        label: spiderLabel(id, row),
+        color: overlayColor(i),
+        values: RADAR_AXES.map(function (ax) { return axisScore(row, ax.key); }),
+        complete: isCompleteRow(row)
+      });
+    });
+    return series;
+  }
+
+  function partialGradeHtml(t) {
+    if (!t) return '<p class="spider-empty">no spider \u2014 unknown ' + unitLabel() + "</p>";
+    if (t.id === "punta-mita") return overlaySpiderHtml(["punta-mita"], { cmp: false, title: "Inside vs El Anclote", small: true });
+    const series = spiderSeriesFromIds([t.id]);
+    if (!series.length) return '<p class="spider-empty">no spider \u2014 unknown ' + unitLabel() + "</p>";
+    const row = series[0].row;
+    const overall = overallOfRow(row);
+    const head = gradeHeading(row);
+    return '<div class="spider-block"><div class="group-h">' + head + "</div>" +
+      '<div class="partial-head"><button type="button" class="score-tap" data-metric="score" aria-haspopup="dialog">' +
+      '<span class="partial-score">' + (overall == null ? "\u2014" : esc(fmtOverall(overall))) + "</span>" +
+      completenessChip(row) + "</button></div>" +
+      '<div class="chart-wrap chart-wrap-sm"><canvas id="radar" aria-label="Coastal Grade radar"></canvas><div class="radar-hits" id="radarHits"></div></div>' +
+      '<p class="caption">' + esc(spiderCaption([t.id], series)) + "</p></div>";
+  }
+
+  function overlaySpiderHtml(ids, opts) {
+    opts = opts || {};
+    const series = spiderSeriesFromIds(ids);
+    if (!series.length) {
+      return '<p class="spider-empty">no spider \u2014 unknown ' + unitLabel() + "</p>";
+    }
+    const title = opts.title || (series.length > 1 ? "Overlay grade" : gradeHeading(series[0].row));
+    let html = '<div class="spider-block"><div class="group-h">' + esc(title) + "</div>";
+    if (series.length > 1) {
+      html += '<div class="radar-legend">';
+      series.forEach(function (s, i) {
+        const ov = overallOfRow(s.row);
+        html += '<span><i style="background:' + overlayVar(i) + '"></i>' + esc(s.label) +
+          (ov == null ? " \u00b7 " : (" " + fmtOverall(ov) + " ")) + completenessChip(s.row) + "</span>";
+      });
+      html += "</div>";
+    }
+    const wrapCls = opts.small ? "chart-wrap chart-wrap-sm" : ((opts.cmp !== false && series.length > 1) ? "chart-wrap chart-wrap-cmp" : "chart-wrap");
+    html += '<div class="' + wrapCls + '"><canvas id="radar" aria-label="Coastal Grade radar"></canvas><div class="radar-hits" id="radarHits"></div></div>';
+    html += '<p class="caption">' + esc(spiderCaption(ids, series)) + "</p></div>";
+    return html;
+  }
+
+  function headlineRecord(id) {
+    if (id === "el-anclote") {
+      const row = scoreRowById("el-anclote");
+      const h = row && row.usd_m2 && row.usd_m2.headline;
+      if (h == null) return null;
+      return { id: id, name: "El Anclote", headline: h };
+    }
+    const t = town(id);
+    if (!t || headlineOf(t) == null) return null;
+    const name = id === "punta-mita" ? "Punta Mita mixed" : shortName(t);
+    return { id: id, name: name, headline: headlineOf(t) };
+  }
+
+  function peerPriceBarsHtml(compareIds) {
+    compareIds = compareIds || [];
+    const overlayingAnclote = compareIds.indexOf("punta-mita") !== -1 || compareIds.indexOf("el-anclote") !== -1;
+    const seen = {};
+    const rows = [];
+    function pushId(id) {
+      if (!id || seen[id]) return;
+      const rec = headlineRecord(id);
+      if (!rec) return;
+      seen[id] = true;
+      rows.push(rec);
+    }
+    PEER_BAR_IDS.forEach(pushId);
+    compareIds.forEach(function (id) {
+      if (id === "punta-mita") return; // mixed already in peer pins
+      pushId(id);
+    });
+    if (overlayingAnclote) pushId("el-anclote");
+    if (!rows.length) return "";
+    let max = 0;
+    rows.forEach(function (r) { if (r.headline > max) max = r.headline; });
+    const warnC = brandColor("--warn") || "#e6c878";
+    let html = '<div class="peer-bars"><div class="group-h">PEER PRICE BARS</div>';
+    rows.forEach(function (r) {
+      const cmpIdx = compareIds.indexOf(r.id);
+      const compared = cmpIdx !== -1 || (r.id === "el-anclote" && overlayingAnclote);
+      let color = compared ? overlayColor(Math.max(0, cmpIdx) % 4).stroke : warnC;
+      if (r.id === "el-anclote") {
+        const seriesIds = expandSpiderIds(compareIds);
+        const ai = seriesIds.indexOf("el-anclote");
+        if (ai >= 0) color = overlayColor(ai).stroke;
+      }
+      const pct = max > 0 ? Math.max(0, Math.min(100, (r.headline / max) * 100)) : 0;
+      html += '<div class="peer-bar-row' + (compared ? " on" : "") + '">';
+      html += '<div class="peer-bar-name">' + esc(r.name) + "</div>";
+      html += '<div class="peer-bar-track"><span class="peer-bar-fill" style="width:' + pct.toFixed(1) + "%;background:" + color + '"></span></div>';
+      html += '<div class="peer-bar-val">' + esc(fmtUsd(toDisplay(r.headline))) + "</div>";
+      html += "</div>";
+    });
+    html += "</div>";
+    return html;
+  }
 
   function projPrice(headline, r, year) {
     return headline * Math.pow(1 + r, year - NOW_YEAR); // P(y) = headline * (1+r)^(y-2026)
@@ -1088,111 +1529,169 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
   function priceChartTowns() {
     if (state.view === "compare") {
-      return state.compare.map(town).filter(function (t) { return t && headlineOf(t) != null; });
+      const seen = {};
+      const out = [];
+      (state.compare || []).forEach(function (id) {
+        const use = id === "punta-mita" ? "el-anclote" : id;
+        if (!use || seen[use]) return;
+        seen[use] = true;
+        const t = town(use);
+        if (t && headlineOf(t) != null) out.push(t);
+      });
+      return out;
     }
     const t = town(state.selected);
     if (t && headlineOf(t) != null) return [t];
     return [];
   }
 
-  function playValue(t) {
-    const h = headlineOf(t);
-    if (h == null) return null;
-    if (state.playYear <= NOW_YEAR) return h;
-    return projPrice(h, state.growthR, state.playYear);
-  }
-
   function priceBlockHtml(towns) {
     const priced = (towns || []).filter(function (t) { return headlineOf(t) != null; });
-    let html = '<div class="price-block"><div class="group-h">Price trajectory</div>';
+    const cmp = state.view === "compare";
+    const title = cmp
+      ? "Price Trajectory \u00b7 Historical + Base Case"
+      : "Historical & Projected";
+    let html = '<div class="price-block"><div class="group-h">' + esc(title) + "</div>";
     if (!priced.length) {
-      html += '<p class="price-unk">unknown — not invented</p></div>';
+      html += '<p class="price-unk">unknown \u2014 not invented</p></div>';
       return html;
     }
-    html += '<div class="price-wrap"><canvas id="priceChart" aria-label="Price trajectory USD per square meter"></canvas></div>';
+    if (cmp) {
+      html += '<div class="proj-row" id="projToggles">';
+      html += '<button type="button" class="proj-chip' + (state.cmpYears === 5 ? " on" : "") + '" data-proj="5">Projection 5yr</button>';
+      html += '<button type="button" class="proj-chip' + (state.cmpYears === 10 ? " on" : "") + '" data-proj="10">Projection 10yr</button>';
+      html += "</div>";
+    }
+    html += '<div class="price-wrap"><canvas id="priceChart" aria-label="' + esc(title) + '"></canvas></div>';
     html += '<div class="price-readout" id="priceReadout"></div>';
-    html += '<div class="price-ctrls">';
-    html += '<div class="price-ctrl"><label id="priceHorizonLab" for="priceHorizon">Horizon ' + state.horizon + ' yr</label>';
-    html += '<input type="range" id="priceHorizon" min="1" max="10" step="1" value="' + state.horizon + '" aria-labelledby="priceHorizonLab"></div>';
-    html += '<div class="price-ctrl"><label id="priceGrowthLab" for="priceGrowth">your growth assumption · not a measured forecast · ' + Math.round(state.growthR * 100) + '%</label>';
-    html += '<input type="range" id="priceGrowth" min="0" max="15" step="1" value="' + Math.round(state.growthR * 100) + '" aria-labelledby="priceGrowthLab"></div>';
-    html += '<div class="price-ctrl"><label id="pricePlayLab" for="pricePlay">Year ' + state.playYear + '</label>';
-    html += '<input type="range" id="pricePlay" min="' + NOW_YEAR + '" max="' + (NOW_YEAR + state.horizon) + '" step="1" value="' + state.playYear + '" aria-labelledby="pricePlayLab"></div>';
+    if (!cmp) {
+      html += '<div class="scen-row" id="scenChips">';
+      html += '<button type="button" class="scen-chip' + (state.scenOn.conservative ? " on" : "") + '" data-scen="conservative">Conservative ' + pctLabel(R_CONSERVATIVE) + "</button>";
+      html += '<button type="button" class="scen-chip' + (state.scenOn.base ? " on" : "") + '" data-scen="base">Base ' + pctLabel(R_BASE) + "</button>";
+      html += '<button type="button" class="scen-chip' + (state.scenOn.abundance ? " on" : "") + '" data-scen="abundance">Abundance ' + pctLabel(R_ABUNDANCE) + "</button>";
+      html += '<button type="button" class="scen-chip' + (state.scenOn.custom ? " on" : "") + '" data-scen="custom" id="scenCustom">Custom ' + pctLabel(state.growthR) + "</button>";
+      html += "</div>";
+      html += '<div class="price-ctrls">';
+      html += '<div class="price-ctrl"><label id="priceHorizonLab" for="priceHorizon">Horizon ' + state.horizon + " yr</label>";
+      html += '<input type="range" id="priceHorizon" min="1" max="10" step="1" value="' + state.horizon + '" aria-labelledby="priceHorizonLab"></div>';
+      html += '<div class="price-ctrl custom"><label id="priceGrowthLab" for="priceGrowth">Custom \u00b7 assumption, not a measured forecast \u00b7 ' + pctLabel(state.growthR) + "</label>";
+      html += '<input type="range" id="priceGrowth" min="0" max="15" step="1" value="' + (state.growthR * 100) + '" aria-labelledby="priceGrowthLab"></div>';
+      html += '<div class="price-ctrl"><label id="pricePlayLab" for="pricePlay">Year ' + state.playYear + "</label>";
+      html += '<input type="range" id="pricePlay" min="' + NOW_YEAR + '" max="' + (NOW_YEAR + state.horizon) + '" step="1" value="' + state.playYear + '" aria-labelledby="pricePlayLab"></div>';
+      html += "</div>";
+      html += '<p class="caption">TODAY at 2026. Paths from headline, never back-cast. Conservative ' + pctLabel(R_CONSERVATIVE) + " teal dash \u00b7 Base " + pctLabel(R_BASE) + " coral \u00b7 Abundance " + pctLabel(R_ABUNDANCE) + " gold dash \u00b7 Custom purple live. P(y) = headline \u00d7 (1+r)^(y\u22122026) \u00b7 assumption, not a measured forecast.</p>";
+    } else {
+      const endY = NOW_YEAR + (state.cmpYears === 10 ? 10 : 5);
+      html += '<p class="caption">Historical = 2026 dots only. Base dashed = ' + pctLabel(R_BASE) + " assumption \u00b7 not a measured forecast. Projection 5yr \u2192 2031 \u00b7 10yr \u2192 2036 (now " + endY + ").</p>";
+    }
     html += "</div>";
-    html += '<p class="caption">Solid = verified asking ' + unitLabel() + ". Dashed = P(y) = headline × (1+r)^(y−2026) · your assumption, not a measured forecast.</p></div>";
     return html;
   }
 
   function updatePriceLabels() {
     const horLab = document.getElementById("priceHorizonLab");
     const groLab = document.getElementById("priceGrowthLab");
-    const playLab = document.getElementById("pricePlayLab");
     const out = document.getElementById("priceReadout");
+    const customChip = document.getElementById("scenCustom");
+    const gro = document.getElementById("priceGrowth");
+    const playLab = document.getElementById("pricePlayLab");
     if (horLab) horLab.textContent = "Horizon " + state.horizon + " yr";
-    if (groLab) groLab.textContent = "your growth assumption · not a measured forecast · " + Math.round(state.growthR * 100) + "%";
+    if (groLab) groLab.textContent = "Custom \u00b7 assumption, not a measured forecast \u00b7 " + pctLabel(state.growthR);
+    if (customChip) customChip.textContent = "Custom " + pctLabel(state.growthR);
+    if (gro) gro.value = String(state.growthR * 100);
+    if (playLab) playLab.textContent = "Year " + state.playYear;
     const towns = priceChartTowns();
-    const assumed = state.playYear > NOW_YEAR;
-    const bits = towns.map(function (t) {
-      const val = playValue(t);
-      const mark = assumed
-        ? ' <span class="assumed">assumed</span>'
-        : ' <span class="verified">verified</span>';
-      return '<div>' + esc(shortName(t)) + " · " + fmtUsd(toDisplay(val)) + " " + unitLabel() + mark + "</div>";
-    });
-    if (playLab) {
-      if (towns.length === 1) {
-        playLab.textContent = "Year " + state.playYear + " · " + fmtUsd(toDisplay(playValue(towns[0]))) + " " + unitLabel() + (assumed ? " · assumed" : " · verified");
-      } else {
-        playLab.textContent = "Year " + state.playYear;
+    const cmp = state.view === "compare";
+    const endY = NOW_YEAR + (cmp ? (state.cmpYears === 10 ? 10 : 5) : state.horizon);
+    const playY = cmp ? endY : state.playYear;
+    let bits = [];
+    if (cmp) {
+      bits = towns.map(function (t) {
+        const h = headlineOf(t);
+        if (h == null) return "";
+        const val = projPrice(h, R_BASE, endY);
+        return "<div>" + esc(shortName(t)) + " \u00b7 " + endY + " Base " + pctLabel(R_BASE) + " \u00b7 " + fmtUsd(toDisplay(val)) + " " + unitLabel() + ' <span class="assumed">assumption</span></div>';
+      });
+    } else if (towns.length) {
+      const t = towns[0];
+      const h = headlineOf(t);
+      if (h != null) {
+        bits = scenarioSpecs().filter(function (sc) { return state.scenOn[sc.key]; }).map(function (sc) {
+          const val = projPrice(h, sc.rate, playY);
+          return "<div>" + esc(sc.label) + " " + pctLabel(sc.rate) + " \u00b7 " + playY + " \u00b7 " + fmtUsd(toDisplay(val)) + " " + unitLabel() + ' <span class="assumed">assumption</span></div>';
+        });
       }
     }
     if (out) out.innerHTML = bits.join("");
+    document.querySelectorAll("[data-proj]").forEach(function (b) {
+      b.classList.toggle("on", Number(b.getAttribute("data-proj")) === (state.cmpYears === 10 ? 10 : 5));
+    });
   }
 
   function bindPriceControls() {
     const hor = document.getElementById("priceHorizon");
     const gro = document.getElementById("priceGrowth");
     const play = document.getElementById("pricePlay");
-    if (!hor && !gro && !play) return;
-
+    function clampPlay() {
+      const maxY = NOW_YEAR + state.horizon;
+      if (state.playYear > maxY) state.playYear = maxY;
+      if (state.playYear < NOW_YEAR) state.playYear = NOW_YEAR;
+    }
     function refresh() {
+      clampPlay();
+      if (hor) hor.value = String(state.horizon);
+      if (gro) gro.value = String(state.growthR * 100);
       if (play) {
+        play.min = String(NOW_YEAR);
         play.max = String(NOW_YEAR + state.horizon);
         play.value = String(state.playYear);
       }
-      if (hor) hor.value = String(state.horizon);
-      if (gro) gro.value = String(Math.round(state.growthR * 100));
       updatePriceLabels();
       renderPriceChart();
     }
-
     if (hor) {
-      hor.value = String(state.horizon);
       hor.oninput = function () {
         state.horizon = Math.max(1, Math.min(10, Math.round(Number(hor.value) || 5)));
-        if (state.playYear > NOW_YEAR + state.horizon) state.playYear = NOW_YEAR + state.horizon;
         refresh();
       };
     }
     if (gro) {
-      gro.value = String(Math.round(state.growthR * 100));
       gro.oninput = function () {
-        state.growthR = Math.max(0, Math.min(0.15, (Number(gro.value) || 0) / 100));
+        state.growthR = Math.max(0, Math.min(0.15, (Number(gro.value) || 12) / 100));
         refresh();
       };
     }
     if (play) {
-      play.min = String(NOW_YEAR);
-      play.max = String(NOW_YEAR + state.horizon);
-      play.value = String(state.playYear);
       play.oninput = function () {
-        const hi = NOW_YEAR + state.horizon;
-        const y = Math.round(Number(play.value) || NOW_YEAR);
-        state.playYear = Math.max(NOW_YEAR, Math.min(hi, y));
+        state.playYear = Math.max(NOW_YEAR, Math.min(NOW_YEAR + state.horizon, Math.round(Number(play.value) || NOW_YEAR)));
         refresh();
       };
     }
+    document.querySelectorAll("[data-proj]").forEach(function (b) {
+      b.onclick = function () {
+        state.cmpYears = Number(b.getAttribute("data-proj")) === 10 ? 10 : 5;
+        refresh();
+      };
+    });
+    document.querySelectorAll("[data-scen]").forEach(function (b) {
+      b.onclick = function () {
+        const k = b.getAttribute("data-scen");
+        if (!k || !state.scenOn) return;
+        state.scenOn[k] = !state.scenOn[k];
+        b.classList.toggle("on", !!state.scenOn[k]);
+        refresh();
+      };
+    });
     updatePriceLabels();
+  }
+
+  function scenarioSpecs() {
+    return [
+      { key: "conservative", rate: R_CONSERVATIVE, color: brandColor("--teal") || "#4A9D9C", dash: [6, 4], width: 2, label: "Conservative" },
+      { key: "base", rate: R_BASE, color: brandColor("--coral") || "#FF6B47", dash: null, width: 3, label: "Base" },
+      { key: "abundance", rate: R_ABUNDANCE, color: brandColor("--gold") || "#FFD166", dash: [2, 3], width: 2, label: "Abundance" },
+      { key: "custom", rate: state.growthR, color: brandColor("--purple") || "#A78BFA", dash: [4, 3], width: 2, label: "Custom" }
+    ];
   }
 
   function renderPriceChart() {
@@ -1216,56 +1715,52 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     const foam = brandColor("--foam") || "#e7fbf6";
     const muted = brandColor("--muted") || "#6f8f94";
     const lineC = brandColor("--line") || "rgba(180,230,220,.12)";
-    const warn = brandColor("--warn") || "#e6c878";
     const bodyFont = getComputedStyle(document.body).fontFamily || "DM Sans, sans-serif";
-    const colors = [
-      brandColor("--accent") || "#3eebc9",
-      brandColor("--warn") || "#e6c878",
-      brandColor("--info") || "#7ab3ff",
-      brandColor("--danger") || "#ff7a6a"
-    ];
-
-    const horizon = state.horizon;
-    const r = state.growthR;
+    const cmp = state.view === "compare";
+    const horizon = cmp ? (state.cmpYears === 10 ? 10 : 5) : state.horizon;
     const padL = 54;
-    const padR = 14;
+    const padR = 18;
     const padT = 32;
     const padB = 34;
     const plotW = Math.max(10, w - padL - padR);
     const plotH = Math.max(10, h - padT - padB);
 
-    let xMin = NOW_YEAR;
-    let xMax = NOW_YEAR + horizon;
-    let yMin = 0;
+    const xMin = NOW_YEAR;
+    const xMax = NOW_YEAR + horizon;
+    const yMin = 0;
     let yMax = 1;
-    const pack = towns.map(function (t) {
+    const pack = towns.map(function (t, i) {
       const h0 = headlineOf(t);
-      const verified = verifiedPoints(t);
-      const future = [];
-      for (let y = NOW_YEAR; y <= NOW_YEAR + horizon; y++) {
-        future.push({ year: y, usd_m2: projPrice(h0, r, y) });
-      }
-      const entry = seriesEntry(t.id);
-      let measured = null;
-      if (entry.cagr != null) {
-        measured = [];
+      const paths = [];
+      if (cmp) {
+        const future = [];
         for (let y = NOW_YEAR; y <= NOW_YEAR + horizon; y++) {
-          measured.push({ year: y, usd_m2: projPrice(h0, entry.cagr, y) });
+          future.push({ year: y, usd_m2: projPrice(h0, R_BASE, y) });
         }
+        paths.push({ pts: future, color: overlayColor(i).stroke, dash: [6, 5], width: 2, label: "assumption" });
+      } else {
+        scenarioSpecs().forEach(function (sc) {
+          if (!state.scenOn[sc.key]) return;
+          const future = [];
+          for (let y = NOW_YEAR; y <= NOW_YEAR + horizon; y++) {
+            future.push({ year: y, usd_m2: projPrice(h0, sc.rate, y) });
+          }
+          paths.push({ pts: future, color: sc.color, dash: sc.dash, width: sc.width, label: sc.label });
+        });
       }
-      verified.forEach(function (pt) {
-        if (pt.year < xMin) xMin = pt.year;
-        const dy = toDisplay(pt.usd_m2);
-        if (dy != null && dy > yMax) yMax = dy;
+      paths.forEach(function (path) {
+        path.pts.forEach(function (pt) {
+          const dy = toDisplay(pt.usd_m2);
+          if (dy != null && dy > yMax) yMax = dy;
+        });
       });
-      future.forEach(function (pt) { const dy = toDisplay(pt.usd_m2); if (dy != null && dy > yMax) yMax = dy; });
-      if (measured) measured.forEach(function (pt) { const dy = toDisplay(pt.usd_m2); if (dy != null && dy > yMax) yMax = dy; });
-      return { t: t, verified: verified, future: future, measured: measured };
+      const nowD = toDisplay(h0);
+      if (nowD != null && nowD > yMax) yMax = nowD;
+      return { t: t, h0: h0, paths: paths, color: overlayColor(i).stroke };
     });
 
     yMax = yMax * 1.14;
     if (yMax <= 0) yMax = 1;
-    if (xMax <= xMin) xMax = xMin + 1;
 
     function xOf(year) {
       return padL + ((year - xMin) / (xMax - xMin)) * plotW;
@@ -1319,31 +1814,27 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ctx.font = "600 10px " + bodyFont;
     ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
-    ctx.fillText("NOW", xNow + 6, padT - 4);
+    ctx.fillText("TODAY", xNow + 6, padT - 4);
 
-    const xPlay = xOf(state.playYear);
-    ctx.save();
-    ctx.strokeStyle = warn;
-    ctx.globalAlpha = 0.9;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(xPlay, padT);
-    ctx.lineTo(xPlay, padT + plotH);
-    ctx.stroke();
-    ctx.restore();
-    if (Math.abs(xPlay - xNow) > 0.5) {
-      ctx.fillStyle = warn;
-      ctx.font = "600 10px " + bodyFont;
-      ctx.textAlign = "left";
-      ctx.textBaseline = "bottom";
-      ctx.fillText(String(state.playYear), xPlay + 6, padT - 4);
+    if (!cmp && state.playYear != null) {
+      const xPlay = xOf(state.playYear);
+      ctx.save();
+      ctx.strokeStyle = brandColor("--purple") || "#A78BFA";
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(xPlay, padT);
+      ctx.lineTo(xPlay, padT + plotH);
+      ctx.stroke();
+      ctx.restore();
     }
 
-    function drawPath(pts, color, dash) {
+    function drawPath(pts, color, dash, width) {
       if (!pts.length) return;
       ctx.save();
       ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = width || 2;
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       if (dash) ctx.setLineDash(dash);
@@ -1358,28 +1849,24 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       ctx.restore();
     }
 
-    pack.forEach(function (row, i) {
-      const color = colors[i % colors.length];
-      drawPath(row.future, color, [6, 5]);
-      if (row.measured) drawPath(row.measured, foam, [2, 5]);
-      if (row.verified.length > 1) drawPath(row.verified, color, null);
-      ctx.fillStyle = color;
-      row.verified.forEach(function (pt) {
-        ctx.beginPath();
-        ctx.arc(xOf(pt.year), yOf(toDisplay(pt.usd_m2)), 4, 0, Math.PI * 2);
-        ctx.fill();
+    pack.forEach(function (row) {
+      row.paths.forEach(function (path) {
+        drawPath(path.pts, path.color, path.dash, path.width);
       });
+      ctx.fillStyle = cmp ? row.color : (foam);
+      ctx.beginPath();
+      ctx.arc(xOf(NOW_YEAR), yOf(toDisplay(row.h0)), 4, 0, Math.PI * 2);
+      ctx.fill();
     });
 
-    if (pack.length > 1) {
+    if (cmp && pack.length) {
       ctx.font = "600 10px " + bodyFont;
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
       let lx = padL + 8;
       const ly = padT + 12;
-      pack.forEach(function (row, i) {
-        const color = colors[i % colors.length];
-        ctx.fillStyle = color;
+      pack.forEach(function (row) {
+        ctx.fillStyle = row.color;
         ctx.beginPath();
         ctx.arc(lx, ly, 3.5, 0, Math.PI * 2);
         ctx.fill();
@@ -1388,6 +1875,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         ctx.fillText(name, lx + 8, ly);
         lx += ctx.measureText(name).width + 22;
       });
+      ctx.fillStyle = muted;
+      ctx.font = "10px " + bodyFont;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Base " + pctLabel(R_BASE) + " assumption", w - padR, padT + 12);
     }
   }
 
@@ -1404,16 +1896,23 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     return Math.round(viewportH());
   }
 
-  function renderChart() {
+  function chartTownIds() {
+    if (state.view === "compare") return expandSpiderIds(state.compare || []);
+    if (state.selected === "punta-mita") return expandSpiderIds(["punta-mita"]);
+    if (state.selected) return [state.selected];
+    return [];
+  }
+
+  function renderChart(ids) {
     const canvas = document.getElementById("radar");
     if (!canvas) return;
-    const t = town(state.selected);
-    const row = scoreRow(t);
-    if (!row || !row.axes) return;
+    const series = spiderSeriesFromIds((ids && ids.length) ? ids : chartTownIds());
+    if (!series.length) return;
+
     const wrap = canvas.parentElement;
     const hits = document.getElementById("radarHits");
     const w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 300;
-    const h = (wrap && wrap.clientHeight) ? wrap.clientHeight : 200;
+    const h = (wrap && wrap.clientHeight) ? wrap.clientHeight : 250;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
@@ -1424,32 +1923,30 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
-    const accent = brandColor("--accent") || "#3eebc9";
-    const fill = brandColor("--accent-22") || "rgba(62,235,201,.22)";
-    const stroke = brandColor("--accent-9") || "rgba(62,235,201,.9)";
     const grid = brandColor("--radar-grid") || brandColor("--line") || "rgba(90,180,190,.18)";
-    const ink = brandColor("--radar-ink") || brandColor("--foam") || "#9ec9c8";
-    const dim = brandColor("--muted") || brandColor("--dim") || "#6f8f94";
-    const bodyFont = getComputedStyle(document.body).fontFamily || "DM Sans, sans-serif";
-
     const n = RADAR_AXES.length;
     const cx = w / 2;
     const cy = h / 2 + 2;
-    const R = Math.max(52, Math.min(w, h) / 2 - 40);
-    const values = RADAR_AXES.map(function (ax) { return axisScore(row, ax.key); });
+    const pad = Math.max(56, Math.min(72, Math.min(w, h) * 0.26));
+    const R = Math.max(48, Math.min(w, h) / 2 - pad);
 
     function pt(i, r) {
       const a = -Math.PI / 2 + i * 2 * Math.PI / n;
       return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r, a: a };
     }
 
+    function armR(v) {
+      return R * (Math.max(0, Math.min(10, Number(v))) / 10);
+    }
+
     ctx.lineJoin = "round";
     ctx.strokeStyle = grid;
     ctx.lineWidth = 1;
-    for (let ring = 1; ring <= 4; ring++) {
+    ctx.globalAlpha = 1;
+    for (let ring = 1; ring <= 5; ring++) {
       ctx.beginPath();
       for (let i = 0; i <= n; i++) {
-        const p = pt(i % n, R * ring / 4);
+        const p = pt(i % n, R * ring / 5);
         if (i === 0) ctx.moveTo(p.x, p.y);
         else ctx.lineTo(p.x, p.y);
       }
@@ -1458,79 +1955,107 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     }
 
     for (let i = 0; i < n; i++) {
-      const known = values[i] != null;
       const tip = pt(i, R);
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(tip.x, tip.y);
-      ctx.globalAlpha = known ? 1 : 0.38;
       ctx.strokeStyle = grid;
       ctx.stroke();
     }
-    ctx.globalAlpha = 1;
 
-    ctx.beginPath();
-    let polyStarted = false;
-    for (let i = 0; i < n; i++) {
-      if (values[i] == null) continue;
-      const r = R * (Math.max(0, Math.min(100, Number(values[i]))) / 100);
-      const p = pt(i, r);
-      if (!polyStarted) {
-        ctx.moveTo(p.x, p.y);
-        polyStarted = true;
-      } else {
-        ctx.lineTo(p.x, p.y);
-      }
-    }
-    if (polyStarted) {
-      ctx.closePath();
-      ctx.fillStyle = fill;
-      ctx.fill();
-      ctx.strokeStyle = stroke;
+    series.forEach(function (s) {
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = s.color.stroke;
       ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-
-    ctx.fillStyle = accent;
-    for (let i = 0; i < n; i++) {
-      if (values[i] == null) continue;
-      const r = R * (Math.max(0, Math.min(100, Number(values[i]))) / 100);
-      const p = pt(i, r);
+      ctx.fillStyle = s.color.fill;
+      if (s.complete) {
+        ctx.beginPath();
+        let okHept = true;
+        for (let i = 0; i < n; i++) {
+          if (s.values[i] == null) { okHept = false; break; }
+          const p = pt(i, armR(s.values[i]));
+          if (i === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        }
+        if (!okHept) return;
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        return;
+      }
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
-      ctx.fill();
-    }
+      let i = 0;
+      let any = false;
+      while (i < n) {
+        while (i < n && s.values[i] == null) i++;
+        if (i >= n) break;
+        const p0 = pt(i, armR(s.values[i]));
+        ctx.moveTo(p0.x, p0.y);
+        any = true;
+        i++;
+        while (i < n && s.values[i] != null) {
+          const p = pt(i, armR(s.values[i]));
+          ctx.lineTo(p.x, p.y);
+          i++;
+        }
+      }
+      if (s.values[0] != null && s.values[n - 1] != null) {
+        const a = pt(n - 1, armR(s.values[n - 1]));
+        const b = pt(0, armR(s.values[0]));
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        any = true;
+      }
+      if (any) ctx.stroke();
+    });
 
-    ctx.font = "10px " + bodyFont;
-    const labelR = R + 18;
+    series.forEach(function (s) {
+      ctx.fillStyle = s.color.stroke;
+      for (let i = 0; i < n; i++) {
+        if (s.values[i] == null) continue;
+        const p = pt(i, armR(s.values[i]));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    const labelR = R + 26;
     const hitHtml = [];
+    const defineTown = town(state.selected) || town((state.compare || [])[0]) || town("punta-mita");
     for (let i = 0; i < n; i++) {
-      const known = values[i] != null;
+      const vals = [];
+      series.forEach(function (s) {
+        if (s.values[i] != null) vals.push(s.values[i]);
+      });
+      const known = vals.length > 0;
       const p = pt(i, labelR);
       const cos = Math.cos(p.a);
       const sin = Math.sin(p.a);
-      ctx.globalAlpha = known ? 1 : 0.45;
-      ctx.fillStyle = known ? ink : dim;
-      if (cos > 0.4) ctx.textAlign = "left";
-      else if (cos < -0.4) ctx.textAlign = "right";
-      else ctx.textAlign = "center";
-      if (sin > 0.45) ctx.textBaseline = "top";
-      else if (sin < -0.45) ctx.textBaseline = "bottom";
-      else ctx.textBaseline = "middle";
-      ctx.fillText(RADAR_AXES[i].label + " " + (known ? fmt10(values[i]) : "\u2014"), p.x, p.y);
+      let tf = "translate(-50%,-50%)";
+      if (cos > 0.35) tf = "translate(0,-50%)";
+      else if (cos < -0.35) tf = "translate(-100%,-50%)";
+      else if (sin < -0.4) tf = "translate(-50%,-100%)";
+      else if (sin > 0.4) tf = "translate(-50%,0)";
+      let lab = RADAR_AXES[i].label;
+      if (!known) lab += " \u2014";
+      else if (series.length === 1) lab += " " + fmtAxis(vals[0]);
+      else if (vals.length === series.length && vals.every(function (v) { return v === vals[0]; })) lab += " " + fmtAxis(vals[0]);
       hitHtml.push(
-        '<button type="button" class="radar-hit" data-axis="' + RADAR_AXES[i].def +
-        '" aria-label="' + esc(RADAR_AXES[i].label) + '" style="left:' + p.x.toFixed(1) +
-        "px;top:" + p.y.toFixed(1) + 'px"></button>'
+        '<button type="button" class="radar-hit' + (known ? "" : " unk") +
+        '" data-axis="' + RADAR_AXES[i].def +
+        '" aria-label="' + esc(RADAR_AXES[i].label) +
+        '" style="left:' + p.x.toFixed(1) + "px;top:" + p.y.toFixed(1) +
+        "px;transform:" + tf + '">' +
+        esc(lab) + "</button>"
       );
     }
-    ctx.globalAlpha = 1;
     if (hits) {
       hits.innerHTML = hitHtml.join("");
       hits.querySelectorAll("[data-axis]").forEach(function (b) {
         b.onclick = function (e) {
           e.stopPropagation();
-          openDefine(b.getAttribute("data-axis"), t);
+          openDefine(b.getAttribute("data-axis"), defineTown);
         };
       });
     }
@@ -1887,15 +2412,42 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     return html;
   }
 
-  function homesHtml() {
+  function homesEmptyHtml() {
     return '<div class="homes-shelf"><div class="group-h">Homes</div>' +
-      '<div class="home-card">' +
-      '<div class="home-photo" aria-hidden="true">Photo</div>' +
-      '<div class="home-body">' +
-      '<div class="home-title">\u2014</div>' +
-      '<div class="home-meta"><span>\u2014</span><span>\u2014 ' + unitLabel() + '</span><span class="chip none">beachfront</span></div>' +
-      '<p class="home-empty">Homes load overnight. Nothing scraped yet.</p>' +
-      "</div></div></div>";
+      '<p class="home-empty">Homes load overnight. Nothing scraped yet.</p></div>';
+  }
+
+  function homesHtml(t) {
+    if (!t) return homesEmptyHtml();
+    const block = HOMES && HOMES.towns ? HOMES.towns[t.id] : null;
+    const listings = block && Array.isArray(block.listings) ? block.listings : [];
+    const n = block && typeof block.n === "number" ? block.n : listings.length;
+    if (!block || n === 0 || !listings.length) return homesEmptyHtml();
+    let html = '<div class="homes-shelf"><div class="group-h">Homes</div><div class="homes-list">';
+    listings.forEach(function (L) {
+      if (!L) return;
+      const sale = L.asking_price_usd != null ? fmtUsd(L.asking_price_usd) : "\u2014";
+      const um2 = L.usd_m2 != null ? (fmtUsd(toDisplay(L.usd_m2)) + " " + unitLabel()) : "\u2014";
+      const photo = L.photo_url
+        ? '<img src="' + esc(L.photo_url) + '" alt="" loading="lazy" onerror="this.remove()">'
+        : "";
+      const chip = (L.beachfront === "yes" || L.beachfront === true)
+        ? '<span class="chip priced">beachfront</span>'
+        : "";
+      const inner =
+        '<div class="home-photo" aria-hidden="true">' + (photo ? photo : "Photo") + "</div>" +
+        '<div class="home-body">' +
+        '<div class="home-title">' + esc(L.title || "\u2014") + "</div>" +
+        '<div class="home-meta"><span class="home-sale">' + esc(sale) + "</span><span>" + esc(um2) + "</span>" + chip + "</div>" +
+        "</div>";
+      if (L.listing_url) {
+        html += '<a class="home-card" href="' + esc(L.listing_url) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>";
+      } else {
+        html += '<div class="home-card">' + inner + "</div>";
+      }
+    });
+    html += "</div></div>";
+    return html;
   }
 
   function loadData() {
@@ -1908,7 +2460,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         if (!r.ok) throw new Error("hotels " + r.status);
         return r.json();
       }),
-      fetch("scores-aug2026.json", { cache: "no-store" }).then(function (r) {
+      fetch("scores-spider-aug2026.json", { cache: "no-store" }).then(function (r) {
         if (!r.ok) throw new Error("scores " + r.status);
         return r.json();
       }),
@@ -1919,8 +2471,29 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       fetch("punta-mita-gates-aug2026.json", { cache: "no-store" }).then(function (r) {
         if (!r.ok) return null;
         return r.json();
-      }).catch(function () { return null })
+      }).catch(function () { return null }),
+      loadHomes()
     ]);
+  }
+
+  function loadHomes() {
+    const fallback = "homes/2026-08-28.json";
+    function pull(url) {
+      return fetch(url, { cache: "no-store" }).then(function (r) {
+        if (!r.ok) throw new Error("homes " + r.status);
+        return r.json();
+      });
+    }
+    return pull("homes/latest.json").then(function (latest) {
+      if (latest && latest.towns) return latest;
+      const raw = latest && latest.file ? String(latest.file) : "";
+      const file = raw.replace(/^.*\//, "");
+      return pull(file ? ("homes/" + file) : fallback);
+    }).catch(function () {
+      return pull(fallback);
+    }).catch(function () {
+      return null;
+    });
   }
 
   function ingestScores(scoreData) {
@@ -1936,7 +2509,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ((data && data.towns) || []).forEach(function (row) { if (row && row.id) SERIES[row.id] = row; });
   }
 
-  function boot(data, hotelData, scoreData, seriesData, gatesData) {
+  function boot(data, hotelData, scoreData, seriesData, gatesData, homesData) {
     DATASET = data;
     CATALOG = data.catalysts_catalog || {};
     HURR_REGION = data.hurricane_region || null;
@@ -1956,6 +2529,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ingestScores(scoreData || {});
     ingestSeries(seriesData || {});
     GATES = gatesData && typeof gatesData === "object" ? gatesData : null;
+    HOMES = homesData && homesData.towns ? homesData : null;
+    buildAnclote();
 
     const brandH = document.querySelector(".brand h1");
     if (brandH) brandH.textContent = BRAND.short;
@@ -2013,11 +2588,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     window.addEventListener("resize", onResize);
     bindSheetSnap();
     setMinutes(90);
-    if (isDesktop()) openView("list");
-    else {
-      paintDock();
-      measureDock();
-    }
+    openView("list");
   }
 
   function markerClass(t) {
@@ -2200,9 +2771,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
   function paintDock() {
     const dock = document.getElementById("dock");
-    const chips = state.compare.map(function (id) {
+    const chips = state.compare.map(function (id, i) {
       const t = town(id);
-      return '<div class="dock-chip"><span>' + esc(shortName(t)) + '</span><button type="button" data-rm="' + esc(id) + '" aria-label="Remove">×</button></div>';
+      return '<div class="dock-chip slot-' + i + '"><span>' + esc(shortName(t)) + '</span><button type="button" data-rm="' + esc(id) + '" aria-label="Remove">\u00d7</button></div>';
     }).join("");
     const empties = state.compare.length ? "" : '<div class="dock-empty">Tap towns · up to 4</div>';
     dock.innerHTML =
@@ -2245,17 +2816,36 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     else if (document.getElementById("sheet") && document.getElementById("sheet").classList.contains("open")) {
       applySheetSnap(sheetSnap);
     }
-    if (document.getElementById("radar")) renderChart();
+    if (document.getElementById("radar")) renderChart(chartTownIds());
     if (document.getElementById("priceChart")) renderPriceChart();
   }
 
   function ranked() {
-    const priced = allPlaces().filter(function (t) { return headlineOf(t) != null; })
-      .sort(function (a, b) { return headlineOf(b) - headlineOf(a); })
-      .map(function (t, i) { return Object.assign({ _rank: i + 1 }, t); });
-    const unk = allPlaces().filter(function (t) { return headlineOf(t) == null; })
-      .map(function (t) { return Object.assign({ _rank: null }, t); });
-    return { priced: priced, unk: unk };
+    let list = filterTowns(allPlaces()).filter(isRankedTown);
+    if (state.listSort === "drive") {
+      list = list.slice().sort(function (a, b) { return driveKey(a) - driveKey(b); });
+    } else if (state.listSort === "price") {
+      list = list.slice().sort(function (a, b) {
+        const ha = headlineOf(a), hb = headlineOf(b);
+        if (ha == null && hb == null) return 0;
+        if (ha == null) return 1;
+        if (hb == null) return -1;
+        return hb - ha;
+      });
+    } else {
+      list = list.slice().sort(function (a, b) {
+        const ra = fileRankOf(a), rb = fileRankOf(b);
+        if (ra != null && rb != null && ra !== rb) return ra - rb;
+        if (ra != null && rb == null) return -1;
+        if (ra == null && rb != null) return 1;
+        const sa = scoreOf(a), sb = scoreOf(b);
+        if (sa == null && sb == null) return 0;
+        if (sa == null) return 1;
+        if (sb == null) return -1;
+        return sb - sa;
+      });
+    }
+    return list.map(function (t) { return Object.assign({}, t, { _rank: fileRankOf(t) }); });
   }
 
   function filterTowns(list) {
@@ -2269,76 +2859,78 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   }
 
   function listHtml() {
-    const groups = ranked();
-    let priced = filterTowns(groups.priced);
-    let unk = state.listFilter === "primary" || state.listFilter === "priced" ? [] : filterTowns(groups.unk);
-    if (state.listSort === "drive") {
-      const key = function (t) { return driveKey(t); };
-      priced = priced.slice().sort(function (a, b) { return key(a) - key(b); });
-      unk = unk.slice().sort(function (a, b) { return key(a) - key(b); });
-    } else if (state.listSort === "score") {
-      const byScore = function (a, b) {
-        const sa = scoreOf(a), sb = scoreOf(b);
-        if (sa == null && sb == null) return 0;
-        if (sa == null) return 1;
-        if (sb == null) return -1;
-        return sb - sa;
-      };
-      priced = priced.slice().sort(byScore);
-      unk = unk.slice().sort(byScore);
-    }
+    const rows = ranked();
     const ccH = headlineOf(CC);
     const caboH = headlineOf(CABO);
     const fil = function (id, label) {
       return '<button type="button" class="filter-chip' + (state.listFilter === id ? " on" : "") + '" data-fil="' + id + '">' + label + "</button>";
     };
-    let html = '<div class="sheet-head"><div><h2>Ranks</h2><div class="meta">Verified asking ' + unitLabel() + ' only · Aug 2026 · partial score on 3 of 7 axes</div></div>';
-    if (!isDesktop()) html += '<button type="button" class="x" id="closeSheet" aria-label="Close">×</button>';
+    let html = '<div class="sheet-head"><div><h2>Ranking</h2><div class="meta thesis">PVR-radius towns \u00b7 verified asking ' + unitLabel() + ' \u00b7 Aug 2026 \u00b7 score partial unless 7 of 7</div></div>';
+    if (!isDesktop()) html += '<button type="button" class="x" id="closeSheet" aria-label="Close">\u00d7</button>';
     html += "</div>";
-    html += '<div class="filters">' + fil("all", "All") + fil("primary", "Primary") + fil("priced", "Priced") + fil("unknown", "Unknown") + fil("coming", "Coming") + "</div>";
+    html += '<div class="filters">' + fil("all", "All") + fil("primary", "PRIMARY") + fil("priced", "SECONDARY") + fil("unknown", "WATCH") + "</div>";
     html += '<div class="sort-row">' +
-      '<button type="button" class="sort-chip' + (state.listSort === "price" ? " on" : "") + '" data-sort="price">By ' + unitLabel() + '</button>' +
-      '<button type="button" class="sort-chip' + (state.listSort === "drive" ? " on" : "") + '" data-sort="drive">By drive</button>' +
-      '<button type="button" class="sort-chip' + (state.listSort === "score" ? " on" : "") + '" data-sort="score">By score</button></div>';
-    html += '<div class="legend"><span><i style="background:var(--sand)"></i>PRIMARY peer + headline</span><span><i style="background:var(--mint)"></i>PRICED headline</span><span><i style="background:var(--unk)"></i>UNKNOWN</span></div>';
+      '<button type="button" class="sort-chip' + (state.listSort === "score" ? " on" : "") + '" data-sort="score">By score</button>' +
+      '<button type="button" class="sort-chip' + (state.listSort === "price" ? " on" : "") + '" data-sort="price">By ' + unitLabel() + "</button>" +
+      '<button type="button" class="sort-chip' + (state.listSort === "drive" ? " on" : "") + '" data-sort="drive">By drive</button></div>';
+    html += '<div class="rank-table">';
+    html += '<div class="rank-head rank-cols"><span>Rank</span><span>Market</span><span class="rank-tier-h">Tier</span><span>' + esc(unitLabel()) + '</span><span class="rank-cagr-h">5yr CAGR</span><span>vs PV</span><span>Score</span></div>';
 
     function row(t) {
       const h = headlineOf(t);
-      const vscc = vsFmt(h, ccH);
-      const vscb = vsFmt(h, caboH);
+      const vscc = vsPctFmt(h, ccH);
       const locked = !unlocked(t.id);
       const inCmp = state.compare.indexOf(t.id) !== -1;
       const sc = scoreOf(t);
-      const left = state.listSort === "drive" ? esc(driveLabel(t).replace(" est.", ""))
-        : state.listSort === "score" ? (sc == null ? "—" : fmt10(sc))
-        : (t._rank == null ? "—" : String(t._rank));
+      const usd = h == null ? "unknown" : (locked ? "Pro" : fmtUsd(toDisplay(h)));
+      const vsTxt = (locked && h != null) ? "Pro" : vscc.text;
+      const vsCls = (locked && h != null) ? "" : vscc.cls;
       return '<div class="rank-line">' +
         '<button type="button" class="rank-row" data-id="' + esc(t.id) + '">' +
-        '<div class="rank-num">' + left + "</div>" +
-        '<div class="rank-name">' + esc(shortName(t)) +
+        '<div class="rank-num">' + fmtRank(t._rank) + "</div>" +
+        '<div class="rank-name"><i class="tier-pip tier-' + tierOf(t) + '" title="' + esc(storyTier(t).label) + '"></i>' + esc(shortName(t)) +
         (locked ? '<span class="lock-ico">Pro</span>' : "") +
         (t.off_map ? '<span class="chip lock">off-map</span>' : "") +
+        (t.rank_only && t.id !== "punta-mita-inside" ? '<span class="chip lock">no pin</span>' : "") +
+        (t.id === "punta-mita-inside" ? '<span class="chip lock">samples</span>' : "") +
         (inCmp ? '<span class="chip priced">in compare</span>' : "") +
-        '<span class="chip ' + tierOf(t) + '">' + tierOf(t).toUpperCase() + "</span></div>" +
-        '<div class="rank-usd' + (h == null ? " unk" : "") + '">' + (h == null ? "unknown" : (locked ? "Pro" : fmtUsd(toDisplay(h)))) + "</div>" +
-        '<div class="rank-meta"><span class="vs ' + ((locked && h != null) ? "" : vscc.cls) + '">vs Conchas Chinas ' + esc((locked && h != null) ? "Pro" : vscc.text) + "</span>" +
-        '<span class="vs ' + ((locked && h != null) ? "" : vscb.cls) + '">vs Cabo Médano ' + esc((locked && h != null) ? "Pro" : vscb.text) + "</span>" +
-        '<span class="score-col">score ' + (sc == null ? "—" : esc(fmt10(sc))) + "</span>" +
-        (state.listSort === "price" ? "<span>" + esc(driveLabel(t)) + "</span>" : "") +
-        "</div></button>" +
+        (t.id === "punta-mita-inside" && insideSamplesLine(t) ? '<div class="rank-samples">' + esc(insideSamplesLine(t)) + "</div>" : "") +
+        "</div>" +
+        '<div class="rank-tier">' + tierChipHtml(t) + "</div>" +
+        '<div class="rank-usd' + (h == null ? " unk" : "") + '">' + (t.id === "punta-mita-inside" ? "\u2014" : usd) + "</div>" +
+        '<div class="rank-cagr">' + fmtCagr(cagrOf(t)) + "</div>" +
+        '<div class="rank-vs vs ' + vsCls + '">' + esc(vsTxt) + "</div>" +
+        '<div class="rank-score">' + (sc == null ? "\u2014" : esc(fmtOverall(sc))) + "</div>" +
+        "</button>" +
         '<button type="button" class="icon-btn" data-detail="' + esc(t.id) + '" aria-label="Open ' + esc(shortName(t)) + '">i</button></div>';
     }
 
-    if (priced.length) {
-      html += '<div class="group-h">' + (state.listSort === "drive" ? "By estimated drive to PVR" : state.listSort === "score" ? "By partial score" : "Ranked by asking " + unitLabel()) + "</div>";
-      html += priced.map(row).join("");
+    function insideSamplesLine(t) {
+      const srow = scoreRow(t);
+      const samples = srow && srow.usd_m2 && srow.usd_m2.inside_development_samples;
+      if (!samples || !samples.length) return "";
+      return samples.map(function (samp) {
+        const usd = samp.headline_usd_m2 != null ? fmtUsd(toDisplay(samp.headline_usd_m2)) : "";
+        const n = samp.n != null ? " n=" + samp.n : "";
+        return (samp.name || "sample") + " " + usd + n;
+      }).join(" · ");
     }
-    if (unk.length) {
-      html += '<div class="group-h">Unknown price · not ranked</div>';
-      html += unk.map(row).join("");
+
+    const shown = rows.slice();
+    if (state.listFilter === "all" || state.listFilter === "unknown") {
+      const inside = stubTownFromScore("punta-mita-inside");
+      if (inside && !shown.some(function (t) { return t.id === "punta-mita-inside"; })) {
+        inside._rank = null;
+        const idx = shown.findIndex(function (t) { return t.id === "el-anclote"; });
+        if (idx >= 0) shown.splice(idx + 1, 0, inside);
+        else shown.push(inside);
+      }
     }
-    if (!priced.length && !unk.length) html += '<p class="caption">No towns in this filter.</p>';
-    html += '<p class="caption">Peer is Conchas Chinas ' + esc(fmtUsd(toDisplay(ccH))) + ' (Homia). Cabo Médano is MLS BCS, off-map, Pro-locked. AMPI municipal averages are not asking ' + unitLabel() + ' and are not used to rank. Score is a PARTIAL grade (3 of 7 axes). Cabo and towns without a scored row stay —. Drive times are estimated.</p>';
+
+    if (shown.length) html += shown.map(row).join("");
+    else html += '<p class="caption">No towns in this filter.</p>';
+    html += "</div>";
+    html += '<p class="caption">vs PV is vs Conchas Chinas ' + esc(fmtUsd(toDisplay(ccH))) + " (Homia), percent only. Cheaper green, dearer coral. Cabo M\u00e9dano " + esc(fmtUsd(toDisplay(caboH))) + " is MLS BCS, off-map, Pro-locked \u2014 not ranked. 5yr CAGR is verified_cagr5 or \u2014 \u2014 not invented. Score is file overall 0\u2013100 (green); Rank is file rank. PRIMARY = peer + headline, SECONDARY = priced headline, WATCH = unknown. Punta Mita mixed 5196 is the peer pin, not a ranked market. Inside has no overall (no Homia headline). El Anclote 3401 is rank 2, no pin. Default sort file rank.</p>";
     if (HURR_REGION && HURR_REGION.noaa_since_1945) {
       html += '<p class="caption">Region: ' + esc(HURR_REGION.noaa_since_1945) + " Not stamped on each town.</p>";
     }
@@ -2375,7 +2967,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
     return '<div class="gates-bands"><div class="group-h">Gate bands</div><div class="rows">' +
       rows +
-      '</div><p class="caption">5196 is mixed (El Anclote + gated developments). Not an inside-only comps score.</p></div>';
+      '</div><p class="caption">5196 is mixed peer-set only, not ranked. Hacienda 12589 n=3 and Las Terrazas 5992 n=2 are samples, not averaged, not an inside headline. Inside overall is \u2014.</p></div>';
   }
 
   function detailHtml(t) {
@@ -2385,7 +2977,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     const vscc = vsFmt(h, headlineOf(CC));
     const vscb = vsFmt(h, headlineOf(CABO));
     let html = '<div class="sheet-head"><div><h2>' + esc(t.name) + "</h2>" +
-      '<div class="meta">' + esc(driveLabel(t)) + " · " + tierOf(t).toUpperCase() + (t.peer ? " · peer" : "") + (t.off_map ? " · off-map" : "") + "</div></div>" +
+      '<div class="meta">' + esc(driveLabel(t)) + " \u00b7 " + storyTier(t).label + (t.peer ? " \u00b7 peer" : "") + (t.off_map ? " \u00b7 off-map" : "") + "</div></div>" +
       '<button type="button" class="x" id="closeSheet" aria-label="Close">×</button></div>';
     html += '<div class="price-card"><div class="k">Asking ' + unitLabel() + ' · Aug 2026</div>';
     html += '<div class="v' + (unknown ? " unk" : "") + '">' + (unknown ? "unknown" : fmtUsd(toDisplay(h))) + "</div>";
@@ -2401,6 +2993,15 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       if (t.ampi_not_mls) {
         html += "<div><span>AMPI (not MLS)</span><b>not used as asking " + unitLabel() + "</b></div>";
       }
+      const samples = t.usd_m2 && t.usd_m2.inside_development_samples;
+      if (samples && samples.length) {
+        samples.forEach(function (samp) {
+          const usd = samp.headline_usd_m2 != null ? fmtUsd(toDisplay(samp.headline_usd_m2)) : "\u2014";
+          const n = samp.n != null ? " n=" + samp.n : "";
+          html += "<div><span>" + esc(samp.name || "sample") + n + "</span><b>" + esc(usd) + " " + unitLabel() + "</b></div>";
+        });
+        html += "<div><span>Inside headline</span><b>none — samples not averaged</b></div>";
+      }
     }
     const sc = scoreOf(t);
     html += '<div><span>Score</span><b>';
@@ -2408,7 +3009,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       html += "—";
     } else {
       html += '<button type="button" class="score-tap" data-metric="score" aria-haspopup="dialog">' +
-        esc(fmt10(sc)) + " " + partialChip() + "</button>";
+        esc(fmtOverall(sc)) + " " + completenessChip(scoreRow(t)) + "</button>";
     }
     html += "</b></div>";
     html += "</div></div>";
@@ -2418,7 +3019,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     html += partialGradeHtml(t);
 
     html += comingHtml(t);
-    html += homesHtml();
+    html += homesHtml(t);
 
     html += '<div class="actions">';
     html += '<button type="button" class="btn-a" id="addCmp">' + (inCmp ? "In compare" : "Add to compare") + "</button>";
@@ -2434,12 +3035,15 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
     html += '<div class="filters" id="cmpPicker">';
     allPlaces().forEach(function (t) {
-      const on = state.compare.indexOf(t.id) !== -1;
+      const idx = state.compare.indexOf(t.id);
+      const on = idx !== -1;
       const lock = !unlocked(t.id);
-      html += '<button type="button" class="filter-chip' + (on ? " on" : "") + '" data-pick="' + esc(t.id) + '">' +
-        esc(shortName(t)) + (lock ? " · Pro" : "") + (t.off_map ? " · off-map" : "") + "</button>";
+      html += '<button type="button" class="filter-chip' + (on ? " on slot-" + idx : "") + '" data-pick="' + esc(t.id) + '">' +
+        esc(shortName(t)) + (lock ? " \u00b7 Pro" : "") + (t.off_map ? " \u00b7 off-map" : "") + "</button>";
     });
     html += "</div>";
+
+    html += priceBlockHtml(towns);
 
     function metricTh(key, label) {
       return '<th><button type="button" class="metric-lab" data-metric="' + key + '">' + label + "</button></th>";
@@ -2457,6 +3061,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     html += "<tr>" + metricTh("usd", "Asking " + unitLabel()) + cells(function (t) {
       const h = headlineOf(t);
       return h == null ? '<span class="rank-usd unk">unknown</span>' : esc(fmtUsd(toDisplay(h)));
+    }) + "</tr>";
+    html += "<tr><th>5yr CAGR</th>" + cells(function (t) {
+      return esc(fmtCagr(cagrOf(t)));
     }) + "</tr>";
     html += "<tr>" + metricTh("source", "Source");
     towns.forEach(function (t) {
@@ -2494,33 +3101,13 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       return '<span class="vs ' + v.cls + '">' + esc(v.text) + "</span>";
     }) + "</tr>";
     html += "<tr>" + metricTh("score", "Score") + cells(function (t) {
-      const s = scoreOf(t);
-      return s == null ? "—" : esc(fmt10(s));
+      const sc = scoreOf(t);
+      return sc == null ? "\u2014" : '<span class="rank-score">' + esc(fmtOverall(sc)) + "</span> " + completenessChip(scoreRow(t));
     }) + "</tr>";
     html += "</tbody></table></div>";
 
-    html += priceBlockHtml(towns);
-
-    const graded = towns.filter(function (t) { return !!scoreRow(t); });
-    if (graded.length) {
-      html += '<div class="group-h">Partial grade · 3 of 7 axes</div>';
-      html += '<div class="facts-grid" style="grid-template-columns:repeat(' + graded.length + ',minmax(140px,1fr))">';
-      graded.forEach(function (t) {
-        const row = scoreRow(t);
-        const sc = scoreOf(t);
-        html += '<div class="fact-col"><h3>' + esc(shortName(t)) + "</h3>";
-        html += "<div><span>Score</span><b>" + (sc == null ? "—" : esc(fmt10(sc))) + "</b></div>";
-        SCORED_AXES.forEach(function (ax) {
-          const v = axisScore(row, ax.key);
-          html += "<div><span>" + esc(ax.label) + "</span><b>" + (v == null ? "—" : esc(fmt10(v))) + "</b></div>";
-        });
-        html += '<div><span></span><b>' + partialChip() + "</b></div>";
-        html += "</div>";
-      });
-      html += "</div>";
-    } else {
-      html += '<p class="caption">no spider — unknown ' + unitLabel() + "</p>";
-    }
+    html += overlaySpiderHtml(state.compare);
+    html += peerPriceBarsHtml(state.compare);
     if (isDesktop()) html += '<div class="actions"><button type="button" class="btn-ghost" id="backList">All towns</button></div>';
     return html;
   }
@@ -2599,14 +3186,14 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     });
     bindPriceControls();
     requestAnimationFrame(function () {
-      if (document.getElementById("radar")) renderChart();
+      if (document.getElementById("radar")) renderChart(chartTownIds());
       if (document.getElementById("priceChart")) renderPriceChart();
     });
   }
 
-  loadData().then(function (pack) { boot(pack[0], pack[1], pack[2], pack[3], pack[4]); }).catch(function (err) {
+  loadData().then(function (pack) { boot(pack[0], pack[1], pack[2], pack[3], pack[4], pack[5]); }).catch(function (err) {
     const el = document.getElementById("sheetBody");
-    if (el) el.innerHTML = "<p class=\"caption\">Could not load pvr-towns-aug2026.json / scores-aug2026.json. Serve this folder over http.</p>";
+    if (el) el.innerHTML = "<p class=\"caption\">Could not load pvr-towns-aug2026.json / scores-spider-aug2026.json. Serve this folder over http.</p>";
     document.getElementById("sheet").classList.add("open");
     console.error(err);
   });
