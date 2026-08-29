@@ -257,8 +257,39 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
 
 .spider-block{margin:0 0 16px}
+
+.price-block{margin:0 0 16px}
+.price-wrap{height:320px;position:relative;margin:4px 0 8px;width:100%}
+.price-wrap canvas{display:block;width:100%;height:100%}
+.price-unk{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
+.price-readout{display:grid;gap:4px;margin:0 0 10px;font-size:13px;font-weight:600;color:var(--foam);font-variant-numeric:tabular-nums}
+.price-readout .assumed{color:var(--sand);font-weight:500;font-size:11px;letter-spacing:.02em}
+.price-readout .verified{color:var(--mint);font-weight:500;font-size:11px;letter-spacing:.02em}
+.price-ctrls{display:grid;gap:8px;margin:4px 0 10px}
+.price-ctrl{display:grid;gap:4px}
+.price-ctrl label{font-size:11px;color:var(--muted);line-height:1.35}
+.price-ctrl input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:44px;min-height:44px;
+  background:transparent;margin:0;padding:0;cursor:pointer
+}
+.price-ctrl input[type=range]::-webkit-slider-runnable-track{
+  height:44px;min-height:44px;background:var(--white-06);border:1px solid var(--line);border-radius:12px;box-sizing:border-box
+}
+.price-ctrl input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:44px;height:44px;min-width:44px;min-height:44px;
+  border-radius:50%;background:var(--accent);border:2px solid var(--accent-ink);
+  box-sizing:border-box;margin-top:0;cursor:pointer
+}
+.price-ctrl input[type=range]::-moz-range-track{
+  height:44px;min-height:44px;background:var(--white-06);border:1px solid var(--line);border-radius:12px;box-sizing:border-box
+}
+.price-ctrl input[type=range]::-moz-range-thumb{
+  width:44px;height:44px;min-width:44px;min-height:44px;border:2px solid var(--accent-ink);
+  border-radius:50%;background:var(--accent);box-sizing:border-box;cursor:pointer
+}
+
 .spider-empty{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
-.chart-wrap{height:256px;position:relative;margin:4px 0 8px;width:100%}
+.chart-wrap{height:200px;position:relative;margin:4px 0 8px;width:100%}
 .chart-wrap canvas{display:block;width:100%;height:100%}
 .radar-hits{position:absolute;inset:0;pointer-events:none}
 .radar-hit{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;border:0;background:transparent;padding:0;margin:0;cursor:pointer;pointer-events:auto;transform:translate(-50%,-50%);appearance:none;-webkit-appearance:none;opacity:0}
@@ -433,7 +464,10 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     listFilter: "all",
     listSort: "price",
     comingFilter: "all",
-    proId: null
+    proId: null,
+    horizon: 5,
+    growthR: 0.08,
+    playYear: 2026
   };
 
   let DATASET = null;
@@ -445,6 +479,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   let PIPELINE = [];
   let SCORES = {};
   let SCORES_META = null;
+  let SERIES = {};
+  const NOW_YEAR = 2026;
   let markers = {};
   let map, radius;
 
@@ -950,6 +986,339 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       '<p class="caption">Partial \u00b7 3 of 7. ' + esc(warn) + "</p></div>";
   }
 
+
+  function projPrice(headline, r, year) {
+    return headline * Math.pow(1 + r, year - NOW_YEAR); // P(y) = headline * (1+r)^(y-2026)
+  }
+
+  function seriesEntry(townId) {
+    const raw = SERIES && SERIES[townId];
+    if (!raw) return { points: [], cagr: null };
+    let points = [];
+    let cagr = null;
+    if (Array.isArray(raw)) {
+      points = raw;
+    } else if (typeof raw === "object") {
+      points = raw.history || raw.points || raw.series || raw.years || [];
+      if (raw.verified_cagr5 != null) cagr = Number(raw.verified_cagr5);
+    }
+    const out = [];
+    (points || []).forEach(function (pt) {
+      if (pt == null) return;
+      const year = pt.year != null ? Number(pt.year) : (pt.y != null ? Number(pt.y) : NaN);
+      const usd = pt.usd_m2 != null ? Number(pt.usd_m2) : (pt.usd != null ? Number(pt.usd) : (pt.price != null ? Number(pt.price) : NaN));
+      if (!isFinite(year) || !isFinite(usd)) return;
+      out.push({ year: year, usd_m2: usd });
+    });
+    out.sort(function (a, b) { return a.year - b.year; });
+    if (isFinite(cagr) && Math.abs(cagr) > 1) cagr = cagr / 100;
+    return { points: out, cagr: isFinite(cagr) ? cagr : null };
+  }
+
+  function verifiedPoints(t) {
+    const h = headlineOf(t);
+    if (h == null) return [];
+    const entry = seriesEntry(t.id);
+    const pts = entry.points.slice();
+    const hasNow = pts.some(function (pt) { return pt.year === NOW_YEAR; });
+    if (!hasNow) pts.push({ year: NOW_YEAR, usd_m2: h });
+    pts.sort(function (a, b) { return a.year - b.year; });
+    return pts;
+  }
+
+  function priceChartTowns() {
+    if (state.view === "compare") {
+      return state.compare.map(town).filter(function (t) { return t && headlineOf(t) != null; });
+    }
+    const t = town(state.selected);
+    if (t && headlineOf(t) != null) return [t];
+    return [];
+  }
+
+  function playValue(t) {
+    const h = headlineOf(t);
+    if (h == null) return null;
+    if (state.playYear <= NOW_YEAR) return h;
+    return projPrice(h, state.growthR, state.playYear);
+  }
+
+  function priceBlockHtml(towns) {
+    const priced = (towns || []).filter(function (t) { return headlineOf(t) != null; });
+    let html = '<div class="price-block"><div class="group-h">Price trajectory</div>';
+    if (!priced.length) {
+      html += '<p class="price-unk">unknown — not invented</p></div>';
+      return html;
+    }
+    html += '<div class="price-wrap"><canvas id="priceChart" aria-label="Price trajectory USD per square meter"></canvas></div>';
+    html += '<div class="price-readout" id="priceReadout"></div>';
+    html += '<div class="price-ctrls">';
+    html += '<div class="price-ctrl"><label id="priceHorizonLab" for="priceHorizon">Horizon ' + state.horizon + ' yr</label>';
+    html += '<input type="range" id="priceHorizon" min="1" max="10" step="1" value="' + state.horizon + '" aria-labelledby="priceHorizonLab"></div>';
+    html += '<div class="price-ctrl"><label id="priceGrowthLab" for="priceGrowth">your growth assumption · not a measured forecast · ' + Math.round(state.growthR * 100) + '%</label>';
+    html += '<input type="range" id="priceGrowth" min="0" max="15" step="1" value="' + Math.round(state.growthR * 100) + '" aria-labelledby="priceGrowthLab"></div>';
+    html += '<div class="price-ctrl"><label id="pricePlayLab" for="pricePlay">Year ' + state.playYear + '</label>';
+    html += '<input type="range" id="pricePlay" min="' + NOW_YEAR + '" max="' + (NOW_YEAR + state.horizon) + '" step="1" value="' + state.playYear + '" aria-labelledby="pricePlayLab"></div>';
+    html += "</div>";
+    html += '<p class="caption">Solid = verified asking USD/m². Dashed = P(y) = headline × (1+r)^(y−2026) · your assumption, not a measured forecast.</p></div>';
+    return html;
+  }
+
+  function updatePriceLabels() {
+    const horLab = document.getElementById("priceHorizonLab");
+    const groLab = document.getElementById("priceGrowthLab");
+    const playLab = document.getElementById("pricePlayLab");
+    const out = document.getElementById("priceReadout");
+    if (horLab) horLab.textContent = "Horizon " + state.horizon + " yr";
+    if (groLab) groLab.textContent = "your growth assumption · not a measured forecast · " + Math.round(state.growthR * 100) + "%";
+    const towns = priceChartTowns();
+    const assumed = state.playYear > NOW_YEAR;
+    const bits = towns.map(function (t) {
+      const val = playValue(t);
+      const mark = assumed
+        ? ' <span class="assumed">assumed</span>'
+        : ' <span class="verified">verified</span>';
+      return '<div>' + esc(shortName(t)) + " · " + fmtUsd(val) + mark + "</div>";
+    });
+    if (playLab) {
+      if (towns.length === 1) {
+        playLab.textContent = "Year " + state.playYear + " · " + fmtUsd(playValue(towns[0])) + (assumed ? " · assumed" : " · verified");
+      } else {
+        playLab.textContent = "Year " + state.playYear;
+      }
+    }
+    if (out) out.innerHTML = bits.join("");
+  }
+
+  function bindPriceControls() {
+    const hor = document.getElementById("priceHorizon");
+    const gro = document.getElementById("priceGrowth");
+    const play = document.getElementById("pricePlay");
+    if (!hor && !gro && !play) return;
+
+    function refresh() {
+      if (play) {
+        play.max = String(NOW_YEAR + state.horizon);
+        play.value = String(state.playYear);
+      }
+      if (hor) hor.value = String(state.horizon);
+      if (gro) gro.value = String(Math.round(state.growthR * 100));
+      updatePriceLabels();
+      renderPriceChart();
+    }
+
+    if (hor) {
+      hor.value = String(state.horizon);
+      hor.oninput = function () {
+        state.horizon = Math.max(1, Math.min(10, Math.round(Number(hor.value) || 5)));
+        if (state.playYear > NOW_YEAR + state.horizon) state.playYear = NOW_YEAR + state.horizon;
+        refresh();
+      };
+    }
+    if (gro) {
+      gro.value = String(Math.round(state.growthR * 100));
+      gro.oninput = function () {
+        state.growthR = Math.max(0, Math.min(0.15, (Number(gro.value) || 0) / 100));
+        refresh();
+      };
+    }
+    if (play) {
+      play.min = String(NOW_YEAR);
+      play.max = String(NOW_YEAR + state.horizon);
+      play.value = String(state.playYear);
+      play.oninput = function () {
+        const hi = NOW_YEAR + state.horizon;
+        const y = Math.round(Number(play.value) || NOW_YEAR);
+        state.playYear = Math.max(NOW_YEAR, Math.min(hi, y));
+        refresh();
+      };
+    }
+    updatePriceLabels();
+  }
+
+  function renderPriceChart() {
+    const canvas = document.getElementById("priceChart");
+    if (!canvas) return;
+    const towns = priceChartTowns();
+    if (!towns.length) return;
+    const wrap = canvas.parentElement;
+    const w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 300;
+    const h = (wrap && wrap.clientHeight) ? wrap.clientHeight : 320;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const foam = brandColor("--foam") || "#e7fbf6";
+    const muted = brandColor("--muted") || "#6f8f94";
+    const lineC = brandColor("--line") || "rgba(180,230,220,.12)";
+    const warn = brandColor("--warn") || "#e6c878";
+    const bodyFont = getComputedStyle(document.body).fontFamily || "DM Sans, sans-serif";
+    const colors = [
+      brandColor("--accent") || "#3eebc9",
+      brandColor("--warn") || "#e6c878",
+      brandColor("--info") || "#7ab3ff",
+      brandColor("--danger") || "#ff7a6a"
+    ];
+
+    const horizon = state.horizon;
+    const r = state.growthR;
+    const padL = 54;
+    const padR = 14;
+    const padT = 26;
+    const padB = 34;
+    const plotW = Math.max(10, w - padL - padR);
+    const plotH = Math.max(10, h - padT - padB);
+
+    let xMin = NOW_YEAR;
+    let xMax = NOW_YEAR + horizon;
+    let yMin = 0;
+    let yMax = 1;
+    const pack = towns.map(function (t) {
+      const h0 = headlineOf(t);
+      const verified = verifiedPoints(t);
+      const future = [];
+      for (let y = NOW_YEAR; y <= NOW_YEAR + horizon; y++) {
+        future.push({ year: y, usd_m2: projPrice(h0, r, y) });
+      }
+      const entry = seriesEntry(t.id);
+      let measured = null;
+      if (entry.cagr != null) {
+        measured = [];
+        for (let y = NOW_YEAR; y <= NOW_YEAR + horizon; y++) {
+          measured.push({ year: y, usd_m2: projPrice(h0, entry.cagr, y) });
+        }
+      }
+      verified.forEach(function (pt) {
+        if (pt.year < xMin) xMin = pt.year;
+        if (pt.usd_m2 > yMax) yMax = pt.usd_m2;
+      });
+      future.forEach(function (pt) { if (pt.usd_m2 > yMax) yMax = pt.usd_m2; });
+      if (measured) measured.forEach(function (pt) { if (pt.usd_m2 > yMax) yMax = pt.usd_m2; });
+      return { t: t, verified: verified, future: future, measured: measured };
+    });
+
+    yMax = yMax * 1.14;
+    if (yMax <= 0) yMax = 1;
+    if (xMax <= xMin) xMax = xMin + 1;
+
+    function xOf(year) {
+      return padL + ((year - xMin) / (xMax - xMin)) * plotW;
+    }
+    function yOf(usd) {
+      return padT + (1 - (usd - yMin) / (yMax - yMin)) * plotH;
+    }
+
+    ctx.font = "10px " + bodyFont;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.strokeStyle = lineC;
+    ctx.lineWidth = 1;
+    const yTicks = 4;
+    for (let i = 0; i <= yTicks; i++) {
+      const v = yMin + (yMax - yMin) * i / yTicks;
+      const y = yOf(v);
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(w - padR, y);
+      ctx.stroke();
+      ctx.fillStyle = muted;
+      ctx.fillText(fmtUsd(v), padL - 6, y);
+    }
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    const yearSpan = xMax - xMin;
+    const yearStep = yearSpan > 8 ? 2 : 1;
+    for (let year = Math.ceil(xMin); year <= xMax; year += yearStep) {
+      ctx.fillStyle = muted;
+      ctx.fillText(String(year), xOf(year), h - padB + 8);
+    }
+
+    const xNow = xOf(NOW_YEAR);
+    ctx.save();
+    ctx.strokeStyle = foam;
+    ctx.globalAlpha = 0.5;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath();
+    ctx.moveTo(xNow, padT);
+    ctx.lineTo(xNow, padT + plotH);
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = foam;
+    ctx.font = "600 10px " + bodyFont;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("NOW", xNow, padT - 4);
+
+    const xPlay = xOf(state.playYear);
+    ctx.save();
+    ctx.strokeStyle = warn;
+    ctx.globalAlpha = 0.9;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(xPlay, padT);
+    ctx.lineTo(xPlay, padT + plotH);
+    ctx.stroke();
+    ctx.restore();
+
+    function drawPath(pts, color, dash) {
+      if (!pts.length) return;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      if (dash) ctx.setLineDash(dash);
+      ctx.beginPath();
+      pts.forEach(function (pt, i) {
+        const x = xOf(pt.year);
+        const y = yOf(pt.usd_m2);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    pack.forEach(function (row, i) {
+      const color = colors[i % colors.length];
+      drawPath(row.future, color, [6, 5]);
+      if (row.measured) drawPath(row.measured, foam, [2, 5]);
+      if (row.verified.length > 1) drawPath(row.verified, color, null);
+      ctx.fillStyle = color;
+      row.verified.forEach(function (pt) {
+        ctx.beginPath();
+        ctx.arc(xOf(pt.year), yOf(pt.usd_m2), 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+
+    if (pack.length > 1) {
+      ctx.font = "600 10px " + bodyFont;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      let lx = padL + 8;
+      const ly = padT + 12;
+      pack.forEach(function (row, i) {
+        const color = colors[i % colors.length];
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(lx, ly, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = foam;
+        const name = shortName(row.t);
+        ctx.fillText(name, lx + 8, ly);
+        lx += ctx.measureText(name).width + 22;
+      });
+    }
+  }
+
   function viewportH() {
     if (window.visualViewport && window.visualViewport.height) return window.visualViewport.height;
     return window.innerHeight;
@@ -972,7 +1341,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     const wrap = canvas.parentElement;
     const hits = document.getElementById("radarHits");
     const w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 300;
-    const h = (wrap && wrap.clientHeight) ? wrap.clientHeight : 256;
+    const h = (wrap && wrap.clientHeight) ? wrap.clientHeight : 200;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
@@ -1470,7 +1839,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       fetch("scores-aug2026.json", { cache: "no-store" }).then(function (r) {
         if (!r.ok) throw new Error("scores " + r.status);
         return r.json();
-      })
+      }),
+      fetch("price-series-aug2026.json", { cache: "no-store" }).then(function (r) {
+        if (!r.ok) return {};
+        return r.json();
+      }).catch(function () { return {}; })
     ]);
   }
 
@@ -1482,7 +1855,12 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     });
   }
 
-  function boot(data, hotelData, scoreData) {
+  function ingestSeries(data) {
+    SERIES = {};
+    ((data && data.towns) || []).forEach(function (row) { if (row && row.id) SERIES[row.id] = row; });
+  }
+
+  function boot(data, hotelData, scoreData, seriesData) {
     DATASET = data;
     CATALOG = data.catalysts_catalog || {};
     HURR_REGION = data.hurricane_region || null;
@@ -1500,6 +1878,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     CC = TOWNS.find(function (t) { return t.id === "conchas-chinas"; }) || null;
     PIPELINE = buildPipeline(hotelData || {});
     ingestScores(scoreData || {});
+    ingestSeries(seriesData || {});
 
     const brandH = document.querySelector(".brand h1");
     if (brandH) brandH.textContent = BRAND.short;
@@ -1782,6 +2161,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       applySheetSnap(sheetSnap);
     }
     if (document.getElementById("radar")) renderChart();
+    if (document.getElementById("priceChart")) renderPriceChart();
   }
 
   function ranked() {
@@ -1916,6 +2296,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     html += "</b></div>";
     html += "</div></div>";
 
+    html += priceBlockHtml([t]);
     html += partialGradeHtml(t);
 
     html += comingHtml(t);
@@ -1999,6 +2380,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       return s == null ? "—" : esc(fmt10(s));
     }) + "</tr>";
     html += "</tbody></table></div>";
+
+    html += priceBlockHtml(towns);
 
     const graded = towns.filter(function (t) { return !!scoreRow(t); });
     if (graded.length) {
@@ -2096,12 +2479,14 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         paintSheet();
       };
     });
+    bindPriceControls();
     requestAnimationFrame(function () {
       if (document.getElementById("radar")) renderChart();
+      if (document.getElementById("priceChart")) renderPriceChart();
     });
   }
 
-  loadData().then(function (triple) { boot(triple[0], triple[1], triple[2]); }).catch(function (err) {
+  loadData().then(function (pack) { boot(pack[0], pack[1], pack[2], pack[3]); }).catch(function (err) {
     const el = document.getElementById("sheetBody");
     if (el) el.innerHTML = "<p class=\"caption\">Could not load pvr-towns-aug2026.json / scores-aug2026.json. Serve this folder over http.</p>";
     document.getElementById("sheet").classList.add("open");
