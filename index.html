@@ -324,26 +324,26 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .price-readout{display:grid;gap:4px;margin:0 0 10px;font-size:13px;font-weight:600;color:var(--foam);font-variant-numeric:tabular-nums}
 .price-readout .assumed{color:var(--sand);font-weight:500;font-size:11px;letter-spacing:.02em}
 .price-readout .verified{color:var(--mint);font-weight:500;font-size:11px;letter-spacing:.02em}
-.price-ctrls{display:grid;gap:8px;margin:4px 0 10px}
-.price-ctrl{display:grid;gap:4px}
+.price-ctrls{display:grid;gap:4px;margin:2px 0 8px}
+.price-ctrl{display:grid;gap:2px}
 .price-ctrl label{font-size:11px;color:var(--muted);line-height:1.35}
 .price-ctrl input[type=range]{
-  -webkit-appearance:none;appearance:none;width:100%;height:44px;min-height:44px;
+  -webkit-appearance:none;appearance:none;width:100%;height:28px;min-height:28px;
   background:transparent;margin:0;padding:0;cursor:pointer
 }
 .price-ctrl input[type=range]::-webkit-slider-runnable-track{
-  height:44px;min-height:44px;background:var(--white-06);border:1px solid var(--line);border-radius:12px;box-sizing:border-box
+  height:6px;min-height:6px;background:var(--white-06);border:1px solid var(--line);border-radius:99px;box-sizing:border-box
 }
 .price-ctrl input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;appearance:none;width:44px;height:44px;min-width:44px;min-height:44px;
+  -webkit-appearance:none;appearance:none;width:16px;height:16px;min-width:16px;min-height:16px;
   border-radius:50%;background:var(--accent);border:2px solid var(--accent-ink);
-  box-sizing:border-box;margin-top:0;cursor:pointer
+  box-sizing:border-box;margin-top:-6px;cursor:pointer
 }
 .price-ctrl input[type=range]::-moz-range-track{
-  height:44px;min-height:44px;background:var(--white-06);border:1px solid var(--line);border-radius:12px;box-sizing:border-box
+  height:6px;min-height:6px;background:var(--white-06);border:1px solid var(--line);border-radius:99px;box-sizing:border-box
 }
 .price-ctrl input[type=range]::-moz-range-thumb{
-  width:44px;height:44px;min-width:44px;min-height:44px;border:2px solid var(--accent-ink);
+  width:16px;height:16px;min-width:16px;min-height:16px;border:2px solid var(--accent-ink);
   border-radius:50%;background:var(--accent);box-sizing:border-box;cursor:pointer
 }
 .price-ctrl.custom input[type=range]::-webkit-slider-thumb{background:var(--purple);border-color:#1a1224}
@@ -355,7 +355,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .chart-wrap{height:250px;position:relative;margin:4px 0 8px;width:100%;overflow:visible}
 .chart-wrap-cmp{height:260px}
 .chart-wrap-sm{height:188px}
-.chart-wrap canvas{display:block;width:100%;height:100%;pointer-events:none}
+.chart-wrap canvas,.chart-wrap .radar-mount{display:block;width:100%;height:100%;pointer-events:none}
+.radar-mount .recharts-wrapper,.radar-mount .recharts-surface{overflow:visible}
 .radar-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin:0 0 8px;font-size:11px;color:var(--foam);font-weight:600}
 .radar-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 .radar-hits{position:absolute;inset:0;pointer-events:none}
@@ -405,21 +406,27 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .coming-now-lab{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--foam)}
 
 .homes-shelf{margin:0 0 16px}
-.homes-list{display:grid;gap:10px}
-.home-card{border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden;background:var(--white-03);color:inherit;text-decoration:none;display:block}
+.homes-list{display:flex;flex-direction:column;gap:10px}
+.home-card{display:grid;grid-template-columns:minmax(118px,40%) minmax(0,1fr);align-items:stretch;border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden;background:var(--white-03);color:inherit;text-decoration:none;min-height:132px}
 a.home-card:hover{border-color:var(--accent-3)}
-.home-photo{position:relative;height:112px;overflow:hidden;background:linear-gradient(145deg,var(--accent-1),var(--sheet-92) 55%,var(--warn-08));display:grid;place-items:center;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
-.home-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.home-body{padding:12px}
-.home-title{font-weight:600;color:var(--muted);font-size:14px}
-.homes-list .home-title{color:var(--foam)}
-.home-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
-.homes-list .home-meta{color:var(--dim)}
-.home-sale{font-weight:700;color:var(--foam);font-variant-numeric:tabular-nums}
-.home-card .chip{opacity:.55}
-.homes-list .home-card .chip{opacity:1}
+.home-photo{position:relative;min-height:132px;height:100%;overflow:hidden;background:var(--map-bg)}
+.home-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.home-body{padding:10px 12px;min-width:0;display:flex;flex-direction:column}
+.home-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.home-title{font-weight:700;font-size:13px;line-height:1.25;color:var(--foam);min-width:0}
+.home-sale{font-weight:800;font-size:15px;line-height:1.2;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--foam);flex-shrink:0}
+.home-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.home-rows{margin-top:6px;display:flex;flex-direction:column}
+.home-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:12px;min-height:28px}
+.home-row span{color:var(--dim)}
+.home-row b{color:var(--foam);font-weight:700;text-align:right}
+.home-row b.ok{color:var(--green)}
 .home-empty{font-size:12.5px;color:var(--foam);margin:10px 0 0;line-height:1.4}
 .homes-shelf > .home-empty{margin:8px 0 0}
+@media (max-width:420px){
+  .home-card{grid-template-columns:1fr}
+  .home-photo{min-height:0;height:auto;aspect-ratio:16/9}
+}
 
 .define-layer{position:absolute;left:0;right:0;top:0;bottom:calc(var(--dock-h) + 8px);z-index:940;display:grid;place-items:center;padding:16px 14px 12px;background:var(--overlay-soft);overflow:auto;pointer-events:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .sheet.snap-full ~ .define-layer{bottom:0;padding-top:max(16px, var(--st))}
@@ -465,6 +472,10 @@ a.home-card:hover{border-color:var(--accent-3)}
 }
 </style>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin=""></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin=""></script>
+<script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js" crossorigin=""></script>
+<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js" crossorigin=""></script>
 </head>
 <body>
 <div id="app">
@@ -1422,7 +1433,7 @@ a.home-card:hover{border-color:var(--accent-3)}
       '<div class="partial-head"><button type="button" class="score-tap" data-metric="score" aria-haspopup="dialog">' +
       '<span class="partial-score">' + (overall == null ? "\u2014" : esc(fmtOverall(overall))) + "</span>" +
       completenessChip(row) + "</button></div>" +
-      '<div class="chart-wrap chart-wrap-sm"><canvas id="radar" aria-label="Coastal Grade radar"></canvas><div class="radar-hits" id="radarHits"></div></div>' +
+      '<div class="chart-wrap chart-wrap-sm"><div id="radar" class="radar-mount" role="img" aria-label="Coastal Grade radar"></div><div class="radar-hits" id="radarHits"></div></div>' +
       '<p class="caption">' + esc(spiderCaption([t.id], series)) + "</p></div>";
   }
 
@@ -1444,7 +1455,7 @@ a.home-card:hover{border-color:var(--accent-3)}
       html += "</div>";
     }
     const wrapCls = opts.small ? "chart-wrap chart-wrap-sm" : ((opts.cmp !== false && series.length > 1) ? "chart-wrap chart-wrap-cmp" : "chart-wrap");
-    html += '<div class="' + wrapCls + '"><canvas id="radar" aria-label="Coastal Grade radar"></canvas><div class="radar-hits" id="radarHits"></div></div>';
+    html += '<div class="' + wrapCls + '"><div id="radar" class="radar-mount" role="img" aria-label="Coastal Grade radar"></div><div class="radar-hits" id="radarHits"></div></div>';
     html += '<p class="caption">' + esc(spiderCaption(ids, series)) + "</p></div>";
     return html;
   }
@@ -1526,6 +1537,7 @@ a.home-card:hover{border-color:var(--accent-3)}
       const year = pt.year != null ? Number(pt.year) : (pt.y != null ? Number(pt.y) : NaN);
       const usd = pt.usd_m2 != null ? Number(pt.usd_m2) : (pt.usd != null ? Number(pt.usd) : (pt.price != null ? Number(pt.price) : NaN));
       if (!isFinite(year) || !isFinite(usd)) return;
+      if (year < NOW_YEAR) return;
       out.push({ year: year, usd_m2: usd });
     });
     out.sort(function (a, b) { return a.year - b.year; });
@@ -1566,8 +1578,8 @@ a.home-card:hover{border-color:var(--accent-3)}
     const priced = (towns || []).filter(function (t) { return headlineOf(t) != null; });
     const cmp = state.view === "compare";
     const title = cmp
-      ? "Price Trajectory \u00b7 Historical + Base Case"
-      : "Historical & Projected";
+      ? "Price Trajectory \u00b7 TODAY + Base Case"
+      : "TODAY & Projected";
     let html = '<div class="price-block"><div class="group-h">' + esc(title) + "</div>";
     if (!priced.length) {
       html += '<p class="price-unk">unknown \u2014 not invented</p></div>';
@@ -1780,7 +1792,10 @@ a.home-card:hover{border-color:var(--accent-3)}
     if (yMax <= 0) yMax = 1;
 
     function xOf(year) {
-      return padL + ((year - xMin) / (xMax - xMin)) * plotW;
+      const nowX = padL + 0.4 * plotW;
+      if (year <= NOW_YEAR) return nowX;
+      const span = Math.max(1, xMax - NOW_YEAR);
+      return nowX + ((year - NOW_YEAR) / span) * (0.6 * plotW);
     }
     function yOf(usd) {
       return padT + (1 - (usd - yMin) / (yMax - yMin)) * plotH;
@@ -1809,9 +1824,9 @@ a.home-card:hover{border-color:var(--accent-3)}
 
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    const yearSpan = xMax - xMin;
+    const yearSpan = xMax - NOW_YEAR;
     const yearStep = yearSpan > 8 ? 2 : 1;
-    for (let year = Math.ceil(xMin); year <= xMax; year += yearStep) {
+    for (let year = NOW_YEAR; year <= xMax; year += yearStep) {
       ctx.fillStyle = muted;
       ctx.fillText(String(year), xOf(year), h - padB + 8);
     }
@@ -1920,102 +1935,107 @@ a.home-card:hover{border-color:var(--accent-3)}
     return [];
   }
 
+  let radarRoot = null;
+  let radarHost = null;
+
+  function gappedRadarShape(props) {
+    const h = window.React.createElement;
+    const key = props.dataKey;
+    const pts = (props.points || []).filter(function (p) {
+      if (!p) return false;
+      const raw = p.payload ? p.payload[key] : p.value;
+      return raw != null && raw === raw;
+    });
+    const kids = [];
+    if (pts.length >= 2) {
+      let d = "";
+      pts.forEach(function (p, i) { d += (i ? "L" : "M") + p.x + "," + p.y; });
+      if (pts.length >= 3) d += "Z";
+      kids.push(h("path", {
+        key: "web",
+        d: d,
+        fill: pts.length >= 3 ? props.fill : "none",
+        fillOpacity: pts.length >= 3 ? (props.fillOpacity != null ? props.fillOpacity : 0.3) : 0,
+        stroke: props.stroke,
+        strokeWidth: 2,
+        strokeLinejoin: "round",
+        strokeLinecap: "round"
+      }));
+    }
+    pts.forEach(function (p, i) {
+      kids.push(h("circle", { key: "dot" + i, cx: p.x, cy: p.y, r: 3, fill: props.stroke }));
+    });
+    return h("g", null, kids);
+  }
+
   function renderChart(ids) {
-    const canvas = document.getElementById("radar");
-    if (!canvas) return;
+    const host = document.getElementById("radar");
+    if (!host) return;
     const series = spiderSeriesFromIds((ids && ids.length) ? ids : chartTownIds());
     if (!series.length) return;
 
-    const wrap = canvas.parentElement;
+    const wrap = host.parentElement;
     const hits = document.getElementById("radarHits");
     const w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 300;
-    const h = (wrap && wrap.clientHeight) ? wrap.clientHeight : 250;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    canvas.style.width = w + "px";
-    canvas.style.height = h + "px";
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-
-    const grid = brandColor("--radar-grid") || brandColor("--line") || "rgba(90,180,190,.18)";
+    const hgt = (wrap && wrap.clientHeight) ? wrap.clientHeight : 250;
     const n = RADAR_AXES.length;
     const cx = w / 2;
-    const cy = h / 2 + 2;
-    const pad = Math.max(56, Math.min(72, Math.min(w, h) * 0.26));
-    const R = Math.max(48, Math.min(w, h) / 2 - pad);
+    const cy = hgt / 2 + 2;
+    const pad = Math.max(56, Math.min(72, Math.min(w, hgt) * 0.26));
+    const R = Math.max(48, Math.min(w, hgt) / 2 - pad);
 
     function pt(i, r) {
       const a = -Math.PI / 2 + i * 2 * Math.PI / n;
       return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r, a: a };
     }
 
-    function armR(v) {
-      return R * (Math.max(0, Math.min(10, Number(v))) / 10);
-    }
-
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = grid;
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = 1;
-    for (let ring = 1; ring <= 5; ring++) {
-      ctx.beginPath();
-      for (let i = 0; i <= n; i++) {
-        const p = pt(i % n, R * ring / 5);
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
-      }
-      ctx.closePath();
-      ctx.stroke();
-    }
-
-    for (let i = 0; i < n; i++) {
-      const tip = pt(i, R);
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(tip.x, tip.y);
-      ctx.strokeStyle = grid;
-      ctx.stroke();
-    }
-
-    series.forEach(function (s) {
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
-      ctx.strokeStyle = s.color.stroke;
-      ctx.lineWidth = 2;
-      ctx.fillStyle = s.color.fill;
-      const pts = [];
-      for (let i = 0; i < n; i++) {
-        if (s.values[i] == null) continue;
-        pts.push(pt(i, armR(s.values[i])));
-      }
-      if (!pts.length) return;
-      ctx.beginPath();
-      pts.forEach(function (p, i) {
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
+    const data = RADAR_AXES.map(function (ax, i) {
+      const rec = { axis: ax.label };
+      series.forEach(function (s, si) {
+        const v = s.values[i];
+        if (v != null) rec["s" + si] = v;
       });
-      if (pts.length >= 3) {
-        ctx.closePath();
-        ctx.globalAlpha = 0.2;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-      if (pts.length >= 2) ctx.stroke();
+      return rec;
     });
 
-    series.forEach(function (s) {
-      ctx.fillStyle = s.color.stroke;
-      for (let i = 0; i < n; i++) {
-        if (s.values[i] == null) continue;
-        const p = pt(i, armR(s.values[i]));
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
-        ctx.fill();
+    const grid = brandColor("--radar-grid") || brandColor("--line") || "rgba(90,180,190,.18)";
+
+    if (window.React && window.ReactDOM && window.ReactDOM.createRoot && window.Recharts) {
+      if (radarRoot && radarHost !== host) {
+        try { radarRoot.unmount(); } catch (e) {}
+        radarRoot = null;
       }
-    });
+      if (!radarRoot) {
+        radarRoot = window.ReactDOM.createRoot(host);
+        radarHost = host;
+      }
+      const RC = window.Recharts;
+      const h = window.React.createElement;
+      const radars = series.map(function (s, si) {
+        return h(RC.Radar, {
+          key: "s" + si,
+          name: s.label,
+          dataKey: "s" + si,
+          stroke: s.color.stroke,
+          fill: s.color.stroke,
+          fillOpacity: 0.3,
+          isAnimationActive: false,
+          dot: false,
+          legendType: "none",
+          shape: gappedRadarShape
+        });
+      });
+      radarRoot.render(
+        h(RC.ResponsiveContainer, { width: "100%", height: "100%" },
+          h(RC.RadarChart, { data: data, cx: "50%", cy: "52%", outerRadius: "58%" },
+            h(RC.PolarGrid, { gridType: "polygon", stroke: grid, radialLines: true }),
+            h(RC.PolarAngleAxis, { dataKey: "axis", tick: false }),
+            h(RC.PolarRadiusAxis, { angle: 90, domain: [0, 10], tick: false, axisLine: false, tickCount: 6 }),
+            radars
+          )
+        )
+      );
+    }
 
     const labelR = R + 26;
     const hitHtml = [];
@@ -2420,23 +2440,38 @@ a.home-card:hover{border-color:var(--accent-3)}
     const listings = block && Array.isArray(block.listings) ? block.listings : [];
     const n = block && typeof block.n === "number" ? block.n : listings.length;
     if (!block || n === 0 || !listings.length) return homesEmptyHtml();
+    function row(lab, val, cls) {
+      if (val == null || val === "") return "";
+      return '<div class="home-row"><span>' + esc(lab) + "</span><b" + (cls ? ' class="' + cls + '"' : "") + ">" + esc(val) + "</b></div>";
+    }
     let html = '<div class="homes-shelf"><div class="group-h">Homes</div><div class="homes-list">';
     listings.forEach(function (L) {
       if (!L) return;
-      const sale = L.asking_price_usd != null ? fmtUsd(L.asking_price_usd) : "\u2014";
-      const um2 = L.usd_m2 != null ? (fmtUsd(toDisplay(L.usd_m2)) + " " + unitLabel()) : "\u2014";
+      const sale = L.asking_price_usd != null ? fmtUsd(L.asking_price_usd) : null;
       const photo = L.photo_url
-        ? '<img src="' + esc(L.photo_url) + '" alt="" loading="lazy" onerror="this.remove()">'
+        ? '<img src="' + esc(L.photo_url) + '" alt="" loading="lazy" decoding="async" onerror="this.remove()">'
         : "";
-      const chip = (L.beachfront === "yes" || L.beachfront === true)
-        ? '<span class="chip priced">beachfront</span>'
-        : "";
+      const ocean = (L.beachfront === "yes" || L.beachfront === true)
+        ? "Yes"
+        : (L.beachfront === "no" || L.beachfront === false) ? "No" : null;
+      const src = L.source === "homia" ? "Homia" : (L.source === "inmuebles24" ? "Inmuebles24" : (L.source || null));
+      const size = L.m2 != null ? (String(L.m2) + " m\u00b2") : null;
+      const um2 = L.usd_m2 != null ? (fmtUsd(toDisplay(L.usd_m2)) + " " + unitLabel()) : null;
+      const beds = L.beds != null ? String(L.beds) : null;
+      const baths = L.baths != null ? String(L.baths) : null;
       const inner =
-        '<div class="home-photo" aria-hidden="true">' + (photo ? photo : "Photo") + "</div>" +
+        '<div class="home-photo" aria-hidden="true">' + (photo ? photo : "") + "</div>" +
         '<div class="home-body">' +
-        '<div class="home-title">' + esc(L.title || "\u2014") + "</div>" +
-        '<div class="home-meta"><span class="home-sale">' + esc(sale) + "</span><span>" + esc(um2) + "</span>" + chip + "</div>" +
-        "</div>";
+        '<div class="home-top"><div class="home-title">' + esc(L.title || "\u2014") + "</div>" +
+        (sale ? '<div class="home-sale">' + esc(sale) + "</div>" : "") + "</div>" +
+        (src ? '<div class="home-sub">' + esc(src) + (L.date_seen ? " \u00b7 " + esc(L.date_seen) : "") + "</div>" : "") +
+        '<div class="home-rows">' +
+        row("Oceanfront", ocean, ocean === "Yes" ? "ok" : "") +
+        row("Beds", beds) +
+        row("Baths", baths) +
+        row("Size", size) +
+        row("Asking " + unitLabel(), um2) +
+        "</div></div>";
       if (L.listing_url) {
         html += '<a class="home-card" href="' + esc(L.listing_url) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>";
       } else {
