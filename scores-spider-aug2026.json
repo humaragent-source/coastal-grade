@@ -1,0 +1,1875 @@
+{
+  "meta": {
+    "model": "mexico-pacific-v1-spider",
+    "as_of": "2026-08-29",
+    "computed": "2026-08-29",
+    "scale_spider": "0-10",
+    "scale_overall": "0-100",
+    "replaces": "scores-aug2026.json was partial 3/7 (catalysts + price + timezone only). This file fills hurricane, safety, water, beach from verified sources. Old file kept as the 3-axis snapshot.",
+    "source_towns": "/workspace/coastal-grade/pvr-towns-aug2026.json",
+    "source_hotels": "/workspace/coastal-grade/hotel-pipeline-aug2026.json",
+    "source_gates": "/workspace/coastal-grade/punta-mita-gates-aug2026.json",
+    "price_rule": "No new prices. Homia headlines from the locked towns file. El Anclote 3401 n=3 from punta-mita-gates-aug2026.json. Inside has no neighborhood headline.",
+    "missing_axis_rule": "If an axis still cannot be sourced, mark unknown and DROP it from the composite. Remaining weights renormalize. Do not invent. A known empty future-catalyst catalog is 0, not unknown.",
+    "hard_gates": [
+      "ocean/coastal",
+      "timezone within 3h of SF / NY / Miami",
+      "~2h of PVR (estimated drive_min_to_pvr.high ≤ 120, or in_pv)"
+    ],
+    "weights_locked": {
+      "hurricane_history_and_damage": 20,
+      "future_catalysts": 20,
+      "price_runway_vs_peers": 20,
+      "safety": 15,
+      "potable_water": 10,
+      "beach_sargassum": 10,
+      "timezone_overlap": 5
+    },
+    "peers": {
+      "in_radius_headlines_usd_m2": {
+        "pv-5dedic": 4759,
+        "conchas-chinas": 7066,
+        "sayulita": 4848,
+        "punta-mita": 5196
+      },
+      "in_radius_median_usd_m2": 5022.0,
+      "median_rule": "Median of PV 5 de Dic, Conchas Chinas, Sayulita, Punta Mita headlines. Four values → mean of the two middle.",
+      "cabo_medano_ceiling_usd_m2": 11500,
+      "cabo_source": "MLS BCS Médano median, 27 Aug 2026 — not Homia",
+      "cabo_role": "off-map ceiling only — not in the median, not scored as a PVR town"
+    },
+    "formulas": {
+      "spider": "Each arm is 0–10. overall_0_100 = (sum score_0_10 * weight) / sum(scored weights) * 10, rounded.",
+      "hurricane_history_and_damage": "Regional 5.0. Two nearby Cat-4 landfalls (Kenna 2002, Lidia 2023). Do not stamp 46 storms on a town.",
+      "safety": "Municipal SESNSP 2025 total rate + State Dept 29 May 2026. BdB 6 (661/100k, Nayarit L2). PV 5 (1882/100k, Jalisco L3, PV+RN unrestricted). No town file. No gates bonus.",
+      "potable_water": "PV 8.0 SEAPAL COPRISJAL 35-year NOM-127. Bucerías 5.0 named salinity/Fe/Mn. Other BdB towns UNKNOWN (no lab print).",
+      "beach_sargassum": "Pacific outside NOAA SIR → sargassum 9. Blue Flag 2025–26 NV/Flamingos/La Cruz marina → 8. 5 de Dic 6 (Cuale fail is centro). Unsampled BdB swim-quality not invented.",
+      "price_runway": "clip(50 + 50 * (in_radius_peer_median - headline) / in_radius_peer_median, 0, 100). Headline ≥ Cabo ceiling → 0. Spider = that score / 10.",
+      "future_catalysts": {
+        "open": 0,
+        "rumor": 25,
+        "tender": 40,
+        "under_construction": 55,
+        "complete_not_open": 70,
+        "second_non_open_bonus": 15,
+        "assignment": "Only towns[].catalysts plus hotel-pipeline rows with town_id. 'Near San Pancho/Sayulita' and PV-wide rumors are not assigned to a scored neighborhood.",
+        "dispute": "Brand-vs-press dispute does not change stage. No invented cancellation."
+      },
+      "timezone_overlap": "Uniform 9.0 for every town that passes the 3h gate."
+    },
+    "punta_mita": {
+      "rule": "Do not average inside and outside into one Comps score. Mixed 5196 stays the peer-set pin only.",
+      "inside": "punta-mita-inside — price unknown (no printed Resort neighborhood $/m²). Hacienda 12589 n=3 and Las Terrazas 5992 n=2 shown, not averaged.",
+      "outside": "el-anclote — Homia development 3401 n=3. Faro 3387 not blended. Montage/Pendry not assigned."
+    },
+    "seven_of_seven": [
+      "bucerias",
+      "amapas",
+      "pv-5dedic",
+      "conchas-chinas"
+    ],
+    "still_partial": [
+      {
+        "id": "nuevo-vallarta",
+        "name": "Nuevo Vallarta",
+        "axes_scored": 6,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "why": [
+          "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        ]
+      },
+      {
+        "id": "punta-mita",
+        "name": "Punta Mita",
+        "axes_scored": 6,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "ranked_market": false,
+        "why": "Peer-set pin only (5196 n=38). Not a ranked market. Water unknown."
+      },
+      {
+        "id": "punta-mita-inside",
+        "name": "Punta Mita (inside the gates)",
+        "axes_scored": 5,
+        "overall": null,
+        "unknown_axes": [
+          "price_runway_vs_peers",
+          "potable_water"
+        ],
+        "why": "No overall: no Homia inside/Resort headline. Samples Hacienda 12589 n=3, Las Terrazas 5992 n=2 not averaged."
+      },
+      {
+        "id": "el-anclote",
+        "name": "El Anclote / Punta de Mita (outside the gates)",
+        "axes_scored": 6,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "why": [
+          "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta. OROMAPAS 19 Mar 2024: well 54 Litibu production drop in Punta de Mita poblado, pipas if needed — supply, not a NOM-127 lab."
+        ]
+      },
+      {
+        "id": "flamingos",
+        "name": "Flamingos",
+        "axes_scored": 6,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "why": [
+          "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        ]
+      },
+      {
+        "id": "la-cruz",
+        "name": "La Cruz de Huanacaxtle",
+        "axes_scored": 6,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "why": [
+          "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        ]
+      },
+      {
+        "id": "sayulita",
+        "name": "Sayulita",
+        "axes_scored": 6,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "why": [
+          "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        ]
+      }
+    ],
+    "not_used": [
+      "AMPI municipal averages",
+      "NOAA 46-storm envelope as a per-town hurricane score",
+      "Pacific-vs-Caribbean sargassum as a per-town beach score",
+      "Belmond Milaroca (town_id null)",
+      "Thompson Puerto Vallarta (town_id null — not pinned to 5 de Dic / Amapas / Conchas)",
+      "EDITION Nayarit (no town)",
+      "Invented hotel guests_from dates",
+      "Averaging Hacienda 12589 and Las Terrazas 5992 into an inside headline",
+      "Blending El Anclote 3401 with Faro De Mita 3387",
+      "Stamping NOAA 46 storms as a per-town hurricane score",
+      "Applying Playa del Cuale not-apta to 5 de Dic / Amapas / Conchas",
+      "Gated-only crime (no SESNSP)"
+    ],
+    "evidence_file": "/workspace/coastal-grade/spider-axes-evidence-aug2026.md",
+    "patch": "2026-08-29 evidence pass: hurricane 5 regional (NHC Lidia+Kenna, not 46). Safety BdB 6 / PV 5 municipal SESNSP+State Dept (dropped doloso-only inversion). Water: PV 8 SEAPAL; Bucerías 5 named; other BdB UNKNOWN. Beach: NOAA SIR Pacific 9; Blue Flag NV/Flamingos/La Cruz 8; 5 de Dic 6 Cuale centro. Prefer UNKNOWN over a guessed town delta.",
+    "no_overall_without_homia_headline": "Locked: no town overall / rank without a verified Homia usd_m2.headline. Punta Mita inside stays overall=null until Homia prints a Punta Mita Resort / inside neighborhood $/m². Hacienda 12589 n=3 and Las Terrazas 5992 n=2 are samples, not averaged, not a headline. Mixed 5196 is peer-set only, never a ranked market. El Anclote 3401 may score.",
+    "qa_patch": "2026-08-29: QA FAIL inside overall 66 with headline=null. overall and rank nulled. Mixed dropped from rank.",
+    "ranked_markets": [
+      "nuevo-vallarta",
+      "el-anclote",
+      "amapas",
+      "bucerias",
+      "flamingos",
+      "la-cruz",
+      "sayulita",
+      "pv-5dedic",
+      "conchas-chinas"
+    ],
+    "not_ranked": [
+      "punta-mita (mixed peer-set)",
+      "punta-mita-inside (no headline, overall null)"
+    ]
+  },
+  "sources": {
+    "sesnsp_pv": {
+      "municipality": "Puerto Vallarta, Jalisco",
+      "year": 2025,
+      "total_delitos": 5492,
+      "tasa_per_100k": 1882,
+      "homicidio_total": 36,
+      "homicidio_doloso": 15,
+      "homicidio_culposo_transito": 21,
+      "feminicidio": 3,
+      "implied_pop": 291817,
+      "url": "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+      "primary": "SESNSP 2025 as published on municipiodata.com (aggregator). gob.mx incident tables not re-downloaded this pass."
+    },
+    "sesnsp_bdb": {
+      "municipality": "Bahía de Banderas, Nayarit",
+      "year": 2025,
+      "total_delitos": 1240,
+      "tasa_per_100k": 661,
+      "homicidio_total": 56,
+      "homicidio_doloso": 24,
+      "homicidio_culposo_transito": 17,
+      "feminicidio": 3,
+      "implied_pop": 187595,
+      "url": "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+      "primary": "SESNSP 2025 as published on municipiodata.com (aggregator). gob.mx incident tables not re-downloaded this pass."
+    },
+    "seapal": {
+      "date": "2026-07-08",
+      "url": "https://www.seapal.gob.mx/index.php/blog/agua-potable-certificada-una-fortaleza-que-distingue-a-puerto-vallarta",
+      "note": "35 consecutive years COPRISJAL certification, NOM-127/179/230"
+    },
+    "bdb_water": {
+      "url": "https://diariodevallarta.com/bahia-de-banderas-registra-mejora-historica-en-la-calidad-del-agua-potable/",
+      "note": "98% chlorination CONAGUA; Bucerías salinity/Fe/Mn history; aqueduct"
+    },
+    "cofepris_beaches": {
+      "url": "https://badeba.media/comunidad/playas-de-nayarit-estan-muy-limpias-revela-cofepris/",
+      "date": "2026-07-16",
+      "samples": {
+        "nuevo-vallarta": {
+          "label": "Nuevo Nayarit",
+          "nmp": [
+            11,
+            33
+          ],
+          "apta": true
+        },
+        "bucerias": {
+          "label": "Bucerías",
+          "nmp": [
+            23,
+            14
+          ],
+          "apta": true
+        },
+        "el-anclote": {
+          "label": "El Anclote, Punta de Mita",
+          "nmp": [
+            23
+          ],
+          "apta": true
+        },
+        "sayulita": {
+          "label": "Sayulita",
+          "nmp": [
+            32
+          ],
+          "apta": true
+        },
+        "la-cruz": {
+          "label": "La Cruz de Huanacaxtle",
+          "nmp": [
+            30
+          ],
+          "apta": true
+        }
+      },
+      "limit_nmp_100ml": 200
+    }
+  },
+  "scored": [
+    {
+      "id": "nuevo-vallarta",
+      "name": "Nuevo Vallarta",
+      "peer": false,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 15–20 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 3456,
+        "source": "Homia MLS asking 27 Aug 2026",
+        "n": 199,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 7.0,
+          "score_0_100": 70,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "Non-open on file: Puente Amado Nervo (Río Ameca) (complete_not_open). Rubric complete_not_open=70.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 6.6,
+          "score_0_100": 66,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 3456,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 3456 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 70 (diagnostic only). Spider 6.6/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": false,
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no CONAGUA/CEA/OROMAPAS lab print naming this town",
+          "why": "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "Blue Flag Playa Nuevo Nayarit Norte 2025–26 + Pacific sargassum",
+          "url": "https://diariodevallarta.com/bahia-de-banderas-consolida-su-liderazgo-en-playas-limpias/",
+          "why": "Blue Flag 2025–26 printed for Playa Nuevo Nayarit Norte (NV / Flamingos). Pacific outside NOAA SIR. Score 8.0 (flag, not a 9 sargassum-only).",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 65,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 90,
+        "weights_dropped": 10,
+        "axes_scored": 6,
+        "axes_total": 7,
+        "complete": false,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": true,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 7.0,
+          "price_runway_vs_peers": 6.6,
+          "safety": 6.0,
+          "potable_water": null,
+          "beach_sargassum": 8.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": null,
+      "rank": 1,
+      "ranked_market": true
+    },
+    {
+      "id": "punta-mita",
+      "name": "Punta Mita",
+      "peer": true,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 40–50 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 5196,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 38,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": "mixed_peer_reference_do_not_overlay_as_one_market",
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town. NHC TCR + Reuters: one Lidia direct fatality 'near Punta Mita' (not gates-split). Not enough for a different integer.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 7.0,
+          "score_0_100": 70,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "Non-open on file: Montage Punta Mita (under_construction); Pendry Punta Mita (under_construction). Rubric under_construction=55 +15 second project. Montage/Pendry stay under_construction (brand pages); Semarnat press is not gob.mx — no invented cancellation.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 4.8,
+          "score_0_100": 48,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 5196,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 5196 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 55 (diagnostic only). Spider 4.8/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": false,
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no CONAGUA/CEA/OROMAPAS lab print naming this town",
+          "why": "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta. OROMAPAS 19 Mar 2024: well 54 Litibu production drop in Punta de Mita poblado, pipas if needed — supply, not a NOM-127 lab."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "Pacific sargassum geography only; beach WQ sample not in retrieved official bulletins",
+          "why": "Pacific is outside NOAA/USF SIR (Atlantic–Caribbean–Gulf). July 2026 'sargassum' was Hypnea at Guayabitos, not this town. No Blue Flag name. Badeba Media named COFEPRIS enterococci for some BdB beaches; gob.mx summer bulletin HTML was empty this pass, so swim-quality stays unlabeled. Score 9.0 is sargassum-risk, not a water-quality badge.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 62,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 90,
+        "weights_dropped": 10,
+        "axes_scored": 6,
+        "axes_total": 7,
+        "complete": false,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": true,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 7.0,
+          "price_runway_vs_peers": 4.8,
+          "safety": 6.0,
+          "potable_water": null,
+          "beach_sargassum": 9.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "display_note": "Mixed Homia 5196 n=38 is the peer-set pin only. Never a ranked market. Overlay Compare as punta-mita-inside (unscored overall) + el-anclote.",
+      "rank_complete": null,
+      "rank": null,
+      "ranked_market": false
+    },
+    {
+      "id": "punta-mita-inside",
+      "name": "Punta Mita (inside the gates)",
+      "peer": false,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 40–50 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": null,
+        "source": null,
+        "n": null,
+        "band": null,
+        "sample_n_unknown": true,
+        "inside_development_samples": [
+          {
+            "name": "Hacienda De Mita",
+            "headline_usd_m2": 12589,
+            "n": 3,
+            "url": "https://www.homia.mx/es/desarrollo/hacienda-de-mita"
+          },
+          {
+            "name": "Las Terrazas",
+            "headline_usd_m2": 5992,
+            "n": 2,
+            "url": "https://www.homia.mx/es/desarrollo/las-terrazas"
+          }
+        ],
+        "note": "No printed inside neighborhood USD/m². Samples not averaged."
+      },
+      "punta_mita_role": "inside_gates",
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town. NHC TCR + Reuters: one Lidia direct fatality 'near Punta Mita' (not gates-split). Not enough for a different integer.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 7.0,
+          "score_0_100": 70,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "Hotel pipeline town_id punta-mita: Montage Punta Mita under_construction (open 2027 on brand pages; Semarnat dispute does not change stage) plus Pendry Punta Mita under_construction (debuting 2028). Second non-open bonus. Open Four Seasons / St. Regis priced-in. Autopista open / priced-in. Score 70 → 7.0. Not assigned to El Anclote.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no printed neighborhood USD/m²",
+          "why": "Homia does not print a USD/m² for the 11-listing Punta Mita Resort neighborhood. Hacienda De Mita US$12,589/m² n=3 and Las Terrazas US$5,992/m² n=2 are development samples. Not averaged. Not used as an inside headline. Price arm unknown.",
+          "weight": 20,
+          "in_composite": false
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score. Inside vs El Anclote delta is UNKNOWN; integer is the same BdB municipal 6, not a gated-security bonus.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": false,
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no CONAGUA/CEA/OROMAPAS lab print naming this town",
+          "why": "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta. Four Seasons prints on-site wastewater reuse, not a potable cert. Realtor desal pages not used."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "Pacific sargassum geography only; beach WQ sample not in retrieved official bulletins",
+          "why": "Pacific is outside NOAA/USF SIR (Atlantic–Caribbean–Gulf). July 2026 'sargassum' was Hypnea at Guayabitos, not this town. No Blue Flag name. Badeba Media named COFEPRIS enterococci for some BdB beaches; gob.mx summer bulletin HTML was empty this pass, so swim-quality stays unlabeled. Score 9.0 is sargassum-risk, not a water-quality badge.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "Nayarit MST UTC−7 or Jalisco CST UTC−6. Aug 2026 SF PDT UTC−7 (0–1h), NY/Miami EDT UTC−4 (2–3h). Uniform 9.0 for every town that passes the gate.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": null,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 70,
+        "weights_dropped": 30,
+        "axes_scored": 5,
+        "axes_total": 7,
+        "complete": false,
+        "unknown_axes": [
+          "price_runway_vs_peers",
+          "potable_water"
+        ],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": true,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 7.0,
+          "price_runway_vs_peers": null,
+          "safety": 6.0,
+          "potable_water": null,
+          "beach_sargassum": 9.0,
+          "timezone_overlap": 9.0
+        },
+        "unscored_reason": "No verified Homia usd_m2.headline for inside-the-gates / Punta Mita Resort. Locked rule: no town score without verified Homia $/m². Hacienda De Mita 12589 n=3 and Las Terrazas 5992 n=2 remain development samples and are not averaged."
+      },
+      "display_note": "Compare overlay arm for inside-the-gates. No overall until Homia prints a Resort neighborhood $/m². Samples only: Hacienda 12589 n=3, Las Terrazas 5992 n=2.",
+      "rank_complete": null,
+      "rank": null,
+      "ranked_market": false
+    },
+    {
+      "id": "el-anclote",
+      "name": "El Anclote / Punta de Mita (outside the gates)",
+      "peer": false,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 40–50 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 3401,
+        "source": "Homia MLS asking, El Anclote development page, 29 Aug 2026",
+        "n": 3,
+        "band": "condo",
+        "url": "https://www.homia.mx/es/desarrollo/el-anclote",
+        "sample_n_unknown": false,
+        "note": "Development median n=3. Faro De Mita 3387 n=3 not blended. Guia 11-listing El Anclote neighborhood has no printed USD/m²."
+      },
+      "punta_mita_role": "outside_gates",
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town. NHC TCR + Reuters: one Lidia direct fatality 'near Punta Mita' (not gates-split). Not enough for a different integer.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "El Anclote / public Punta de Mita. Autopista Las Varas–Bucerías–PV is open / priced-in. Montage and Pendry stay on town_id punta-mita (inside). No non-open catalyst assigned. Score 0.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 6.6,
+          "score_0_100": 66,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 3401,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "El Anclote development Homia median US$3401/m² n=3 (not the 11-listing neighborhood, which has no printed $/m²). Faro De Mita 3387 n=3 not blended. Vs peer median 5022 → 6.6/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score. Inside vs El Anclote delta is UNKNOWN; integer is the same BdB municipal 6, not a gated-security bonus.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": false,
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no CONAGUA/CEA/OROMAPAS lab print naming this town",
+          "why": "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta. OROMAPAS 19 Mar 2024: well 54 Litibu production drop in Punta de Mita poblado, pipas if needed — supply, not a NOM-127 lab."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "Pacific sargassum geography only; beach WQ sample not in retrieved official bulletins",
+          "why": "Pacific is outside NOAA/USF SIR (Atlantic–Caribbean–Gulf). July 2026 'sargassum' was Hypnea at Guayabitos, not this town. No Blue Flag name. Badeba Media named COFEPRIS enterococci for some BdB beaches; gob.mx summer bulletin HTML was empty this pass, so swim-quality stays unlabeled. Score 9.0 is sargassum-risk, not a water-quality badge.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "Nayarit MST UTC−7 or Jalisco CST UTC−6. Aug 2026 SF PDT UTC−7 (0–1h), NY/Miami EDT UTC−4 (2–3h). Uniform 9.0 for every town that passes the gate.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 51,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 90,
+        "weights_dropped": 10,
+        "axes_scored": 6,
+        "axes_total": 7,
+        "complete": false,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": true,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 6.6,
+          "safety": 6.0,
+          "potable_water": null,
+          "beach_sargassum": 9.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "display_note": "Compare spider arm for outside-the-gates / El Anclote.",
+      "rank_complete": null,
+      "rank": 2,
+      "ranked_market": true
+    },
+    {
+      "id": "flamingos",
+      "name": "Flamingos",
+      "peer": false,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 20–20 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 3590,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 164,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id).",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 6.4,
+          "score_0_100": 64,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 3590,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 3590 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 69 (diagnostic only). Spider 6.4/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": false,
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no CONAGUA/CEA/OROMAPAS lab print naming this town",
+          "why": "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "Blue Flag Playa Nuevo Nayarit Norte 2025–26 + Pacific sargassum",
+          "url": "https://diariodevallarta.com/bahia-de-banderas-consolida-su-liderazgo-en-playas-limpias/",
+          "why": "Blue Flag 2025–26 printed for Playa Nuevo Nayarit Norte (NV / Flamingos). Pacific outside NOAA SIR. Score 8.0 (flag, not a 9 sargassum-only).",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 49,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 90,
+        "weights_dropped": 10,
+        "axes_scored": 6,
+        "axes_total": 7,
+        "complete": false,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": true,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 6.4,
+          "safety": 6.0,
+          "potable_water": null,
+          "beach_sargassum": 8.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": null,
+      "rank": 5,
+      "ranked_market": true
+    },
+    {
+      "id": "la-cruz",
+      "name": "La Cruz de Huanacaxtle",
+      "peer": false,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 30–40 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 3881,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 203,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "Only open/priced-in on file (SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta). Open is not future upside.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 6.1,
+          "score_0_100": 61,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 3881,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 3881 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 66 (diagnostic only). Spider 6.1/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": false,
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no CONAGUA/CEA/OROMAPAS lab print naming this town",
+          "why": "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "Blue Flag Marina Riviera Nayarit 2025–26 (marina, not a public surf beach) + Pacific sargassum",
+          "url": "https://diariodevallarta.com/bahia-de-banderas-consolida-su-liderazgo-en-playas-limpias/",
+          "why": "Blue Flag 2025–26: Marina Riviera Nayarit en La Cruz de Huanacaxtle. Marina, not a surf beach. Pacific outside SIR. Score 8.0.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 49,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 90,
+        "weights_dropped": 10,
+        "axes_scored": 6,
+        "axes_total": 7,
+        "complete": false,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": true,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 6.1,
+          "safety": 6.0,
+          "potable_water": null,
+          "beach_sargassum": 8.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": null,
+      "rank": 6,
+      "ranked_market": true
+    },
+    {
+      "id": "bucerias",
+      "name": "Bucerías",
+      "peer": false,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 20–30 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4150,
+        "source": "Homia MLS asking 27 Aug 2026",
+        "n": 363,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "Only open/priced-in on file (SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta). Open is not future upside.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 5.9,
+          "score_0_100": 59,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 4150,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 4150 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 64 (diagnostic only). Spider 5.9/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": true,
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "grain": "municipal BdB + Bucerías named historically — not a CONAGUA lab PDF",
+          "source": "Diario de Vallarta municipal water note; Vallarta Independiente 23 Jun 2026 dirty-water complaints (municipal, not scored as a number)",
+          "url": "https://diariodevallarta.com/bahia-de-banderas-registra-mejora-historica-en-la-calidad-del-agua-potable/",
+          "why": "Bucerías named: historical salinity, iron, manganese; aqueduct built; municipal chlorination 60→98% CONAGUA claim (press, not a lab PDF). 2026 dirty-water complaints are municipal and contested. Score 5.0."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "Pacific sargassum geography only; beach WQ sample not in retrieved official bulletins",
+          "why": "Pacific is outside NOAA/USF SIR (Atlantic–Caribbean–Gulf). July 2026 'sargassum' was Hypnea at Guayabitos, not this town. No Blue Flag name. Badeba Media named COFEPRIS enterococci for some BdB beaches; gob.mx summer bulletin HTML was empty this pass, so swim-quality stays unlabeled. Score 9.0 is sargassum-risk, not a water-quality badge.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 49,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 100,
+        "weights_dropped": 0,
+        "axes_scored": 7,
+        "axes_total": 7,
+        "complete": true,
+        "unknown_axes": [],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": false,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 5.9,
+          "safety": 6.0,
+          "potable_water": 5.0,
+          "beach_sargassum": 9.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": 2,
+      "rank": 4,
+      "ranked_market": true
+    },
+    {
+      "id": "amapas",
+      "name": "Amapas",
+      "peer": false,
+      "municipality": "Puerto Vallarta, Jalisco",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. in_pv."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4536,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 115,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town. NHC Kenna: PV hotel surge ~$5M / 10 ft waves, 30 kt in town (municipal, not colonia). Do not extra-ding Amapas/Conchas for Lidia; eyewall emphasis is Tomatlán.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id).",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 5.5,
+          "score_0_100": 55,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 4536,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 4536 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 61 (diagnostic only). Spider 5.5/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Puerto Vallarta, Jalisco) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Puerto Vallarta, not colonia. SESNSP 2025 via municipiodata: 5,492 delitos, aggregator 1,882/100k (~3× BdB), 15 homicidio doloso. State Dept 29 May 2026: Jalisco L3, but PV + Riviera Nayarit unrestricted. Town UNKNOWN.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": true,
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "municipal operator SEAPAL — colonia UNKNOWN",
+          "source": "SEAPAL gob.mx 8 Jul 2026",
+          "url": "https://www.seapal.gob.mx/index.php/blog/agua-potable-certificada-una-fortaleza-que-distingue-a-puerto-vallarta",
+          "why": "SEAPAL 8 Jul 2026: 35 consecutive years COPRISJAL certification, NOM-127/179/230. Unique operador in Jalisco with that streak. Colonia tap test not printed. Score 8.0 municipal."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "not on COFEPRIS five-beach fail list; no Blue Flag name found; Pacific sargassum",
+          "why": "Not on the five-beach COFEPRIS verano 2026 fail list. No Blue Flag name found. Pacific outside SIR. Score 8.0 (no-sargassum + not failed). Do not invent a scenic rating. Do not extra-ding for Lidia.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 49,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 100,
+        "weights_dropped": 0,
+        "axes_scored": 7,
+        "axes_total": 7,
+        "complete": true,
+        "unknown_axes": [],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": false,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 5.5,
+          "safety": 5.0,
+          "potable_water": 8.0,
+          "beach_sargassum": 8.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": 1,
+      "rank": 3,
+      "ranked_market": true
+    },
+    {
+      "id": "pv-5dedic",
+      "name": "PV 5 de Dic",
+      "peer": false,
+      "municipality": "Puerto Vallarta, Jalisco",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. in_pv."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4759,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 152,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town. NHC Kenna: PV hotel surge ~$5M / 10 ft waves, 30 kt in town (municipal, not colonia). Do not extra-ding Amapas/Conchas for Lidia; eyewall emphasis is Tomatlán.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id).",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 5.3,
+          "score_0_100": 53,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 4759,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 4759 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 59 (diagnostic only). Spider 5.3/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Puerto Vallarta, Jalisco) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Puerto Vallarta, not colonia. SESNSP 2025 via municipiodata: 5,492 delitos, aggregator 1,882/100k (~3× BdB), 15 homicidio doloso. State Dept 29 May 2026: Jalisco L3, but PV + Riviera Nayarit unrestricted. Town UNKNOWN.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": true,
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "municipal operator SEAPAL — colonia UNKNOWN",
+          "source": "SEAPAL gob.mx 8 Jul 2026",
+          "url": "https://www.seapal.gob.mx/index.php/blog/agua-potable-certificada-una-fortaleza-que-distingue-a-puerto-vallarta",
+          "why": "SEAPAL 8 Jul 2026: 35 consecutive years COPRISJAL certification, NOM-127/179/230. Unique operador in Jalisco with that streak. Colonia tap test not printed. Score 8.0 municipal."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/",
+            "https://www.informador.mx/jalisco/playa-de-puerto-vallarta-no-apta-para-uso-recreativo-en-verano-cofepris-20260710-0135.html",
+            "https://www.ejecentral.com.mx/nuestro-eje/vacaciones-de-verano-2026-cofepris-identifica-5-playas-no-aptas-para-nadar-en-mexico-revisa-cuales-son-las-costas-contaminadas"
+          ],
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "grain": "COFEPRIS verano 2026 Playa del Cuale not apta (centro). Camarones Blue Flag claimed nearby. 5 de Dic is not the Cuale sample.",
+          "why": "COFEPRIS verano 2026: Playa del Cuale only Jalisco fail (limit 200 NMP/100 mL). ejecentral: the fail is the analyzed PV point, not all BdB beaches. Camarones Blue Flag claimed nearby (Vallarta Hoy). 5 de Dic is the closest priced colonia to centro/Camarones. Score 6.0. Not a town enterococci print for 5 de Dic itself.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 47,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 100,
+        "weights_dropped": 0,
+        "axes_scored": 7,
+        "axes_total": 7,
+        "complete": true,
+        "unknown_axes": [],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": false,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 5.3,
+          "safety": 5.0,
+          "potable_water": 8.0,
+          "beach_sargassum": 6.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": 3,
+      "rank": 8,
+      "ranked_market": true
+    },
+    {
+      "id": "sayulita",
+      "name": "Sayulita",
+      "peer": true,
+      "municipality": "Bahía de Banderas, Nayarit",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 45–60 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4848,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 53,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "Only open/priced-in on file (SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta). Open is not future upside.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 5.2,
+          "score_0_100": 52,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 4848,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 4848 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 58 (diagnostic only). Spider 5.2/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 6.0,
+          "score_0_100": 60,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Bahía de Banderas, Nayarit) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Bahía de Banderas, not town. SESNSP 2025 via municipiodata: 1,240 delitos, aggregator 661/100k, 24 homicidio doloso. State Dept 29 May 2026: Nayarit L2; PV + Riviera Nayarit unrestricted. No town file. No gates vs village file. Not a 8–9 blog-safe score.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": false,
+          "score_0_10": null,
+          "score_0_100": null,
+          "status": "unknown",
+          "grain": "no CONAGUA/CEA/OROMAPAS lab print naming this town",
+          "why": "No potable lab (CONAGUA/CEA/COPRISJAL) naming this town. BdB 98% chlorination is municipal press, not copied onto un-named towns. Prefer UNKNOWN over a guessed town delta."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "Pacific sargassum geography only; beach WQ sample not in retrieved official bulletins",
+          "why": "Pacific is outside NOAA/USF SIR (Atlantic–Caribbean–Gulf). July 2026 'sargassum' was Hypnea at Guayabitos, not this town. No Blue Flag name. Badeba Media named COFEPRIS enterococci for some BdB beaches; gob.mx summer bulletin HTML was empty this pass, so swim-quality stays unlabeled. Score 9.0 is sargassum-risk, not a water-quality badge.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 48,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 90,
+        "weights_dropped": 10,
+        "axes_scored": 6,
+        "axes_total": 7,
+        "complete": false,
+        "unknown_axes": [
+          "potable_water"
+        ],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": true,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 5.2,
+          "safety": 6.0,
+          "potable_water": null,
+          "beach_sargassum": 9.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": null,
+      "rank": 7,
+      "ranked_market": true
+    },
+    {
+      "id": "conchas-chinas",
+      "name": "Conchas Chinas",
+      "peer": true,
+      "municipality": "Puerto Vallarta, Jalisco",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. in_pv."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 7066,
+        "source": "Homia MLS asking Aug 2026",
+        "n": null,
+        "band": "Lower / beach-side Homia pin",
+        "sample_n_unknown": true
+      },
+      "punta_mita_role": null,
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 20,
+          "grain": "PV-centered regional — not a town storm count",
+          "formula": "10 = no Pacific hurricane history; 0 = repeated Cat-4 landfall damage on this town. 5 = two nearby Cat-4 landfalls (Kenna 2002 San Blas; Lidia 2023 Las Peñitas ~35 n mi SW), priced towns not the eyewall.",
+          "do_not_stamp_46_per_town": true,
+          "source": "NHC TCR Lidia EP152023; NHC TCR Kenna EP142002; Reuters 11 Oct 2023. Parent 46/60 n mi NOAA HHT is regional only, not re-counted this pass.",
+          "urls": [
+            "https://www.nhc.noaa.gov/data/tcr/EP152023_Lidia.pdf",
+            "https://www.nhc.noaa.gov/data/tcr/EP142002_Kenna.pdf",
+            "https://www.reuters.com/world/americas/hurricane-lidia-slams-mexicos-coast-leaving-widespread-damage-2023-10-11/"
+          ],
+          "why": "Regional 5.0. Lidia Cat 4 landfall Las Peñitas ~35 n mi SW of PV; trees/roofs 'around PV'; eyewall Tomatlán (out of priced set). Kenna Cat 4 San Blas; PV surge. Do not stamp 46 storms on this town. NHC Kenna: PV hotel surge ~$5M / 10 ft waves, 30 kt in town (municipal, not colonia). Do not extra-ding Amapas/Conchas for Lidia; eyewall emphasis is Tomatlán.",
+          "in_composite": true
+        },
+        "future_catalysts": {
+          "score_0_10": 0.0,
+          "score_0_100": 0,
+          "status": "scored",
+          "grain": "town_id catalysts + hotel-pipeline rows with this town_id. Open is priced-in (0).",
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id).",
+          "weight": 20,
+          "in_composite": true
+        },
+        "price_runway_vs_peers": {
+          "score_0_10": 3.0,
+          "score_0_100": 30,
+          "status": "scored",
+          "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
+          "headline_usd_m2": 7066,
+          "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
+          "why": "Headline 7066 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 39 (diagnostic only). Spider 3.0/10.",
+          "weight": 20,
+          "in_composite": true
+        },
+        "safety": {
+          "score_0_10": 5.0,
+          "score_0_100": 50,
+          "status": "scored",
+          "weight": 15,
+          "grain": "municipality (Puerto Vallarta, Jalisco) — not town",
+          "formula": "Buyer 0–10 from municipal SESNSP 2025 total rate + State Dept level. BdB 6, PV 5. Doloso-only inversion not used (it made PV look safer against a 3× higher denuncia rate).",
+          "source": "SESNSP 2025 via municipiodata.com; travel.state.gov Mexico advisory 29 May 2026 (search-index snapshot; live HTML Cloudflare-blocked).",
+          "urls": [
+            "https://www.municipiodata.com/municipios/nayarit/bahia-de-banderas/criminalite",
+            "https://www.municipiodata.com/municipios/jalisco/puerto-vallarta/criminalite",
+            "https://travel.state.gov/en/international-travel/travel-advisories/mexico.html"
+          ],
+          "why": "Municipal Puerto Vallarta, not colonia. SESNSP 2025 via municipiodata: 5,492 delitos, aggregator 1,882/100k (~3× BdB), 15 homicidio doloso. State Dept 29 May 2026: Jalisco L3, but PV + Riviera Nayarit unrestricted. Town UNKNOWN.",
+          "in_composite": true
+        },
+        "potable_water": {
+          "weight": 10,
+          "in_composite": true,
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "municipal operator SEAPAL — colonia UNKNOWN",
+          "source": "SEAPAL gob.mx 8 Jul 2026",
+          "url": "https://www.seapal.gob.mx/index.php/blog/agua-potable-certificada-una-fortaleza-que-distingue-a-puerto-vallarta",
+          "why": "SEAPAL 8 Jul 2026: 35 consecutive years COPRISJAL certification, NOM-127/179/230. Unique operador in Jalisco with that streak. Colonia tap test not printed. Score 8.0 municipal."
+        },
+        "beach_sargassum": {
+          "weight": 10,
+          "source_sargassum": "NOAA/USF SIR is Atlantic–Caribbean–Gulf only (status 28 Aug 2026). Pacific sargassum component 9. July 2026 Nayarit scare was Hypnea at Guayabitos/Compostela, not this set.",
+          "urls": [
+            "https://cwcgom.aoml.noaa.gov/SIR/",
+            "https://mexiconewsdaily.com/news/thats-not-sargassum-nayarit-beach-but-hypnea-safer-lookalike/"
+          ],
+          "score_0_10": 8.0,
+          "score_0_100": 80,
+          "status": "scored",
+          "grain": "not on COFEPRIS five-beach fail list; no Blue Flag name found; Pacific sargassum",
+          "why": "Not on the five-beach COFEPRIS verano 2026 fail list. No Blue Flag name found. Pacific outside SIR. Score 8.0 (no-sargassum + not failed). Do not invent a scenic rating. Do not extra-ding for Lidia.",
+          "in_composite": true
+        },
+        "timezone_overlap": {
+          "score_0_10": 9.0,
+          "score_0_100": 90,
+          "status": "scored",
+          "grain": "region (passes 3h gate)",
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas.",
+          "weight": 5,
+          "in_composite": true
+        }
+      },
+      "composite": {
+        "overall": 44,
+        "scale": "0-100",
+        "spider_scale": "0-10",
+        "weights_used": 100,
+        "weights_dropped": 0,
+        "axes_scored": 7,
+        "axes_total": 7,
+        "complete": true,
+        "unknown_axes": [],
+        "formula": "(sum score_0_10 * weight) / sum(weights of scored axes) * 10, then round. Unknown axes dropped, not zeroed.",
+        "partial": false,
+        "spider_0_10": {
+          "hurricane_history_and_damage": 5.0,
+          "future_catalysts": 0.0,
+          "price_runway_vs_peers": 3.0,
+          "safety": 5.0,
+          "potable_water": 8.0,
+          "beach_sargassum": 8.0,
+          "timezone_overlap": 9.0
+        }
+      },
+      "rank_complete": 4,
+      "rank": 9,
+      "ranked_market": true
+    }
+  ]
+}
