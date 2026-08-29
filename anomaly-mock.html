@@ -105,24 +105,24 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--foam);font-famil
 <script>
 (function () {
   const RAW = [
-    { id: "c1",  name: "Ola Studio",     town: "Bucerías",        m2: 70,  usd: 360000,  swatch: "#1a3a3a" },
-    { id: "c2",  name: "Coco Loft",      town: "Sayulita",        m2: 90,  usd: 440000,  swatch: "#2a2438" },
-    { id: "c3",  name: "Arena 12",       town: "La Cruz",         m2: 110, usd: 520000,  swatch: "#3a2418" },
-    { id: "c4",  name: "Palapa Norte",   town: "Nuevo Vallarta",  m2: 130, usd: 600000,  swatch: "#1a3040" },
-    { id: "c5",  name: "Brisa 8",        town: "Flamingos",       m2: 150, usd: 680000,  swatch: "#243018" },
-    { id: "c6",  name: "Duna Casa",      town: "Bucerías",        m2: 170, usd: 760000,  swatch: "#301828" },
-    { id: "c7",  name: "Tide House",     town: "Conchas Chinas",  m2: 190, usd: 840000,  swatch: "#182838" },
-    { id: "c8",  name: "Mar y Sal",      town: "Sayulita",        m2: 210, usd: 920000,  swatch: "#283018" },
     { id: "c9",  name: "Pelican Walk",   town: "La Cruz",         m2: 230, usd: 1000000, swatch: "#381820" },
     { id: "c10", name: "Concha Loft",    town: "Nuevo Vallarta",  m2: 80,  usd: 400000,  swatch: "#203040" },
-    { id: "c11", name: "Palma Split",    town: "Flamingos",       m2: 200, usd: 880000,  swatch: "#302010" },
-    { id: "c12", name: "Azulito",        town: "Bucerías",        m2: 250, usd: 1080000, swatch: "#102830" },
+    { id: "c6",  name: "Duna Casa",      town: "Bucerías",        m2: 170, usd: 760000,  swatch: "#301828" },
+    { id: "c3",  name: "Arena 12",       town: "La Cruz",         m2: 110, usd: 520000,  swatch: "#3a2418" },
     { id: "g1",  name: "Casa Nube 2",    town: "Sayulita",        m2: 140, usd: 420000,  swatch: "#143028" },
-    { id: "g2",  name: "Solera Beach",   town: "La Cruz",         m2: 180, usd: 520000,  swatch: "#183424" },
-    { id: "g3",  name: "Mango Deck",     town: "Bucerías",        m2: 220, usd: 640000,  swatch: "#1c3820" },
-    { id: "p1",  name: "Loma Coral",     town: "Conchas Chinas",  m2: 100, usd: 640000,  swatch: "#3a2018" },
+    { id: "c12", name: "Azulito",        town: "Bucerías",        m2: 250, usd: 1080000, swatch: "#102830" },
+    { id: "c2",  name: "Coco Loft",      town: "Sayulita",        m2: 90,  usd: 440000,  swatch: "#2a2438" },
+    { id: "c11", name: "Palma Split",    town: "Flamingos",       m2: 200, usd: 880000,  swatch: "#302010" },
     { id: "p2",  name: "Fuego Deck",     town: "Sayulita",        m2: 160, usd: 1040000, swatch: "#3c2414" },
-    { id: "p3",  name: "Pescador 4",     town: "Nuevo Vallarta",  m2: 240, usd: 1480000, swatch: "#401810" }
+    { id: "c5",  name: "Brisa 8",        town: "Flamingos",       m2: 150, usd: 680000,  swatch: "#243018" },
+    { id: "c1",  name: "Ola Studio",     town: "Bucerías",        m2: 70,  usd: 360000,  swatch: "#1a3a3a" },
+    { id: "p1",  name: "Loma Coral",     town: "Conchas Chinas",  m2: 100, usd: 640000,  swatch: "#3a2018" },
+    { id: "c8",  name: "Mar y Sal",      town: "Sayulita",        m2: 210, usd: 920000,  swatch: "#283018" },
+    { id: "g3",  name: "Mango Deck",     town: "Bucerías",        m2: 220, usd: 640000,  swatch: "#1c3820" },
+    { id: "c4",  name: "Palapa Norte",   town: "Nuevo Vallarta",  m2: 130, usd: 600000,  swatch: "#1a3040" },
+    { id: "p3",  name: "Pescador 4",     town: "Nuevo Vallarta",  m2: 240, usd: 1480000, swatch: "#401810" },
+    { id: "c7",  name: "Tide House",     town: "Conchas Chinas",  m2: 190, usd: 840000,  swatch: "#182838" },
+    { id: "g2",  name: "Solera Beach",   town: "La Cruz",         m2: 180, usd: 520000,  swatch: "#183424" }
   ];
 
   function ols(rows) {
