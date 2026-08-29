@@ -436,13 +436,14 @@ a.home-card:hover{border-color:var(--accent-3)}
 
 .rail-bar{display:none}
 @media (min-width:900px){
-  #app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-width:none;grid-template-rows:100dvh}
-  #app.content-full{grid-template-columns:0 minmax(0,1fr)}
+  #app{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"rail stage";max-width:none;grid-template-rows:100dvh}
+  #app.content-full{grid-template-columns:minmax(0,1fr);grid-template-areas:"rail"}
   #app.content-full #stage{display:none}
-  #stage{position:relative;height:100dvh;min-width:0}
+  #stage{grid-area:stage;position:relative;height:100dvh;min-width:0}
   .drive{right:12px;left:12px;max-width:420px}
   #openList{display:none}
-  #rail{position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-left:1px solid var(--line);z-index:2;min-width:0;overflow:hidden}
+  #rail{grid-area:rail;position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-right:1px solid var(--line);border-left:0;z-index:2;min-width:0;overflow:hidden}
+  .modal,.toast{grid-area:rail}
   .rail-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px 4px;flex-shrink:0;min-height:52px}
   .rail-brand{font-family:var(--font-display);font-weight:800;letter-spacing:.04em;font-size:13px}
   #toggleContentFull{min-width:44px;min-height:44px}
@@ -455,8 +456,7 @@ a.home-card:hover{border-color:var(--accent-3)}
   .compare-dock.tucked{transform:none;pointer-events:auto;z-index:auto}
   .sheet.snap-full ~ .define-layer{bottom:0;padding-top:16px}
   .map-credit{bottom:14px;right:14px}
-  .toast{left:auto;right:calc(50% + 16px);transform:none;bottom:24px}
-  #app.content-full .toast{right:16px}
+  .toast{left:auto;right:16px;transform:none;bottom:24px}
   .rank-line{min-width:0;width:100%}
   .rank-row,.rank-cols{grid-template-columns:26px minmax(0,1fr) 58px 48px 44px;min-width:0}
   .chart-wrap{height:320px}
