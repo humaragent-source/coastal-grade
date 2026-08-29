@@ -153,9 +153,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .go-compare:disabled{opacity:.35;cursor:default}
 .clear-compare{background:transparent;color:var(--dim);padding:10px 6px}
 
-.sheet{position:absolute;left:0;right:0;bottom:0;z-index:900;background:var(--sheet);border-top:1px solid var(--line);border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;backdrop-filter:blur(16px);transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.8,.2,1),height .32s cubic-bezier(.2,.8,.2,1);height:64dvh;display:flex;flex-direction:column;box-shadow:0 -20px 60px var(--shadow);pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;top:auto;z-index:900;background:var(--sheet);border-top:1px solid var(--line);border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;backdrop-filter:blur(16px);transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.8,.2,1),height .32s cubic-bezier(.2,.8,.2,1),top .32s cubic-bezier(.2,.8,.2,1),border-radius .32s cubic-bezier(.2,.8,.2,1);height:64dvh;max-height:none;display:flex;flex-direction:column;box-shadow:0 -20px 60px var(--shadow);pointer-events:auto}
 .sheet.open{transform:translateY(0)}
-.sheet.snap-full{height:calc(100dvh - var(--st))}
+.sheet.snap-full{top:var(--st);bottom:0;height:auto;max-height:none;border-radius:0}
 .sheet.dragging{transition:none}
 .handle-hit{display:flex;align-items:center;justify-content:center;height:44px;min-height:44px;width:100%;flex-shrink:0;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
 .handle{width:42px;height:4px;border-radius:4px;background:var(--white-18);pointer-events:none}
@@ -163,7 +163,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .sheet.snap-full .sheet-scroll{padding-bottom:calc(24px + var(--sb))}
 .compare-dock.tucked{transform:translateY(calc(100% + 32px));pointer-events:none;z-index:800}
 .sheet-scroll::-webkit-scrollbar{width:0;height:0;display:none}
-.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;touch-action:none;-webkit-user-select:none;user-select:none}
+.sheet-head .x,.sheet-head .icon-btn{touch-action:manipulation}
 .sheet-head h2{margin:0;font-family:var(--font-display);font-size:22px;letter-spacing:-.02em}
 .meta{font-size:12px;color:var(--dim);margin-top:3px}
 .x,.icon-btn{border:0;background:var(--white-06);color:var(--foam);width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:16px;flex-shrink:0}
@@ -257,22 +258,15 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
 .spider-block{margin:0 0 16px}
 .spider-empty{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
-.chart-wrap{height:250px;position:relative;margin:4px 0 8px;width:100%}
+.chart-wrap{height:256px;position:relative;margin:4px 0 8px;width:100%}
 .chart-wrap canvas{display:block;width:100%;height:100%}
 .radar-hits{position:absolute;inset:0;pointer-events:none}
-.radar-hit{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;border:0;background:transparent;padding:0;margin:0;cursor:pointer;pointer-events:auto;transform:translate(-50%,-50%);appearance:none;-webkit-appearance:none;visibility:hidden}
+.radar-hit{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;border:0;background:transparent;padding:0;margin:0;cursor:pointer;pointer-events:auto;transform:translate(-50%,-50%);appearance:none;-webkit-appearance:none;opacity:0}
 #openSettings{padding:0;width:44px;height:44px;min-width:44px;min-height:44px}
 #openSettings svg{display:block;width:18px;height:18px}
 .chip.partial{background:var(--sand-d);color:var(--sand);border-color:var(--warn-3);font-weight:600}
 .partial-head{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .partial-score{font-size:26px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.axis-bars{display:grid;gap:8px;margin:0 0 12px}
-.axis-bar{display:grid;grid-template-columns:84px 1fr 36px;gap:8px;align-items:center;font-size:12px;color:var(--dim)}
-.axis-bar b{color:var(--foam);font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
-.axis-track{height:8px;border-radius:var(--radius-chip);background:var(--white-06);overflow:hidden}
-.axis-fill{height:100%;border-radius:inherit;background:var(--accent);width:0}
-.axis-fill.runway{background:var(--warn)}
-.axis-fill.timezone{background:var(--info)}
 .axis-defs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
 .score-tap{appearance:none;-webkit-appearance:none;background:transparent;border:0;color:inherit;font:inherit;cursor:pointer;padding:0;min-height:44px;min-width:44px;display:inline-flex;align-items:center;gap:8px;text-align:left}
 .plan-row{display:flex;gap:8px}
@@ -332,8 +326,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   .drive{right:12px;left:12px;max-width:420px}
   #openList{display:none}
   #rail{position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-left:1px solid var(--line);z-index:2}
-  .sheet{position:relative;bottom:auto;transform:none;max-height:none;height:auto;flex:1;min-height:0;border-radius:0;border:0;box-shadow:none}
-  .sheet.open,.sheet.snap-full,.sheet.dragging{transform:none;max-height:none;height:auto}
+  .sheet{position:relative;bottom:auto;top:auto;transform:none;max-height:none;height:auto;flex:1;min-height:0;border-radius:0;border:0;box-shadow:none}
+  .sheet.open,.sheet.snap-full,.sheet.dragging{transform:none;max-height:none;height:auto;top:auto;bottom:auto;border-radius:0}
   .handle-hit,.handle{display:none}
   .sheet-scroll{padding:14px 16px 16px}
   .sheet.snap-full .sheet-scroll{padding:14px 16px 16px}
@@ -659,19 +653,44 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       ]
     },
     comps: {
-      name: "COMPS",
+      name: "RUNWAY (COMPS)",
       mean: "Price runway vs peers: Puerto Vallarta, Sayulita, Punta Mita, Cabo M\u00e9dano.",
       grade: [
         "How cheap or expensive this town is per m\u00b2 versus those markets.",
-        "No verified USD/m\u00b2 = no Comps score.",
+        "No verified USD/m\u00b2 = no Runway score.",
         "AMPI averages are not comps."
+      ]
+    },
+    safety: {
+      name: "SAFETY",
+      mean: "Town-level safety. Not a tourist-board badge.",
+      grade: [
+        "No verified per-town crime or safety series is on file.",
+        "Unknown stays unknown. Do not invent a safety score from regional headlines."
+      ]
+    },
+    water: {
+      name: "WATER",
+      mean: "Potable water at the town, not a regional stamp.",
+      grade: [
+        "No verified per-town potable-water measure is on file.",
+        "Unknown stays unknown."
       ]
     },
     beach: {
       name: "BEACH",
       mean: "Beach quality and sargassum.",
       grade: [
-        "Pacific is usually lighter on sargassum than the Caribbean; still grade the beach, never a free badge."
+        "Pacific is usually lighter on sargassum than the Caribbean; still grade the beach, never a free badge.",
+        "No town-level sargassum count is on file. Unknown stays unknown."
+      ]
+    },
+    timezone: {
+      name: "TIMEZONE",
+      mean: "Overlap with San Francisco, New York, and Miami (within 3 hours).",
+      grade: [
+        "Hard gate: timezone within 3h of SF / NY / Miami.",
+        "Scored towns on this map are MST or CST. Do not invent an IANA split."
       ]
     }
   };
@@ -799,6 +818,13 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   function thisBeach(t) {
     const band = t.usd_m2 && t.usd_m2.band;
     if (band && /beach|lower/i.test(String(band))) return String(band);
+    return axisWhy(t, "beach_sargassum");
+  }
+
+  function axisWhy(t, key) {
+    const row = scoreRow(t);
+    const a = row && row.axes && row.axes[key];
+    if (a && a.why) return a.why;
     return "unknown \u2014 not invented";
   }
 
@@ -809,7 +835,10 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     if (id === "storm") return thisStorm(t);
     if (id === "catalyst" || id === "catalysts") return thisCatalyst(t);
     if (id === "comps" || id === "vscc") return thisComps(t);
+    if (id === "safety") return axisWhy(t, "safety");
+    if (id === "water") return axisWhy(t, "potable_water");
     if (id === "beach") return thisBeach(t);
+    if (id === "timezone") return axisWhy(t, "timezone_overlap");
     if (id === "usd") {
       const h = headlineOf(t);
       return h == null ? "unknown \u2014 not invented" : fmtUsd(h);
@@ -875,7 +904,16 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     };
   }
 
-  const AXIS_IDS = ["access", "signal", "storm", "catalyst", "comps", "beach"];
+  const AXIS_IDS = ["access", "signal", "storm", "catalyst", "comps", "safety", "water", "beach", "timezone"];
+  const RADAR_AXES = [
+    { key: "hurricane_history_and_damage", label: "Storm", def: "storm" },
+    { key: "future_catalysts", label: "Catalysts", def: "catalyst" },
+    { key: "price_runway_vs_peers", label: "Runway", def: "comps" },
+    { key: "safety", label: "Safety", def: "safety" },
+    { key: "potable_water", label: "Water", def: "water" },
+    { key: "beach_sargassum", label: "Beach", def: "beach" },
+    { key: "timezone_overlap", label: "Timezone", def: "timezone" }
+  ];
   const SCORED_AXES = [
     { key: "future_catalysts", label: "Catalysts", cls: "catalysts" },
     { key: "price_runway_vs_peers", label: "Runway", cls: "runway" },
@@ -885,17 +923,6 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
   function partialChip() {
     return '<span class="chip partial">Partial \u00b7 3 of 7 axes</span>';
-  }
-
-  function axisBarsHtml(row) {
-    return SCORED_AXES.map(function (ax) {
-      const v = axisScore(row, ax.key);
-      if (v == null) return "";
-      const pct = Math.max(0, Math.min(100, Number(v)));
-      return '<div class="axis-bar"><span>' + esc(ax.label) + "</span>" +
-        '<div class="axis-track"><div class="axis-fill ' + ax.cls + '" style="width:' + pct + '%"></div></div>' +
-        "<b>" + esc(String(v)) + "</b></div>";
-    }).join("");
   }
 
   function axisDefsHtml() {
@@ -914,22 +941,145 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       '<div class="partial-head"><button type="button" class="score-tap" data-metric="score" aria-haspopup="dialog">' +
       '<span class="partial-score">' + (overall == null ? "\u2014" : esc(String(overall))) + "</span>" +
       partialChip() + "</button></div>" +
-      '<div class="axis-bars">' + axisBarsHtml(row) + "</div>" +
-      '<div class="axis-defs">' + axisDefsHtml() + "</div>" +
-      '<p class="caption">' + esc(warn) + "</p></div>";
+      '<div class="chart-wrap"><canvas id="radar" aria-label="Partial grade radar"></canvas><div class="radar-hits" id="radarHits"></div></div>' +
+      '<p class="caption">Partial \u00b7 3 of 7. ' + esc(warn) + "</p></div>";
+  }
+
+  function viewportH() {
+    if (window.visualViewport && window.visualViewport.height) return window.visualViewport.height;
+    return window.innerHeight;
   }
 
   function peekHeight() {
-    return Math.round(window.innerHeight * 0.64);
+    return Math.round(viewportH() * 0.64);
   }
 
   function fullHeight() {
-    const probe = document.createElement("div");
-    probe.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;height:var(--st)";
-    document.body.appendChild(probe);
-    const st = probe.getBoundingClientRect().height || 0;
-    document.body.removeChild(probe);
-    return Math.max(peekHeight(), Math.round(window.innerHeight - st));
+    return Math.round(viewportH());
+  }
+
+  function renderChart() {
+    const canvas = document.getElementById("radar");
+    if (!canvas) return;
+    const t = town(state.selected);
+    const row = scoreRow(t);
+    if (!row || !row.axes) return;
+    const wrap = canvas.parentElement;
+    const hits = document.getElementById("radarHits");
+    const w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 300;
+    const h = (wrap && wrap.clientHeight) ? wrap.clientHeight : 256;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const accent = brandColor("--accent") || "#3eebc9";
+    const fill = brandColor("--accent-22") || "rgba(62,235,201,.22)";
+    const stroke = brandColor("--accent-9") || "rgba(62,235,201,.9)";
+    const grid = brandColor("--radar-grid") || brandColor("--line") || "rgba(90,180,190,.18)";
+    const ink = brandColor("--radar-ink") || brandColor("--foam") || "#9ec9c8";
+    const dim = brandColor("--muted") || brandColor("--dim") || "#6f8f94";
+    const bodyFont = getComputedStyle(document.body).fontFamily || "DM Sans, sans-serif";
+
+    const n = RADAR_AXES.length;
+    const cx = w / 2;
+    const cy = h / 2 + 2;
+    const R = Math.max(52, Math.min(w, h) / 2 - 40);
+    const values = RADAR_AXES.map(function (ax) { return axisScore(row, ax.key); });
+
+    function pt(i, r) {
+      const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+      return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r, a: a };
+    }
+
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = grid;
+    ctx.lineWidth = 1;
+    for (let ring = 1; ring <= 4; ring++) {
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const p = pt(i % n, R * ring / 4);
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    for (let i = 0; i < n; i++) {
+      const known = values[i] != null;
+      const tip = pt(i, R);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.globalAlpha = known ? 1 : 0.38;
+      ctx.strokeStyle = grid;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const r = values[i] == null ? 0 : R * (Math.max(0, Math.min(100, Number(values[i]))) / 100);
+      const p = pt(i, r);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = accent;
+    for (let i = 0; i < n; i++) {
+      if (values[i] == null) continue;
+      const r = R * (Math.max(0, Math.min(100, Number(values[i]))) / 100);
+      const p = pt(i, r);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.font = "10px " + bodyFont;
+    const labelR = R + 18;
+    const hitHtml = [];
+    for (let i = 0; i < n; i++) {
+      const known = values[i] != null;
+      const p = pt(i, labelR);
+      const cos = Math.cos(p.a);
+      const sin = Math.sin(p.a);
+      ctx.globalAlpha = known ? 1 : 0.45;
+      ctx.fillStyle = known ? ink : dim;
+      if (cos > 0.4) ctx.textAlign = "left";
+      else if (cos < -0.4) ctx.textAlign = "right";
+      else ctx.textAlign = "center";
+      if (sin > 0.45) ctx.textBaseline = "top";
+      else if (sin < -0.45) ctx.textBaseline = "bottom";
+      else ctx.textBaseline = "middle";
+      ctx.fillText(RADAR_AXES[i].label, p.x, p.y);
+      hitHtml.push(
+        '<button type="button" class="radar-hit" data-axis="' + RADAR_AXES[i].def +
+        '" aria-label="' + esc(RADAR_AXES[i].label) + '" style="left:' + p.x.toFixed(1) +
+        "px;top:" + p.y.toFixed(1) + 'px"></button>'
+      );
+    }
+    ctx.globalAlpha = 1;
+    if (hits) {
+      hits.innerHTML = hitHtml.join("");
+      hits.querySelectorAll("[data-axis]").forEach(function (b) {
+        b.onclick = function (e) {
+          e.stopPropagation();
+          openDefine(b.getAttribute("data-axis"), t);
+        };
+      });
+    }
   }
 
   function applySheetSnap(mode) {
@@ -941,11 +1091,14 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     if (isDesktop()) {
       sheet.classList.remove("snap-full", "dragging");
       sheet.style.height = "";
+      sheet.style.top = "";
       if (dock) dock.classList.remove("tucked");
       if (handle) handle.setAttribute("aria-valuenow", "0");
       return;
     }
     sheet.classList.toggle("snap-full", sheetSnap === "full");
+    sheet.style.height = "";
+    sheet.style.top = "";
     if (dock) dock.classList.toggle("tucked", sheetSnap === "full");
     if (handle) handle.setAttribute("aria-valuenow", sheetSnap === "full" ? "1" : "0");
   }
@@ -958,6 +1111,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     if (sheet) {
       sheet.classList.remove("snap-full", "dragging");
       sheet.style.height = "";
+      sheet.style.top = "";
     }
     if (dock) dock.classList.remove("tucked");
     if (handle) handle.setAttribute("aria-valuenow", "0");
@@ -975,10 +1129,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       return e.clientY;
     }
 
-    function onDown(e) {
+    function startDrag(e, fromHandle) {
       if (isDesktop() || !sheet.classList.contains("open")) return;
       if (drag) return;
       if (e.pointerType === "mouse" && e.button !== 0) return;
+      if (!fromHandle && e.target.closest("button, a, input, select, textarea, [data-metric], [data-axis]")) return;
       const y = clientY(e);
       if (y == null) return;
       drag = {
@@ -986,12 +1141,17 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         startH: sheet.getBoundingClientRect().height,
         lastY: y,
         lastT: performance.now(),
-        vy: 0
+        vy: 0,
+        moved: 0,
+        fromHandle: !!fromHandle
       };
       sheet.classList.add("dragging");
       sheet.style.height = drag.startH + "px";
-      if (e.pointerId != null && handle.setPointerCapture) {
-        try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+      sheet.classList.remove("snap-full");
+      sheet.style.top = "";
+      const capEl = fromHandle ? handle : (e.currentTarget || sheet);
+      if (e.pointerId != null && capEl.setPointerCapture) {
+        try { capEl.setPointerCapture(e.pointerId); } catch (err) {}
       }
       e.preventDefault();
     }
@@ -1005,6 +1165,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       if (dt > 0) drag.vy = (y - drag.lastY) / dt;
       drag.lastY = y;
       drag.lastT = now;
+      drag.moved = Math.max(drag.moved, Math.abs(y - drag.startY));
       const next = Math.max(peekHeight(), Math.min(fullHeight(), drag.startH + (drag.startY - y)));
       sheet.style.height = next + "px";
       e.preventDefault();
@@ -1012,23 +1173,38 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
     function onUp() {
       if (!drag) return;
+      const fromHandle = drag.fromHandle;
+      const moved = drag.moved;
+      const vy = drag.vy;
       const h = sheet.getBoundingClientRect().height;
-      const peek = peekHeight();
-      const full = fullHeight();
-      let snap = (h - peek) >= (full - peek) * 0.5 ? "full" : "peek";
-      if (drag.vy < -0.45) snap = "full";
-      else if (drag.vy > 0.45) snap = "peek";
       drag = null;
       sheet.classList.remove("dragging");
-      sheet.style.height = "";
+      if (fromHandle && moved < 8) {
+        applySheetSnap(sheetSnap === "full" ? "peek" : "full");
+        return;
+      }
+      const peek = peekHeight();
+      const full = fullHeight();
+      const span = Math.max(1, full - peek);
+      let snap = (h - peek) >= span * 0.5 ? "full" : "peek";
+      if (vy < -0.45) snap = "full";
+      else if (vy > 0.45) snap = "peek";
       applySheetSnap(snap);
     }
 
-    handle.addEventListener("pointerdown", onDown);
+    function onHandleDown(e) { startDrag(e, true); }
+    function onSheetDown(e) {
+      if (e.target.closest("#sheetHandle") || e.target.closest(".handle-hit")) return;
+      if (e.target.closest(".sheet-head")) startDrag(e, false);
+    }
+
+    handle.addEventListener("pointerdown", onHandleDown);
+    sheet.addEventListener("pointerdown", onSheetDown);
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
     window.addEventListener("pointercancel", onUp);
-    handle.addEventListener("touchstart", onDown, { passive: false });
+    handle.addEventListener("touchstart", onHandleDown, { passive: false });
+    sheet.addEventListener("touchstart", onSheetDown, { passive: false });
     window.addEventListener("touchmove", onMove, { passive: false });
     window.addEventListener("touchend", onUp);
     window.addEventListener("touchcancel", onUp);
@@ -1592,6 +1768,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     else if (document.getElementById("sheet") && document.getElementById("sheet").classList.contains("open")) {
       applySheetSnap(sheetSnap);
     }
+    if (document.getElementById("radar")) renderChart();
   }
 
   function ranked() {
@@ -1905,6 +2082,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         state.comingFilter = b.getAttribute("data-cfil");
         paintSheet();
       };
+    });
+    requestAnimationFrame(function () {
+      if (document.getElementById("radar")) renderChart();
     });
   }
 
