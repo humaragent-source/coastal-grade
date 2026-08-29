@@ -1,0 +1,627 @@
+{
+  "meta": {
+    "as_of": "2026-08-28",
+    "radius": "PVR ~2h, Nayarit + north Jalisco coast",
+    "rule": "Do not invent. Official brand pages / brand press only. Open = priced-in. guests_from is month+year only when a primary official source states when the hotel hosts guests; else null. Cabo/Mayakoba/East Cape/Costalegre-beyond-2h stay off_map or out_of_radius.",
+    "brands_checked": [
+      "1 Hotels",
+      "Alila",
+      "Aman",
+      "Andaz",
+      "Auberge",
+      "Autograph Collection",
+      "Banyan Tree",
+      "Belmond",
+      "Canopy",
+      "Conrad",
+      "Curio Collection",
+      "Edition",
+      "Fairmont",
+      "Four Seasons",
+      "Hyatt Ziva",
+      "InterContinental",
+      "JW Marriott",
+      "Kimpton",
+      "Luxury Collection",
+      "Mandarin Oriental",
+      "Montage",
+      "Nobu",
+      "One&Only",
+      "Park Hyatt",
+      "Pendry",
+      "Peninsula",
+      "Raffles",
+      "Regent",
+      "Ritz-Carlton",
+      "Rosewood",
+      "Six Senses",
+      "Sofitel",
+      "Soho House",
+      "St. Regis",
+      "Thompson",
+      "Unbound Collection",
+      "W Hotels",
+      "Waldorf",
+      "Waldorf Astoria"
+    ],
+    "widened": "2026-08-28 append: more global chains. Existing verified rows kept."
+  },
+  "pvr_radius": [
+    {
+      "brand": "Ritz-Carlton",
+      "official_name": "Siari Riviera Nayarit, a Ritz-Carlton Reserve",
+      "town": "La Peñita de Jaltemba (Compostela, Nayarit)",
+      "stage": "open",
+      "priced_in": true,
+      "date_or_window": "Official booking page live 2026-08-28. Marriott News Center item dated 2025-11-24. Exact opening day not stated on the official hotel page.",
+      "source_url": "https://www.ritzcarlton.com/en/hotels/pvrcc-siari-riviera-nayarit-a-ritz-carlton-reserve/overview/",
+      "source_name": "Official Ritz-Carlton hotel page",
+      "date_seen": "2026-08-28",
+      "notes": "Address: Carretera Federal 200 Tepic-Puerto Vallarta Km.88 300, 63720. Official page: 50 minutes / 70.2 km from PVR. Check-in 3pm, rates live.",
+      "town_id": null,
+      "guests_from": null,
+      "logo_domain": "ritzcarlton.com"
+    },
+    {
+      "brand": "Four Seasons",
+      "official_name": "Four Seasons Resort Punta Mita",
+      "town": "Punta Mita",
+      "stage": "open",
+      "priced_in": true,
+      "date_or_window": null,
+      "source_url": "https://www.fourseasons.com/puntamita/",
+      "source_name": "Official Four Seasons hotel page",
+      "date_seen": "2026-08-28",
+      "notes": "Punta Mita, Bahía de Banderas, Nayarit 63734. Live check-rates page. Opening year not stated on the fetched page.",
+      "town_id": "punta-mita",
+      "guests_from": null,
+      "logo_domain": "fourseasons.com"
+    },
+    {
+      "brand": "Four Seasons",
+      "official_name": "Naviva, A Four Seasons Resort",
+      "town": "Punta Mita",
+      "stage": "open",
+      "priced_in": true,
+      "date_or_window": null,
+      "source_url": "https://www.fourseasons.com/naviva/",
+      "source_name": "Official Four Seasons Naviva page",
+      "date_seen": "2026-08-28",
+      "notes": "Adults-only, 15 tented bungalows, Punta Mita Nayarit 63734. Live check-rates. Opening year not stated on the fetched page.",
+      "town_id": "punta-mita",
+      "guests_from": null,
+      "logo_domain": "fourseasons.com"
+    },
+    {
+      "brand": "St. Regis",
+      "official_name": "The St. Regis Punta Mita Resort",
+      "town": "Punta Mita",
+      "stage": "open",
+      "priced_in": true,
+      "date_or_window": "Opened 2008 (White & Case deal note). Marriott hotel page live 2026-08-28.",
+      "source_url": "https://www.marriott.com/en-us/hotels/pvrxr-the-st-regis-punta-mita-resort/overview/",
+      "source_name": "Marriott / St. Regis hotel page",
+      "date_seen": "2026-08-28",
+      "secondary_source": "https://www.whitecase.com/news/press-release/white-case-advises-vertex-and-grupo-mrp-acquisition-financing-st-regis-punta",
+      "notes": "120 rooms. Marriott continues to operate. White & Case: opened 2008.",
+      "town_id": "punta-mita",
+      "guests_from": null,
+      "logo_domain": "marriott.com"
+    },
+    {
+      "brand": "Rosewood",
+      "official_name": "Rosewood Mandarina",
+      "town": "El Monteón (Compostela, Nayarit) / Mandarina",
+      "stage": "open",
+      "priced_in": true,
+      "date_or_window": "Opened 15 May 2025 (official Rosewood press).",
+      "source_url": "https://www.rosewoodhotels.com/en/mandarina",
+      "source_name": "Official Rosewood Mandarina hotel page",
+      "date_seen": "2026-08-28",
+      "secondary_source": "https://www.rosewoodhotels.com/en/media/press/2025/rosewood-mandarina-opens-on-the-shores-of-mexicos-riviera-nayarit1",
+      "notes": "Official address: Carretera Federal Libre 200 Tepic-Puerto Vallarta, El Monteón, Compostela, Nayarit 63724. Press: 45 minutes from PVR, 134 suites, RLH Properties.",
+      "town_id": null,
+      "guests_from": "2025-05",
+      "logo_domain": "rosewoodhotels.com"
+    },
+    {
+      "brand": "Belmond",
+      "official_name": "Milaroca, A Belmond Hotel, Riviera Nayarit",
+      "town": "Riviera Nayarit (near San Pancho / Sayulita per Belmond press)",
+      "stage": "rumor",
+      "priced_in": false,
+      "date_or_window": "Anticipated to open in 2027 (official Belmond press, page title updated from 2025).",
+      "source_url": "https://mediahub.belmond.com/a-legend-in-the-makingmilaroca-a-belmond-hotel-rivieranayarit-opening-2025/",
+      "source_name": "Official Belmond mediahub press release",
+      "date_seen": "2026-08-28",
+      "notes": "22 June 2023 management agreement with Cora Pacific Development. 'Will be built from the ground up.' 105 acres, 40-minute drive from PVR, 57 pavilions. Construction / groundbreaking not confirmed on a primary official page, so stage is rumor (announced), not under_construction.",
+      "town_id": null,
+      "guests_from": null,
+      "logo_domain": "belmond.com"
+    },
+    {
+      "brand": "W Hotels",
+      "official_name": "W Punta de Mita",
+      "town": "Punta de Mita",
+      "town_id": "punta-mita",
+      "stage": "open",
+      "priced_in": true,
+      "guests_from": null,
+      "source_url": "https://www.marriott.com/en-us/hotels/pvrwh-w-punta-de-mita/overview/",
+      "date_seen": "2026-08-28",
+      "logo_domain": "marriott.com",
+      "notes": "Official Marriott hotel page live. Year built not stated on the official page fetched this pass, so guests_from is null."
+    },
+    {
+      "brand": "Conrad",
+      "official_name": "Conrad Punta de Mita",
+      "town": "Punta de Mita",
+      "town_id": "punta-mita",
+      "stage": "open",
+      "priced_in": true,
+      "guests_from": null,
+      "source_url": "https://www.hilton.com/en/hotels/pvrpmci-conrad-punta-de-mita/",
+      "date_seen": "2026-08-28",
+      "logo_domain": "hilton.com",
+      "notes": "Official Hilton page live (check-in 3pm). Opening month not stated on hilton.com this pass; guests_from left null."
+    },
+    {
+      "brand": "Montage",
+      "official_name": "Montage Punta Mita",
+      "town": "Punta Mita",
+      "town_id": "punta-mita",
+      "stage": "under_construction",
+      "priced_in": false,
+      "guests_from": null,
+      "date_or_window": "Official Montage page: currently under development. Official Pendry/Montage press 13 Mar 2025: broken ground, set to open 2027. No month for first guests.",
+      "source_url": "https://www.montage.com/destinations/puntamita/",
+      "secondary_source": "https://www.pendry.com/media/montage-and-pendry-punta-mita-officially-break-ground-in-nayarit/",
+      "date_seen": "2026-08-28",
+      "logo_domain": "montage.com",
+      "notes": "145 guestrooms, 62 residences. Stage UC from official groundbreaking press. guests_from null.",
+      "dispute": {
+        "status": "disputed",
+        "brand_pages_still_say": "Currently Under Development; groundbreaking 13 Mar 2025; set to open 2027",
+        "later_press_not_gobmx": "Mexican press 20–21 Jul 2026 attributes a Semarnat Zofemat revocation at Playa Las Cocinas to Cantiles de Mita. Live gob.mx Semarnat URL was not retrieved 2026-08-28. Brand pages do not confirm cancellation.",
+        "press_url_not_primary": "https://elpais.com/mexico/2026-07-21/medio-ambiente-revoca-la-concesion-para-el-complejo-turistico-que-hizo-obras-en-areas-publicas-en-playa-las-cocinas.html",
+        "rule": "Do not invent either outcome. Stage stays under_construction until official brand or gob.mx says otherwise."
+      }
+    },
+    {
+      "brand": "Pendry",
+      "official_name": "Pendry Punta Mita",
+      "town": "Punta Mita",
+      "town_id": "punta-mita",
+      "stage": "under_construction",
+      "priced_in": false,
+      "guests_from": null,
+      "date_or_window": "Official pendry.com/punta-mita page: Debuting in 2028. March 2025 press said 2027; official destination page is the later figure. No month for first guests.",
+      "source_url": "https://www.pendry.com/punta-mita/",
+      "secondary_source": "https://www.pendry.com/media/montage-and-pendry-punta-mita-officially-break-ground-in-nayarit/",
+      "date_seen": "2026-08-28",
+      "logo_domain": "pendry.com",
+      "notes": "125 guestrooms, 32 residences. Official page says under development / debuting 2028. UC from same March 2025 groundbreaking press.",
+      "dispute": {
+        "status": "disputed",
+        "brand_pages_still_say": "Currently Under Development; debuting 2028 on dest page; same Mar 2025 groundbreaking press as Montage",
+        "later_press_not_gobmx": "Same Las Cocinas / Cantiles de Mita Semarnat story as Montage. Live gob.mx URL not retrieved. Brand pages still present the project.",
+        "rule": "Do not invent either outcome. Stage stays under_construction until official brand or gob.mx says otherwise."
+      }
+    },
+    {
+      "brand": "Auberge",
+      "official_name": "Susurros del Corazón, Auberge Resorts Collection",
+      "town": "Punta de Mita",
+      "town_id": "punta-mita",
+      "stage": "open",
+      "priced_in": true,
+      "guests_from": "2022-11",
+      "source_url": "https://auberge.com/susurros/",
+      "date_seen": "2026-08-28",
+      "logo_domain": "aubergeresorts.com",
+      "notes": "Official Auberge page live with booking. Address: Desarrollo El Banco, Carretera a La Cruz de Huanacaxtle Km 14, Punta De Mita, Nayarit 63734. Opening month not on the fetched page. Official Auberge press 6 Jul 2022: begin welcoming guests 3 Nov 2022."
+    },
+    {
+      "brand": "One&Only",
+      "official_name": "One&Only Mandarina",
+      "town": "El Monteón / Mandarina (Compostela, Nayarit)",
+      "town_id": null,
+      "stage": "open",
+      "priced_in": true,
+      "guests_from": null,
+      "source_url": "https://www.oneandonlyresorts.com/mandarina",
+      "date_seen": "2026-08-28",
+      "logo_domain": "oneandonlyresorts.com",
+      "notes": "Official Kerzner/One&Only page live. Same Mandarina master plan as Rosewood Mandarina. Opening month not stated on the official page this pass."
+    },
+    {
+      "brand": "Hyatt Ziva",
+      "official_name": "Hyatt Ziva Puerto Vallarta",
+      "town": "Puerto Vallarta (Las Estacas Beach / Golden Zone)",
+      "town_id": null,
+      "stage": "open",
+      "priced_in": true,
+      "guests_from": "2014-12",
+      "source_url": "https://newsroom.hyatt.com/122214Hyatt-Ziva-Puerto-Vallarta-Opens-In-Mexico",
+      "date_seen": "2026-08-28",
+      "logo_domain": "hyatt.com",
+      "notes": "Official Hyatt newsroom 22 Dec 2014: announces the opening. Southern Bahia de Banderas, in radius. Also Hyatt fact-sheet PDF 2025 on assets.hyatt.com."
+    },
+    {
+      "brand": "Edition",
+      "official_name": "EDITION Nayarit",
+      "town": null,
+      "town_id": null,
+      "stage": "rumor",
+      "priced_in": false,
+      "guests_from": null,
+      "source_url": "https://www.editionhotels.com/coming-soon/",
+      "date_seen": "2026-08-28",
+      "logo_domain": "editionhotels.com",
+      "notes": "Official EDITION coming-soon and North America destination lists name 'Nayarit' only. No official hotel name beyond that, no town, no date, no construction claim. Stage is rumor. Do not invent a site."
+    },
+    {
+      "brand": "Thompson",
+      "official_name": "Thompson Puerto Vallarta",
+      "town": "Puerto Vallarta",
+      "town_id": null,
+      "stage": "rumor",
+      "priced_in": false,
+      "guests_from": null,
+      "date_or_window": "Hyatt newsroom: in 2027 (year only)",
+      "source_url": "https://newsroom.hyatt.com/2024-01-19-Hyatt-Announces-Record-Signings-and-Pipeline-of-127,000-Rooms-at-Year-End,-Fueling-Growth-Strategy-in-2024-and-Beyond",
+      "secondary_source": "https://newsroom.hyatt.com/news-releases?item=124496",
+      "date_seen": "2026-08-28",
+      "logo_domain": "hyatt.com",
+      "notes": "Official Hyatt newsroom 19 Jan 2024: 'Thompson Puerto Vallarta (Mexico) in 2027.' Construction not stated. No town finer than Puerto Vallarta. guests_from null."
+    }
+  ],
+  "brands_no_project_in_pvr_radius": [
+    {
+      "brand": "1 Hotels",
+      "status": "no_project_in_pvr_radius",
+      "note": "Official 1 Hotels Mexico is 1 Homes Preview Cabo (off-map).",
+      "source_url": "https://www.1hotels.com/cabo",
+      "logo_domain": "1hotels.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Alila",
+      "status": "no_project_in_pvr_radius",
+      "note": "Alila Mayakoba is Riviera Maya, not PVR.",
+      "source_url": null,
+      "logo_domain": "hyatt.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Aman",
+      "status": "no_project_in_pvr_radius",
+      "note": "Official Aman Mexico is Amanvari, East Cape BCS (off-map).",
+      "source_url": "https://www.aman.com/resorts/amanvari",
+      "logo_domain": "aman.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Andaz",
+      "status": "no_project_in_pvr_radius",
+      "note": "Andaz Mayakoba is Riviera Maya, not PVR.",
+      "source_url": null,
+      "logo_domain": "hyatt.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Autograph Collection",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Autograph Collection hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "marriott.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Banyan Tree",
+      "status": "no_project_in_pvr_radius",
+      "note": "Banyan Tree Mayakoba is Riviera Maya, not PVR.",
+      "source_url": null,
+      "logo_domain": "banyantree.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Canopy",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Canopy by Hilton in PVR radius found on hilton.com this pass.",
+      "source_url": null,
+      "logo_domain": "hilton.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Curio Collection",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Curio Collection in PVR radius found on hilton.com this pass.",
+      "source_url": null,
+      "logo_domain": "hilton.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Fairmont",
+      "status": "no_project_in_pvr_radius",
+      "note": "Official Fairmont Mexico hotel found is Fairmont Mayakoba (Riviera Maya). No Nayarit/PVR page.",
+      "source_url": "https://www.fairmont.com/en/hotels/riviera-maya/fairmont-mayakoba.html",
+      "logo_domain": "fairmont.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "InterContinental",
+      "status": "no_project_in_pvr_radius",
+      "note": "No InterContinental hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "ihg.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "JW Marriott",
+      "status": "no_project_in_pvr_radius",
+      "note": "No JW Marriott in PVR/Nayarit on marriott.com this pass. JW hits were Cancun / Costa Rica.",
+      "source_url": null,
+      "logo_domain": "marriott.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Kimpton",
+      "status": "no_project_in_pvr_radius",
+      "note": "Kimpton Mas Olas is Baja, not PVR. No Nayarit Kimpton page found.",
+      "source_url": null,
+      "logo_domain": "ihg.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Luxury Collection",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Luxury Collection hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "marriott.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Mandarin Oriental",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Mandarin Oriental hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "mandarinoriental.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Nobu",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Nobu Hotels page found naming a PVR-radius town this pass.",
+      "source_url": null,
+      "logo_domain": "nobuhotels.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Park Hyatt",
+      "status": "no_project_in_pvr_radius",
+      "note": "Park Hyatt Mexico pages found are Cabo del Sol / Riviera Maya / Mexico City — not PVR.",
+      "source_url": null,
+      "logo_domain": "hyatt.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Peninsula",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Peninsula hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "peninsula.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Raffles",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Raffles hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "raffles.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Regent",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Regent hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "ihg.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Six Senses",
+      "status": "no_project_in_pvr_radius",
+      "note": "Six Senses Xala is Costalegre, south of the ~2h PVR radius. Not treated as a PVR hit.",
+      "source_url": null,
+      "logo_domain": "sixsenses.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Sofitel",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Sofitel hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "sofitel.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Soho House",
+      "status": "no_project_in_pvr_radius",
+      "note": "Soho House Los Cabos is off-map. No Nayarit/PVR Soho House page found.",
+      "source_url": null,
+      "logo_domain": "sohohouse.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Unbound Collection",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Unbound Collection hotel page found in PVR radius this pass.",
+      "source_url": null,
+      "logo_domain": "hyatt.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Waldorf Astoria",
+      "status": "no_project_in_pvr_radius",
+      "note": "No Waldorf Astoria Punta Mita / Puerto Vallarta / Nayarit hotel page found.",
+      "source_url": null,
+      "logo_domain": "hilton.com",
+      "date_seen": "2026-08-28"
+    }
+  ],
+  "off_map": [
+    {
+      "brand": "St. Regis",
+      "official_name": "The St. Regis Los Cabos at Quivira",
+      "town": "Cabo San Lucas / Quivira",
+      "off_map": true,
+      "stage": null,
+      "note": "Already on file as off-map Cabo. Not in PVR radius. Stage not re-verified this pass beyond the existing file note (under construction / summer 2026 target in CoS memory).",
+      "source": "already_on_file"
+    },
+    {
+      "brand": "Aman",
+      "official_name": "Amanvari",
+      "town": "Costa Palmas, East Cape, BCS",
+      "off_map": true,
+      "stage": "open",
+      "priced_in": true,
+      "date_or_window": "CoS memory: opened 1 Aug 2026. Official aman.com/resorts/amanvari live 2026-08-28.",
+      "source_url": "https://www.aman.com/resorts/amanvari",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "1 Hotels",
+      "official_name": "1 Homes Preview Cabo",
+      "town": "Cabo San Lucas, El Médano",
+      "off_map": true,
+      "stage": null,
+      "source_url": "https://www.1hotels.com/cabo",
+      "date_seen": "2026-08-28",
+      "note": "Not PVR. Listed only so it is not stretched onto the bay."
+    },
+    {
+      "brand": "Six Senses",
+      "official_name": "Six Senses Xala",
+      "town": "Xala, Costalegre, Jalisco",
+      "off_map": true,
+      "reason": "out_of_radius",
+      "stage": null,
+      "guests_from": null,
+      "note": "Official sixsenses.com new-openings: 2.5h drive from PVR / Costalegre. Out of ~2h radius. Listing year 2028 only. Not a PVR hit.",
+      "source": "secondary press only this pass; official sixsenses.com page not required for exclusion",
+      "logo_domain": "sixsenses.com",
+      "date_seen": "2026-08-28",
+      "source_url": "https://www.sixsenses.com/en/new-openings/xala/",
+      "date_or_window": "2028 (year only)"
+    },
+    {
+      "brand": "Park Hyatt",
+      "official_name": "Park Hyatt Los Cabos / Cabo del Sol",
+      "town": "Los Cabos",
+      "off_map": true,
+      "logo_domain": "hyatt.com",
+      "date_seen": "2026-08-28"
+    },
+    {
+      "brand": "Soho House",
+      "official_name": "Soho House Los Cabos",
+      "town": "Los Cabos",
+      "off_map": true,
+      "logo_domain": "sohohouse.com",
+      "date_seen": "2026-08-28"
+    }
+  ],
+  "already_on_file_non_hotel": [
+    {
+      "name": "SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta",
+      "stage": "open",
+      "priced_in": true,
+      "note": "Already on file. Not a hotel."
+    },
+    {
+      "name": "Puente Amado Nervo",
+      "stage": "complete_not_open",
+      "priced_in": false,
+      "note": "Already on file. Not a hotel."
+    },
+    {
+      "name": "Litibú Bay Club",
+      "town": "Litibú",
+      "stage": "under_construction",
+      "priced_in": false,
+      "date_or_window": "Deliveries winter 2026 (already on file).",
+      "note": "Already on file. Not one of the 10 brands."
+    },
+    {
+      "name": "Tehuamixtle / Mayto eco-hotels",
+      "town": "Tehuamixtle / Mayto",
+      "stage": "rumor",
+      "priced_in": false,
+      "note": "Already on file: SEMARNAT permitting / rumor. Not one of the 10 brands."
+    }
+  ],
+  "adjacent_not_on_brand_list": [
+    {
+      "official_name": "Conrad Punta de Mita",
+      "town": "Punta de Mita",
+      "stage": "open",
+      "note": "Hilton Conrad. Not on the requested brand list. Opened 1 Sep 2020 per Hotel Online / Hilton. Recorded so it is not confused with a list hit.",
+      "source_url": "https://www.hotel-online.com/news/hiltons-conrad-brand-debuts-in-mexico-with-opening-of-conrad-punta-de-mita",
+      "date_seen": "2026-08-28"
+    }
+  ],
+  "whats_coming_not_priced_in": [
+    {
+      "name": "Montage Punta Mita",
+      "stage": "under_construction",
+      "window": "2027 (official groundbreaking press)",
+      "guests_from": null
+    },
+    {
+      "name": "Pendry Punta Mita",
+      "stage": "under_construction",
+      "window": "2028 (official pendry.com destination page)",
+      "guests_from": null
+    },
+    {
+      "name": "Milaroca, A Belmond Hotel, Riviera Nayarit",
+      "stage": "rumor",
+      "window": "2027 anticipated (official Belmond)",
+      "guests_from": null
+    },
+    {
+      "name": "Litibú Bay Club",
+      "stage": "under_construction",
+      "window": "winter 2026 deliveries (on file)",
+      "guests_from": null
+    },
+    {
+      "name": "Tehuamixtle / Mayto eco-hotels",
+      "stage": "rumor",
+      "window": null,
+      "guests_from": null
+    },
+    {
+      "name": "EDITION Nayarit",
+      "stage": "rumor",
+      "window": null,
+      "guests_from": null,
+      "note": "Official coming-soon listing only; town not stated."
+    },
+    {
+      "name": "Thompson Puerto Vallarta",
+      "stage": "rumor",
+      "window": "2027 (Hyatt newsroom, year only)",
+      "guests_from": null
+    }
+  ],
+  "counts": {
+    "pvr_radius_rows": 15,
+    "pvr_open": 10,
+    "pvr_uc": 2,
+    "pvr_rumor": 3,
+    "no_project_brands": 24
+  }
+}
