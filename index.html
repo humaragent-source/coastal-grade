@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no"/>
+<meta name="theme-color" content="#061016"/>
+<title>Coastal Grade · PVR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<style>
+
+:root{--bg:#061016;--foam:#e7fbf6;--dim:#9bbfb8;--mint:#3eebc9;--mint-d:rgba(62,235,201,.16);--sand:#e6c878;--sand-d:rgba(230,200,120,.16);--storm:#ff7a6a;--uc:#ffb020;--tender:#7ab3ff;--rumor:#c9a0ff;--muted:#6f8f94;--line:rgba(180,230,220,.12);--sheet:rgba(8,18,24,.94);--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:#03080c;color:var(--foam);font-family:"DM Sans",system-ui,sans-serif;overflow:hidden}
+#app{height:100dvh;width:100%;max-width:430px;margin:0 auto;position:relative;overflow:hidden;background:var(--bg);box-shadow:0 0 0 1px rgba(255,255,255,.04),0 20px 80px rgba(0,0,0,.45)}
+#map{position:absolute;inset:0;background:#08141c}
+.leaflet-container{background:#08141c;font-family:inherit}
+.leaflet-control-attribution{background:rgba(6,16,22,.72)!important;color:#6f8f94!important;font-size:9px!important;max-width:70%}
+.leaflet-control-attribution a{color:#8fb8b2!important}
+.leaflet-control-zoom{display:none}
+.vignette{pointer-events:none;position:absolute;inset:0;z-index:400;background:radial-gradient(120% 70% at 50% 100%,rgba(6,16,22,.55),transparent 55%),linear-gradient(180deg,rgba(6,16,22,.55) 0%,transparent 18%,transparent 70%,rgba(6,16,22,.25) 100%)}
+.topbar{position:absolute;top:0;left:0;right:0;z-index:800;padding:calc(10px + var(--st)) 14px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.brand h1{font-family:Syne,sans-serif;font-weight:800;letter-spacing:.04em;font-size:15px;margin:0;line-height:1.1}
+.brand .sub{font-size:10.5px;color:var(--dim);letter-spacing:.04em;margin-top:2px}
+.seed-chip{font-size:10px;color:var(--sand);background:var(--sand-d);border:1px solid rgba(230,200,120,.25);border-radius:999px;padding:6px 9px;white-space:nowrap}
+.drive{position:absolute;top:calc(58px + var(--st));left:12px;right:12px;z-index:800;display:flex;gap:6px;padding:4px;background:rgba(8,18,24,.78);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(10px)}
+.drive button{flex:1;border:0;background:transparent;color:var(--dim);font:600 12px/1 "DM Sans",sans-serif;padding:9px 0;border-radius:11px;cursor:pointer}
+.drive button.on{background:var(--mint-d);color:var(--mint)}
+.drive-label{position:absolute;top:calc(102px + var(--st));left:16px;z-index:800;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.count-pill{position:absolute;top:calc(100px + var(--st));right:14px;z-index:800;font-size:11px;color:var(--foam);background:rgba(8,18,24,.78);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid #061016;box-shadow:0 0 0 1px rgba(62,235,201,.35),0 0 12px rgba(62,235,201,.35);background:var(--mint);transform:translate(-7px,-7px)}
+.dot.unknown{background:#4a6a72;box-shadow:0 0 0 1px rgba(150,180,180,.25),0 0 8px rgba(80,110,120,.3)}
+.dot.ampi{background:#7ab3ff;box-shadow:0 0 0 1px rgba(122,179,255,.4),0 0 10px rgba(122,179,255,.3)}
+.dot.peer{background:var(--sand);width:16px;height:16px;transform:translate(-8px,-8px);box-shadow:0 0 0 1px rgba(230,200,120,.45),0 0 14px rgba(230,200,120,.45)}
+.dot.sel{box-shadow:0 0 0 3px rgba(62,235,201,.55),0 0 18px rgba(62,235,201,.7)}
+.dot.boat{background:#7ab3ff;border-radius:4px}
+.airport{width:22px;height:22px;transform:translate(-11px,-11px);border-radius:6px;background:#12303a;border:1px solid var(--mint);display:grid;place-items:center;color:var(--mint);font-size:10px;font-weight:700;box-shadow:0 0 16px rgba(62,235,201,.35)}
+.lbl{background:none;border:0;box-shadow:none;font-size:10px;font-weight:600;color:#cfeae4;text-shadow:0 1px 4px #061016,0 0 8px #061016;margin-left:8px;margin-top:-2px;white-space:nowrap;pointer-events:none}
+.compare-dock{position:absolute;left:10px;right:10px;bottom:calc(18px + var(--sb));z-index:960;background:rgba(8,18,24,.9);border:1px solid var(--line);border-radius:16px;padding:10px 12px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:8px;transition:transform .25s ease}
+.compare-dock.sheet-open{transform:translateY(-6px)}
+.slot{flex:1;min-width:0;background:rgba(255,255,255,.04);border-radius:10px;padding:8px 9px;font-size:11px;color:var(--muted)}
+.slot strong{display:block;color:var(--foam);font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot.filled strong{color:var(--mint)}
+.slot.b.filled strong{color:var(--sand)}
+.go-compare,.clear-compare{border:0;cursor:pointer;font:600 11px/1 "DM Sans",sans-serif;border-radius:999px;padding:10px 11px;white-space:nowrap}
+.go-compare{background:var(--mint);color:#052019}
+.go-compare:disabled{opacity:.35;cursor:default}
+.clear-compare{background:transparent;color:var(--dim);padding:10px 6px}
+
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:900;background:var(--sheet);border-top:1px solid var(--line);border-radius:22px 22px 0 0;backdrop-filter:blur(16px);transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.8,.2,1);max-height:64dvh;display:flex;flex-direction:column;box-shadow:0 -20px 60px rgba(0,0,0,.45)}
+.sheet.open{transform:translateY(0)}
+.sheet.compare-mode{max-height:86dvh}
+.handle{width:42px;height:4px;border-radius:4px;background:rgba(255,255,255,.18);margin:10px auto 6px}
+.sheet-scroll{overflow:auto;padding:0 16px calc(18px + var(--sb));flex:1;-webkit-overflow-scrolling:touch}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.sheet-head h2{margin:0;font-family:Syne,sans-serif;font-size:22px;letter-spacing:-.02em}
+.meta{font-size:12px;color:var(--dim);margin-top:3px}
+.x{border:0;background:rgba(255,255,255,.06);color:var(--foam);width:32px;height:32px;border-radius:10px;cursor:pointer;font-size:16px}
+.price-card{background:linear-gradient(180deg,rgba(62,235,201,.08),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:12px}
+.price-card .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.price-card .v{font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:2px}
+.price-card .v.unk{color:var(--muted);font-style:italic;font-weight:500;font-size:22px}
+.rows{margin-top:8px;display:grid;gap:4px}
+.rows div{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);gap:8px}
+.rows b{color:var(--foam);font-weight:600;text-align:right}
+.hurr{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:rgba(255,122,106,.08);border:1px solid rgba(255,122,106,.22);font-size:12px;margin-bottom:10px;color:#ffd0c8}
+.hurr.quiet{background:rgba(255,255,255,.03);border-color:var(--line);color:var(--dim)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:10.5px;font-weight:600;letter-spacing:.03em;border-radius:999px;padding:5px 9px;border:1px solid transparent}
+.chip.open{background:var(--mint-d);color:var(--mint);border-color:rgba(62,235,201,.3)}
+.chip.uc{background:rgba(255,176,32,.12);color:var(--uc);border-color:rgba(255,176,32,.3)}
+.chip.complete{background:rgba(230,200,120,.12);color:var(--sand);border-color:rgba(230,200,120,.3)}
+.chip.tender{background:rgba(122,179,255,.12);color:var(--tender);border-color:rgba(122,179,255,.3)}
+.chip.rumor{background:rgba(201,160,255,.12);color:var(--rumor);border-color:rgba(201,160,255,.3)}
+.chip.none{color:var(--muted);background:rgba(255,255,255,.03);border-color:var(--line);font-weight:500;letter-spacing:0}
+.chart-wrap{height:210px;position:relative;margin:4px -6px 8px}
+.caption{font-size:10.5px;color:var(--muted);margin:0 0 12px;line-height:1.4}
+.actions{display:flex;gap:8px;margin-bottom:6px}
+.actions button{flex:1;border:0;border-radius:12px;padding:11px;cursor:pointer;font:600 13px/1 "DM Sans",sans-serif}
+.btn-a{background:var(--mint-d);color:var(--mint)}
+.btn-b{background:var(--sand-d);color:var(--sand)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.col-card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px}
+.col-card h3{margin:0 0 6px;font-size:13px}
+.col-card .p{font-size:16px;font-weight:700}
+.col-card .p.unk{font-style:italic;color:var(--muted);font-weight:500;font-size:14px}
+.col-card .d{font-size:11px;color:var(--dim);margin-top:4px}
+.bars{display:grid;gap:7px;margin:6px 0 4px}
+.bar-row{display:grid;grid-template-columns:96px 1fr 58px;gap:8px;align-items:center;font-size:11px}
+.bar-row .n{color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-row .n.hi{color:var(--foam);font-weight:600}
+.track{height:8px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;background:#3a5a62}
+.fill.peer-gold{background:linear-gradient(90deg,#c9a24a,var(--sand))}
+.fill.hi-a{background:var(--mint)}
+.fill.hi-b{background:var(--sand)}
+.bar-row .usd{text-align:right;font-variant-numeric:tabular-nums;color:var(--foam)}
+.bar-row .usd.unk{color:var(--muted);font-style:italic}
+.legend{display:flex;flex-wrap:wrap;gap:8px 10px;margin:8px 0 0;font-size:10px;color:var(--muted)}
+.legend i{display:inline-block;width:7px;height:7px;border-radius:99px;margin-right:4px}
+</style>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+</head>
+<body>
+<div id="app">
+  <div id="map"></div>
+  <div class="vignette"></div>
+  <div class="topbar">
+    <div class="brand">
+      <h1>COASTAL GRADE</h1>
+      <div class="sub">PVR center · Homia asking USD/m²</div>
+    </div>
+    <div class="seed-chip">Aug 2026</div>
+  </div>
+  <div class="drive" role="tablist" aria-label="Drive-time radius">
+    <button data-min="30">30 min</button>
+    <button data-min="60">60</button>
+    <button data-min="90" class="on">90</button>
+    <button data-min="120">120</button>
+  </div>
+  <div class="drive-label">Drive-time radius from PVR</div>
+  <div class="count-pill" id="count">—</div>
+  <div class="compare-dock" id="dock">
+    <div class="slot" id="slotA"><span>A</span><strong>Tap a town</strong></div>
+    <div class="slot b" id="slotB"><span>B</span><strong>Then another</strong></div>
+    <button class="clear-compare" id="clearCmp" hidden>Clear</button>
+    <button class="go-compare" id="goCmp" disabled>Compare</button>
+  </div>
+  <div class="sheet" id="sheet">
+    <div class="handle"></div>
+    <div class="sheet-scroll" id="sheetBody"></div>
+  </div>
+</div>
+<script>
+
+(function () {
+  const SEED = "Aug 2026";
+  const PVR = [20.68083, -105.25556];
+  const AXES = ["Access", "Signal", "Storm", "Catalyst", "Comps", "Beach"];
+  const PEERS = [
+    { id: "cabo-medano", name: "Cabo Médano", usd: 11500, offMap: true },
+    { id: "conchas-chinas", name: "Conchas Chinas", usd: 7066 },
+    { id: "punta-mita", name: "Punta Mita", usd: 5196 },
+    { id: "sayulita", name: "Sayulita", usd: 4848 }
+  ];
+  const AUTOPISTA = { type: "open", label: "Las Varas-Bucerías autopista", meta: "OPEN / priced-in" };
+  const AMADO = { type: "complete", label: "Puente Amado Nervo", meta: "COMPLETE / NOT OPEN" };
+  const LITIBU_CLUB = { type: "uc", label: "Litibú Bay Club", meta: "UNDER CONSTRUCTION / winter 2026" };
+  const HOTELS = { type: "rumor", label: "Hotels permitting", meta: "RUMOR" };
+
+  const TOWNS = [
+    { id: "san-blas", name: "San Blas", lat: 21.53972, lng: -105.28556, drive: [130, 150], region: "north",
+      homia: null, ampi: null, hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "chacala", name: "Chacala", lat: 21.16764, lng: -105.22829, drive: [80, 100], region: "north",
+      homia: null, ampi: null, hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "guayabitos", name: "Guayabitos", lat: 21.0240, lng: -105.2678, drive: [50, 70], region: "north",
+      homia: null, ampi: 920, ampiNote: "AMPI only, not MLS", hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "lo-de-marcos", name: "Lo de Marcos", lat: 20.95509, lng: -105.35223, drive: [60, 75], region: "north",
+      homia: null, ampi: 1070, ampiNote: "AMPI only", hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "san-pancho", name: "San Pancho", lat: 20.9025, lng: -105.4133, drive: [55, 70], region: "north",
+      homia: null, ampi: 1850, ampiNote: "AMPI only", hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "sayulita", name: "Sayulita", lat: 20.86889, lng: -105.44083, drive: [45, 60], region: "north", peer: true,
+      homia: 4848, homiaBand: "condo", hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "litibu", name: "Litibú", lat: 20.809, lng: -105.478, drive: [45, 45], region: "north",
+      homia: null, ampi: null, hurricane: null, catalysts: [AUTOPISTA, LITIBU_CLUB] },
+    { id: "punta-mita", name: "Punta Mita", lat: 20.7752, lng: -105.5270, drive: [40, 50], region: "north", peer: true,
+      homia: 5196, homiaBand: "condo", hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "la-cruz", name: "La Cruz", lat: 20.74889, lng: -105.38222, drive: [30, 40], region: "north",
+      homia: 3881, hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "bucerias", name: "Bucerías", lat: 20.7582, lng: -105.3362, drive: [20, 30], region: "north",
+      homia: 4150, homiaBand: "condo", hurricane: null, catalysts: [AUTOPISTA] },
+    { id: "flamingos", name: "Flamingos", lat: 20.73, lng: -105.31, drive: [20, 20], region: "bay",
+      homia: 3590, hurricane: null, catalysts: [] },
+    { id: "nuevo-vallarta", name: "Nuevo Vallarta", lat: 20.700, lng: -105.300, drive: [15, 20], region: "bay",
+      homia: 3456, homiaBand: "condo", hurricane: null, catalysts: [AMADO] },
+    { id: "pv-5dedic", name: "PV 5 de Dic", short: "5 de Dic", lat: 20.6534, lng: -105.2253, drive: null, inPV: true, region: "pv",
+      homia: 4759, hurricane: null, catalysts: [] },
+    { id: "amapas", name: "Amapas", lat: 20.605, lng: -105.234, drive: null, inPV: true, region: "pv",
+      homia: 4536, hurricane: null, catalysts: [] },
+    { id: "conchas-chinas", name: "Conchas Chinas", short: "Conchas Chinas", lat: 20.590, lng: -105.245, drive: null, inPV: true, region: "pv", peer: true,
+      homia: 7066, homiaBand: "Lower", hurricane: null, catalysts: [] },
+    { id: "mismaloya", name: "Mismaloya", lat: 20.53102, lng: -105.29263, drive: [40, 60], region: "south",
+      homia: null, ampi: null, hurricane: null, catalysts: [] },
+    { id: "boca", name: "Boca de Tomatlán", short: "Boca", lat: 20.51194, lng: -105.31389, drive: [50, 70], region: "south",
+      homia: null, ampi: null, hurricane: null, catalysts: [] },
+    { id: "yelapa", name: "Yelapa", lat: 20.48833, lng: -105.44528, drive: null, boat: true, region: "south",
+      homia: null, ampi: null, hurricane: null, catalysts: [] },
+    { id: "tehuamixtle", name: "Tehuamixtle", lat: 20.27, lng: -105.58, drive: [120, 140], region: "south",
+      homia: null, ampi: null, hurricane: null, catalysts: [HOTELS] }
+  ];
+
+  const fmt = n => n == null ? "unknown" : "$" + Math.round(n).toLocaleString("en-US");
+  const driveLabel = t => {
+    if (t.boat) return "BOAT";
+    if (t.inPV) return "in PV";
+    if (!t.drive) return "unknown";
+    return t.drive[0] === t.drive[1] ? "~" + t.drive[0] + " min" : "~" + t.drive[0] + "-" + t.drive[1] + " min";
+  };
+  const typicalMin = t => {
+    if (t.boat) return 70;
+    if (t.inPV) return 12;
+    if (!t.drive) return 90;
+    return Math.round((t.drive[0] + t.drive[1]) / 2);
+  };
+
+  function headline(t) {
+    if (t.homia != null) {
+      const rows = [["Source", "Homia asking"], ["Unit", "USD/m²"]];
+      if (t.homiaBand) rows.push(["Band", t.homiaBand]);
+      return { main: fmt(t.homia), unknown: false, rows: rows };
+    }
+    if (t.ampi != null) {
+      return { main: "~" + fmt(t.ampi).replace("$", "$"), unknown: false, rows: [["Source", t.ampiNote || "AMPI only"], ["Not", "Homia / MLS"]] };
+    }
+    return { main: "unknown", unknown: true, rows: [["Seed", "unknown - not invented"]] };
+  }
+
+  function barValue(t) {
+    if (t.homia != null) return t.homia;
+    if (t.ampi != null) return t.ampi;
+    return null;
+  }
+
+  function spider(t) {
+    const access = t.boat ? 28 : Math.round(Math.max(8, 100 * (1 - (typicalMin(t) - 10) / 140)));
+    let signal = 12;
+    if (t.homia != null) signal = 88;
+    else if (t.ampi != null) signal = 36;
+    const storm = t.hurricane ? 20 : 70;
+    let catalyst = 18;
+    const types = new Set((t.catalysts || []).map(c => c.type));
+    if (types.has("open") && (types.has("uc") || types.has("complete"))) catalyst = 86;
+    else if (types.has("complete")) catalyst = 68;
+    else if (types.has("uc")) catalyst = 64;
+    else if (types.has("open")) catalyst = 58;
+    else if (types.has("tender")) catalyst = 44;
+    else if (types.has("rumor")) catalyst = 30;
+    const comps = t.peer ? 92 : t.homia != null ? 62 : t.ampi != null ? 34 : 14;
+    let beach = 22;
+    if (t.homiaBand && /Lower|beach/i.test(t.homiaBand)) beach = 90;
+    else if (t.peer) beach = 82;
+    else if (t.homia != null) beach = 70;
+    else if (t.inPV) beach = 74;
+    else if (t.boat) beach = 80;
+    return [access, signal, storm, catalyst, comps, beach];
+  }
+
+  const state = { minutes: 90, selected: null, a: null, b: null, compareView: false, chart: null };
+  const markers = {};
+
+  const map = L.map("map", { zoomControl: false, attributionControl: true, minZoom: 7, maxZoom: 13 }).setView(PVR, 9);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+    attribution: "Tiles &copy; Esri", maxZoom: 16
+  }).addTo(map);
+
+  const radius = L.circle(PVR, {
+    radius: 90 * 700, color: "#3eebc9", weight: 1.2, dashArray: "5 8",
+    fillColor: "#3eebc9", fillOpacity: 0.05, interactive: false
+  }).addTo(map);
+
+  L.marker(PVR, {
+    icon: L.divIcon({ className: "", html: '<div class="airport">PVR</div>', iconSize: [22, 22] }),
+    zIndexOffset: 500, interactive: false
+  }).addTo(map);
+
+  function inRadius(t) {
+    if (t.boat) return state.minutes >= 60;
+    if (t.inPV) return true;
+    if (!t.drive) return true;
+    if (state.minutes >= 120) return t.drive[0] <= 150;
+    return t.drive[0] <= state.minutes;
+  }
+
+  function markerClass(t) {
+    const sel = state.selected === t.id || state.a === t.id || state.b === t.id;
+    let c = "dot";
+    if (t.boat) c += " boat";
+    else if (t.peer) c += " peer";
+    else if (t.homia == null && t.ampi != null) c += " ampi";
+    else if (t.homia == null) c += " unknown";
+    if (sel) c += " sel";
+    return c;
+  }
+
+  function iconFor(t) {
+    return L.divIcon({
+      className: "",
+      html: '<div class="' + markerClass(t) + '"></div><div class="lbl">' + (t.short || t.name) + "</div>",
+      iconSize: [14, 14]
+    });
+  }
+
+  TOWNS.forEach(t => {
+    const m = L.marker([t.lat, t.lng], { icon: iconFor(t), keyboard: true, title: t.name }).addTo(map);
+    m.on("click", function () { openTown(t.id); });
+    markers[t.id] = m;
+  });
+
+  function refreshMarkers() {
+    TOWNS.forEach(t => {
+      markers[t.id].setIcon(iconFor(t));
+      if (inRadius(t)) {
+        if (!map.hasLayer(markers[t.id])) markers[t.id].addTo(map);
+        markers[t.id].setOpacity(1);
+      } else if (map.hasLayer(markers[t.id])) {
+        map.removeLayer(markers[t.id]);
+      }
+    });
+    const n = TOWNS.filter(inRadius).length;
+    document.getElementById("count").textContent = n + " towns · " + state.minutes + " min";
+  }
+
+  function setMinutes(min) {
+    state.minutes = min;
+    document.querySelectorAll(".drive button").forEach(b => {
+      b.classList.toggle("on", Number(b.dataset.min) === min);
+    });
+    radius.setRadius(min * 700);
+    refreshMarkers();
+    const vis = TOWNS.filter(inRadius);
+    if (vis.length) {
+      const b = L.latLngBounds(vis.map(t => [t.lat, t.lng]));
+      b.extend(PVR);
+      map.fitBounds(b.pad(0.18), { animate: true, maxZoom: min <= 30 ? 11 : min <= 60 ? 10 : 9 });
+    }
+  }
+
+  document.querySelector(".drive").addEventListener("click", function (e) {
+    const b = e.target.closest("button");
+    if (b) setMinutes(Number(b.dataset.min));
+  });
+
+  function town(id) { return TOWNS.find(t => t.id === id); }
+
+  function chipHtml(c) {
+    return '<span class="chip ' + c.type + '">' + c.label + " · " + c.meta + "</span>";
+  }
+
+  function priceBlock(t) {
+    const h = headline(t);
+    let html = '<div class="price-card"><div class="k">Asking USD/m² · ' + SEED + "</div>";
+    html += '<div class="v' + (h.unknown ? " unk" : "") + '">' + h.main + "</div>";
+    html += '<div class="rows">';
+    h.rows.forEach(r => { html += "<div><span>" + r[0] + "</span><b>" + r[1] + "</b></div>"; });
+    html += "</div></div>";
+    return html;
+  }
+
+  function hurricaneBlock(t) {
+    if (t.hurricane) {
+      return '<div class="hurr"><div>◉</div><div><b>Hurricane ' + t.hurricane.event + " · " + t.hurricane.year + "</b><br>" + t.hurricane.note + "</div></div>";
+    }
+    return '<div class="hurr quiet"><div>○</div><div>Hurricane note: no event in seed.</div></div>';
+  }
+
+  function catalystsBlock(t) {
+    if (!t.catalysts.length) return '<div class="chips"><span class="chip none">No catalyst in seed</span></div>';
+    return '<div class="chips">' + t.catalysts.map(chipHtml).join("") + "</div>";
+  }
+
+  function renderChart(ids) {
+    ids = (ids || []).filter(function (id) { return !!town(id); });
+    const canvas = document.getElementById("radar");
+    if (!canvas || !ids.length) return;
+    const wrap = canvas.parentElement;
+    const w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 300;
+    const h = 210;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2 + 6, R = Math.min(w, h) * 0.32;
+    const n = AXES.length;
+    const colors = [
+      { s: "rgba(62,235,201,.9)", f: "rgba(62,235,201,.22)" },
+      { s: "rgba(230,200,120,.95)", f: "rgba(230,200,120,.18)" }
+    ];
+    ctx.strokeStyle = "rgba(90,180,190,.18)";
+    ctx.fillStyle = "#9ec9c8";
+    ctx.font = "10px DM Sans, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (let ring = 1; ring <= 4; ring++) {
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const a = -Math.PI / 2 + (i % n) * 2 * Math.PI / n;
+        const r = R * ring / 4;
+        const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+    for (let i = 0; i < n; i++) {
+      const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+      ctx.stroke();
+      const lx = cx + Math.cos(a) * (R + 16);
+      const ly = cy + Math.sin(a) * (R + 16);
+      ctx.fillText(AXES[i], lx, ly);
+    }
+    ids.forEach(function (id, di) {
+      const data = spider(town(id));
+      const col = colors[di];
+      ctx.beginPath();
+      data.forEach(function (v, i) {
+        const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+        const r = R * (v / 100);
+        const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = col.f;
+      ctx.fill();
+      ctx.strokeStyle = col.s;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = col.s;
+      data.forEach(function (v, i) {
+        const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+        const r = R * (v / 100);
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+    if (ids.length > 1) {
+      ctx.font = "11px DM Sans, sans-serif";
+      ctx.textAlign = "left";
+      ids.forEach(function (id, di) {
+        const t = town(id);
+        ctx.fillStyle = colors[di].s;
+        ctx.fillRect(8, 8 + di * 16, 8, 8);
+        ctx.fillStyle = "#9bbfb8";
+        ctx.fillText(t.short || t.name, 20, 12 + di * 16);
+      });
+    }
+  }
+
+  function barRowsHtml(highlight) {
+    const hi = highlight || [];
+    const rows = PEERS.map(p => ({ id: p.id, name: p.name + (p.offMap ? " · off-map" : ""), usd: p.usd, kind: "peer" }));
+    hi.forEach(id => {
+      if (rows.some(r => r.id === id)) return;
+      const t = town(id);
+      rows.push({ id: t.id, name: t.short || t.name, usd: barValue(t), kind: "town" });
+    });
+    const nums = rows.map(r => r.usd || 0);
+    const max = Math.max(11500, nums.length ? Math.max.apply(null, nums) : 11500);
+    return rows.map(r => {
+      const isA = r.id === hi[0], isB = r.id === hi[1];
+      const w = r.usd == null ? 0 : Math.max(4, (r.usd / max) * 100);
+      let fill = "fill";
+      if (isA) fill += " hi-a";
+      else if (isB) fill += " hi-b";
+      else if (r.kind === "peer") fill += " peer-gold";
+      return '<div class="bar-row"><div class="n' + (isA || isB ? " hi" : "") + '">' + r.name + '</div><div class="track"><div class="' + fill + '" style="width:' + w + '%"></div></div><div class="usd' + (r.usd == null ? " unk" : "") + '">' + (r.usd == null ? "unknown" : fmt(r.usd)) + "</div></div>";
+    }).join("");
+  }
+
+  function detailHtml(t) {
+    const inA = state.a === t.id, inB = state.b === t.id;
+    return (
+      '<div class="sheet-head"><div><h2>' + (t.short || t.name) + "</h2>" +
+      '<div class="meta">' + t.region + " · " + driveLabel(t) + (t.peer ? " · peer" : "") + (t.boat ? " · not a drive" : "") + "</div></div>" +
+      '<button class="x" id="closeSheet" aria-label="Close">x</button></div>' +
+      priceBlock(t) + hurricaneBlock(t) + catalystsBlock(t) +
+      '<div class="chart-wrap"><canvas id="radar"></canvas></div>' +
+      '<p class="caption">Spider indexes seed attributes (access, data signal, storm note, catalyst, comps, beach mix). It is not a price. Unknown USD/m² stays unknown.</p>' +
+      '<div class="actions">' +
+      '<button class="btn-a" id="setA">' + (inA ? "A · selected" : "Set as A") + "</button>" +
+      '<button class="btn-b" id="setB">' + (inB ? "B · selected" : "Set as B") + "</button>" +
+      "</div>" +
+      '<div class="legend"><span><i style="background:var(--mint)"></i>Homia / A</span><span><i style="background:var(--sand)"></i>peer / B</span><span><i style="background:#7ab3ff"></i>AMPI only</span><span><i style="background:#4a6a72"></i>unknown</span></div>'
+    );
+  }
+
+  function compareHtml() {
+    const a = town(state.a), b = town(state.b);
+    const ha = headline(a), hb = headline(b);
+    return (
+      '<div class="sheet-head"><div><h2>Compare</h2><div class="meta">Two towns · peer asking USD/m² · ' + SEED + "</div></div>" +
+      '<button class="x" id="closeSheet" aria-label="Close">x</button></div>' +
+      '<div class="compare-grid">' +
+      '<div class="col-card"><h3 style="color:var(--mint)">' + (a.short || a.name) + "</h3>" +
+      '<div class="p' + (ha.unknown ? " unk" : "") + '">' + ha.main + "</div>" +
+      '<div class="d">' + driveLabel(a) + "</div></div>" +
+      '<div class="col-card"><h3 style="color:var(--sand)">' + (b.short || b.name) + "</h3>" +
+      '<div class="p' + (hb.unknown ? " unk" : "") + '">' + hb.main + "</div>" +
+      '<div class="d">' + driveLabel(b) + "</div></div></div>" +
+      '<div class="chart-wrap"><canvas id="radar"></canvas></div>' +
+      '<p class="caption">Overlay spider from seed attributes. Bars use Homia typical / named peers. Unknown stays unknown. AMPI-only is labeled, not treated as Homia.</p>' +
+      '<div class="k" style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Peer price bars</div>' +
+      '<div class="bars">' + barRowsHtml([a.id, b.id]) + "</div>" +
+      '<div class="legend"><span><i style="background:var(--rumor)"></i>rumor</span><span><i style="background:var(--tender)"></i>tender</span><span><i style="background:var(--uc)"></i>under construction</span><span><i style="background:var(--mint)"></i>open</span></div>' +
+      '<p class="caption" style="margin-top:8px">Seed catalysts: autopista OPEN/priced-in; Litibú Bay Club UNDER CONSTRUCTION winter 2026; Amado Nervo COMPLETE NOT OPEN. No tender in this seed.</p>'
+    );
+  }
+
+  function paintSheet() {
+    const body = document.getElementById("sheetBody");
+    const sheet = document.getElementById("sheet");
+    if (state.compareView && state.a && state.b) {
+      sheet.classList.add("compare-mode");
+      body.innerHTML = compareHtml();
+      const ids = [state.a, state.b];
+      requestAnimationFrame(function () { renderChart(ids); });
+    } else if (state.selected) {
+      sheet.classList.remove("compare-mode");
+      body.innerHTML = detailHtml(town(state.selected));
+      const id = state.selected;
+      requestAnimationFrame(function () { renderChart([id]); });
+    }
+    const close = document.getElementById("closeSheet");
+    if (close) close.onclick = closeSheet;
+    const sa = document.getElementById("setA");
+    const sb = document.getElementById("setB");
+    if (sa) sa.onclick = function () { setSlot("a", state.selected); closeSheet(); };
+    if (sb) sb.onclick = function () { setSlot("b", state.selected); closeSheet(); };
+  }
+
+  function openTown(id) {
+    state.selected = id;
+    state.compareView = false;
+    document.getElementById("sheet").classList.add("open");
+    document.getElementById("dock").classList.add("sheet-open");
+    paintSheet();
+    refreshMarkers();
+    const t = town(id);
+    map.panTo([t.lat, t.lng], { animate: true });
+  }
+
+  function openCompare() {
+    if (!state.a || !state.b) return;
+    state.compareView = true;
+    document.getElementById("sheet").classList.add("open");
+    document.getElementById("dock").classList.add("sheet-open");
+    paintSheet();
+  }
+
+  function closeSheet() {
+    state.compareView = false;
+    document.getElementById("sheet").classList.remove("open", "compare-mode");
+    document.getElementById("dock").classList.remove("sheet-open");
+    state.selected = null;
+    refreshMarkers();
+  }
+
+  function setSlot(which, id) {
+    if (which === "a") {
+      if (state.b === id) state.b = state.a;
+      state.a = id;
+    } else {
+      if (state.a === id) state.a = state.b;
+      state.b = id;
+    }
+    paintDock();
+    paintSheet();
+    refreshMarkers();
+  }
+
+  function paintDock() {
+    const a = state.a ? town(state.a) : null;
+    const b = state.b ? town(state.b) : null;
+    document.getElementById("slotA").classList.toggle("filled", !!a);
+    document.getElementById("slotB").classList.toggle("filled", !!b);
+    document.getElementById("slotA").innerHTML = a ? "<span>A</span><strong>" + (a.short || a.name) + "</strong>" : "<span>A</span><strong>Tap a town</strong>";
+    document.getElementById("slotB").innerHTML = b ? "<span>B</span><strong>" + (b.short || b.name) + "</strong>" : "<span>B</span><strong>Then another</strong>";
+    document.getElementById("goCmp").disabled = !(a && b);
+    document.getElementById("clearCmp").hidden = !(a || b);
+  }
+
+  document.getElementById("goCmp").onclick = openCompare;
+  document.getElementById("clearCmp").onclick = function () {
+    state.a = state.b = null;
+    paintDock();
+    refreshMarkers();
+    if (state.compareView) closeSheet();
+  };
+
+  setMinutes(90);
+  paintDock();
+})();
+
+</script>
+</body>
+</html>
