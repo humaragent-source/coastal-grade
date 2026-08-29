@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no"/>
+<meta name="theme-color" content="#0F1419"/>
+<title>TEST DATA · Anomaly feed (mock)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0F1419;
+  --bg-deep:#03080c;
+  --coral:#FF6B47;
+  --gold:#FFD166;
+  --teal:#4A9D9C;
+  --purple:#A78BFA;
+  --green:#3FB950;
+  --foam:#e7fbf6;
+  --dim:#9bbfb8;
+  --muted:#6f8f94;
+  --line:rgba(180,230,220,.12);
+  --font-body:"DM Sans",sans-serif;
+  --font-display:Syne,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--foam);font-family:var(--font-body);overflow:hidden}
+#app{height:100dvh;display:flex;flex-direction:column;overflow:hidden;padding:calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+.banner{flex:0 0 auto;background:rgba(255,209,102,.14);border:1px solid rgba(255,209,102,.45);color:var(--gold);font:800 12px/1.2 var(--font-display);letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:10px 12px;border-radius:10px;margin-bottom:10px}
+.sub{font:600 11px/1.35 var(--font-body);letter-spacing:.04em;color:var(--dim);margin-top:4px;text-transform:none}
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(240px,42%);gap:10px}
+.feed-col,.chart-col{min-height:0;min-width:0;border:1px solid var(--line);border-radius:14px;background:#08141c;overflow:hidden;display:flex;flex-direction:column}
+.col-h{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px 8px;border-bottom:1px solid var(--line)}
+.col-h h2{margin:0;font:800 11px/1 var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stamp{font:700 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(255,209,102,.4);padding:4px 6px;border-radius:99px;white-space:nowrap}
+#feed{flex:1;min-height:0;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin}
+#feed:empty::after{content:"Waiting for test cards…";display:block;color:var(--muted);font-size:12px;font-style:italic;padding:16px 8px}
+.card{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);cursor:pointer;min-height:64px;animation:slideIn .42s ease both;flex-shrink:0}
+.card.gem{border-color:rgba(63,185,80,.45);background:rgba(63,185,80,.08)}
+.card.premium{border-color:rgba(255,107,71,.28)}
+.card.on{outline:2px solid var(--gold);outline-offset:0}
+.card.flash{animation:slideIn .42s ease both, flash .9s ease}
+.swatch{width:56px;height:48px;border-radius:8px;flex-shrink:0}
+.meta{min-width:0}
+.town{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats{font-size:11px;color:var(--dim);margin-top:2px}
+.right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.price{font-weight:800;font-variant-numeric:tabular-nums;font-size:13px}
+.delta{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+.delta.gem{color:var(--green)}
+.delta.premium{color:var(--coral)}
+.delta.ok{color:var(--muted)}
+.chip{font:700 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;padding:4px 6px;border-radius:99px;border:1px solid}
+.chip.gem{color:var(--green);border-color:rgba(63,185,80,.5);background:rgba(63,185,80,.12)}
+.chip.test{color:var(--gold);border-color:rgba(255,209,102,.35)}
+.chart-col{position:relative}
+#chartWrap{flex:1;min-height:0;position:relative}
+#scatter{width:100%;height:100%;display:block}
+.watermark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font:800 42px/1 var(--font-display);letter-spacing:.12em;color:rgba(255,209,102,.09);transform:rotate(-18deg);user-select:none}
+.caption{flex:0 0 auto;margin:0;padding:8px 12px 4px;font-size:11px;color:var(--dim);line-height:1.4}
+.actions{flex:0 0 auto;padding:8px 12px 12px}
+#replay{width:100%;min-height:44px;border:1px solid var(--line);background:transparent;color:var(--foam);border-radius:12px;font:700 13px var(--font-body);cursor:pointer}
+#replay:disabled{opacity:.4;cursor:default}
+.dot-hit{cursor:pointer}
+.axis-lab{fill:var(--muted);font:600 10px var(--font-body);letter-spacing:.08em}
+.tick{fill:var(--muted);font:500 9px var(--font-body)}
+@keyframes slideIn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+@keyframes drop{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{r:7}50%{r:11}}
+@keyframes flash{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 3px rgba(63,185,80,.55)}}
+.dot.drop{animation:drop .35s ease both}
+.dot.gem-pulse{animation:drop .35s ease both, gemPulse 1.1s ease 2}
+@keyframes gemPulse{0%,100%{filter:none}50%{filter:drop-shadow(0 0 8px #3FB950)}}
+@media (min-width:900px){
+  .layout{grid-template-columns:minmax(280px,38%) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+  #app{padding:16px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="banner">TEST DATA · mock only · not live MLS<div class="sub">Fake PVR-radius beachfront cards. Invented names and round numbers.</div></div>
+  <div class="layout">
+    <section class="feed-col" aria-label="Test listing feed">
+      <div class="col-h"><h2>Feed · newest first</h2><span class="stamp">Test data</span></div>
+      <div id="feed"></div>
+    </section>
+    <section class="chart-col" aria-label="Size vs asking price scatter">
+      <div class="col-h"><h2>Size vs asking price</h2><span class="stamp">Test data</span></div>
+      <div id="chartWrap">
+        <div class="watermark">TEST DATA</div>
+        <svg id="scatter" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="TEST DATA scatter: size versus asking price"></svg>
+      </div>
+      <p class="caption">Below the line is cheaper than this size usually costs. Above is a premium. Test data, not live MLS.</p>
+      <div class="actions"><button type="button" id="replay" disabled>Replay</button></div>
+    </section>
+  </div>
+</div>
+<script>
+(function () {
+  const RAW = [
+    { id: "c1",  name: "Ola Studio",     town: "Bucerías",        m2: 70,  usd: 360000,  swatch: "#1a3a3a" },
+    { id: "c2",  name: "Coco Loft",      town: "Sayulita",        m2: 90,  usd: 440000,  swatch: "#2a2438" },
+    { id: "c3",  name: "Arena 12",       town: "La Cruz",         m2: 110, usd: 520000,  swatch: "#3a2418" },
+    { id: "c4",  name: "Palapa Norte",   town: "Nuevo Vallarta",  m2: 130, usd: 600000,  swatch: "#1a3040" },
+    { id: "c5",  name: "Brisa 8",        town: "Flamingos",       m2: 150, usd: 680000,  swatch: "#243018" },
+    { id: "c6",  name: "Duna Casa",      town: "Bucerías",        m2: 170, usd: 760000,  swatch: "#301828" },
+    { id: "c7",  name: "Tide House",     town: "Conchas Chinas",  m2: 190, usd: 840000,  swatch: "#182838" },
+    { id: "c8",  name: "Mar y Sal",      town: "Sayulita",        m2: 210, usd: 920000,  swatch: "#283018" },
+    { id: "c9",  name: "Pelican Walk",   town: "La Cruz",         m2: 230, usd: 1000000, swatch: "#381820" },
+    { id: "c10", name: "Concha Loft",    town: "Nuevo Vallarta",  m2: 80,  usd: 400000,  swatch: "#203040" },
+    { id: "c11", name: "Palma Split",    town: "Flamingos",       m2: 200, usd: 880000,  swatch: "#302010" },
+    { id: "c12", name: "Azulito",        town: "Bucerías",        m2: 250, usd: 1080000, swatch: "#102830" },
+    { id: "g1",  name: "Casa Nube 2",    town: "Sayulita",        m2: 140, usd: 420000,  swatch: "#143028" },
+    { id: "g2",  name: "Solera Beach",   town: "La Cruz",         m2: 180, usd: 520000,  swatch: "#183424" },
+    { id: "g3",  name: "Mango Deck",     town: "Bucerías",        m2: 220, usd: 640000,  swatch: "#1c3820" },
+    { id: "p1",  name: "Loma Coral",     town: "Conchas Chinas",  m2: 100, usd: 640000,  swatch: "#3a2018" },
+    { id: "p2",  name: "Fuego Deck",     town: "Sayulita",        m2: 160, usd: 1040000, swatch: "#3c2414" },
+    { id: "p3",  name: "Pescador 4",     town: "Nuevo Vallarta",  m2: 240, usd: 1480000, swatch: "#401810" }
+  ];
+
+  function ols(rows) {
+    const n = rows.length;
+    let sx = 0, sy = 0, sxy = 0, sx2 = 0;
+    rows.forEach(function (r) {
+      sx += r.m2; sy += r.usd; sxy += r.m2 * r.usd; sx2 += r.m2 * r.m2;
+    });
+    const b = (n * sxy - sx * sy) / (n * sx2 - sx * sx);
+    const a = (sy - b * sx) / n;
+    return { a: a, b: b };
+  }
+
+  const trend = ols(RAW);
+  const ITEMS = RAW.map(function (r) {
+    const pred = trend.a + trend.b * r.m2;
+    const pct = (r.usd - pred) / pred;
+    let kind = "ok";
+    if (pct <= -0.2) kind = "gem";
+    else if (pct >= 0.2) kind = "premium";
+    return Object.assign({}, r, { pred: pred, pct: pct, kind: kind });
+  });
+
+  const PAD = { l: 62, r: 18, t: 28, b: 42 };
+  const VW = 640, VH = 400;
+  const plotW = VW - PAD.l - PAD.r;
+  const plotH = VH - PAD.t - PAD.b;
+  const xMin = 50, xMax = 270;
+  const yMin = 0, yMax = 1600000;
+
+  function xOf(m2) { return PAD.l + ((m2 - xMin) / (xMax - xMin)) * plotW; }
+  function yOf(usd) { return PAD.t + (1 - (usd - yMin) / (yMax - yMin)) * plotH; }
+  function fmtUsd(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+  function fmtPct(p) {
+    const v = Math.round(Math.abs(p) * 100);
+    if (p <= -0.005) return v + "% below";
+    if (p >= 0.005) return v + "% above";
+    return "on trend";
+  }
+
+  const svg = document.getElementById("scatter");
+  const feed = document.getElementById("feed");
+  const replay = document.getElementById("replay");
+  let shown = [];
+  let selected = null;
+  let timer = null;
+  let running = false;
+
+  function ns(name, attrs) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+    Object.keys(attrs || {}).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+    return el;
+  }
+
+  function drawFrame() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.appendChild(ns("rect", { x: 0, y: 0, width: VW, height: VH, fill: "#08141c" }));
+    const yTicks = [0, 400000, 800000, 1200000, 1600000];
+    yTicks.forEach(function (v) {
+      const y = yOf(v);
+      svg.appendChild(ns("line", { x1: PAD.l, y1: y, x2: VW - PAD.r, y2: y, stroke: "rgba(180,230,220,.12)", "stroke-width": 1 }));
+      const t = ns("text", { x: PAD.l - 8, y: y + 3, class: "tick", "text-anchor": "end" });
+      t.textContent = v === 0 ? "$0" : "$" + (v / 1000) + "k";
+      svg.appendChild(t);
+    });
+    const xTicks = [60, 120, 180, 240];
+    xTicks.forEach(function (v) {
+      const x = xOf(v);
+      svg.appendChild(ns("line", { x1: x, y1: PAD.t, x2: x, y2: VH - PAD.b, stroke: "rgba(180,230,220,.08)", "stroke-width": 1 }));
+      const t = ns("text", { x: x, y: VH - 18, class: "tick", "text-anchor": "middle" });
+      t.textContent = v + " m²";
+      svg.appendChild(t);
+    });
+    const xLab = ns("text", { x: PAD.l + plotW / 2, y: VH - 6, class: "axis-lab", "text-anchor": "middle" });
+    xLab.textContent = "SIZE (m²)";
+    svg.appendChild(xLab);
+    const yLab = ns("text", { x: 16, y: PAD.t + plotH / 2, class: "axis-lab", "text-anchor": "middle", transform: "rotate(-90 16 " + (PAD.t + plotH / 2) + ")" });
+    yLab.textContent = "ASKING PRICE";
+    svg.appendChild(yLab);
+    const x1 = xOf(xMin), x2 = xOf(xMax);
+    const y1 = yOf(trend.a + trend.b * xMin), y2 = yOf(trend.a + trend.b * xMax);
+    svg.appendChild(ns("line", { x1: x1, y1: y1, x2: x2, y2: y2, stroke: "rgba(231,251,246,.55)", "stroke-width": 1.6, "stroke-dasharray": "5 4", "stroke-linecap": "round" }));
+    const note = ns("text", { x: VW - PAD.r, y: 16, class: "tick", "text-anchor": "end", fill: "#FFD166" });
+    note.textContent = "TEST DATA · OLS trend";
+    svg.appendChild(note);
+    svg.appendChild(ns("g", { id: "dots" }));
+  }
+
+  function cardHtml(item) {
+    const dCls = item.kind === "gem" ? "gem" : (item.kind === "premium" ? "premium" : "ok");
+    const gem = item.kind === "gem" ? '<span class="chip gem">GEM</span>' : "";
+    return '<button type="button" class="card ' + item.kind + (item.kind === "gem" ? " flash" : "") + '" data-id="' + item.id + '">' +
+      '<div class="swatch" style="background:' + item.swatch + '" aria-hidden="true"></div>' +
+      '<div class="meta"><div class="town"><span class="chip test">Test data</span> ' + item.town + "</div>" +
+      '<div class="name">' + item.name + "</div>" +
+      '<div class="stats">' + item.m2 + " m² · beachfront (fake)</div></div>" +
+      '<div class="right"><div class="price">' + fmtUsd(item.usd) + "</div>" +
+      '<div class="delta ' + dCls + '">' + fmtPct(item.pct) + "</div>" + gem + "</div></button>";
+  }
+
+  function addDot(item) {
+    const g = document.getElementById("dots");
+    const cx = xOf(item.m2), cy = yOf(item.usd);
+    const wrap = ns("g", { class: "dot-hit", "data-id": item.id, transform: "translate(" + cx + " " + cy + ")" });
+    const hit = ns("circle", { r: 16, fill: "transparent" });
+    let fill = "#6f8f94", stroke = "rgba(231,251,246,.4)", r = 6;
+    if (item.kind === "gem") { fill = "#3FB950"; stroke = "#3FB950"; r = 8; }
+    if (item.kind === "premium") { fill = "rgba(255,107,71,.35)"; stroke = "#FF6B47"; r = 7; }
+    const c = ns("circle", { class: "dot " + (item.kind === "gem" ? "gem-pulse" : "drop"), r: String(r), fill: fill, stroke: stroke, "stroke-width": item.kind === "gem" ? 3 : 1.5 });
+    wrap.appendChild(hit);
+    wrap.appendChild(c);
+    if (item.kind === "gem") {
+      const ring = ns("circle", { r: 12, fill: "none", stroke: "#3FB950", "stroke-width": 2, opacity: "0.7", class: "drop" });
+      wrap.appendChild(ring);
+    }
+    wrap.addEventListener("click", function (e) { e.stopPropagation(); select(item.id); });
+    g.appendChild(wrap);
+  }
+
+  function paintSelection() {
+    Array.prototype.forEach.call(feed.querySelectorAll(".card"), function (el) {
+      el.classList.toggle("on", el.getAttribute("data-id") === selected);
+    });
+    Array.prototype.forEach.call(svg.querySelectorAll(".dot-hit"), function (el) {
+      const on = el.getAttribute("data-id") === selected;
+      el.style.opacity = selected && !on ? "0.35" : "1";
+    });
+  }
+
+  function select(id) {
+    selected = id;
+    paintSelection();
+    const card = feed.querySelector('.card[data-id="' + id + '"]');
+    if (card) card.scrollIntoView({ block: "nearest" });
+  }
+
+  function pushItem(item) {
+    shown.unshift(item);
+    feed.insertAdjacentHTML("afterbegin", cardHtml(item));
+    const card = feed.querySelector('.card[data-id="' + item.id + '"]');
+    card.addEventListener("click", function () { select(item.id); });
+    window.setTimeout(function () { addDot(item); }, 160);
+  }
+
+  function clearAll() {
+    shown = [];
+    selected = null;
+    feed.innerHTML = "";
+    drawFrame();
+  }
+
+  function play() {
+    if (running) return;
+    running = true;
+    replay.disabled = true;
+    clearAll();
+    let i = 0;
+    function step() {
+      if (i >= ITEMS.length) {
+        running = false;
+        replay.disabled = false;
+        return;
+      }
+      pushItem(ITEMS[i]);
+      i += 1;
+      timer = window.setTimeout(step, 700);
+    }
+    step();
+  }
+
+  replay.addEventListener("click", function () {
+    if (timer) window.clearTimeout(timer);
+    running = false;
+    play();
+  });
+
+  drawFrame();
+  play();
+})();
+</script>
+</body>
+</html>
