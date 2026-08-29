@@ -12,7 +12,8 @@
       "https://www.homia.mx/en/puerto-vallarta-real-estate-market-report (Q3 2026, same year)",
       "MLS Vallarta 2018 condo stats, 2020 report, 2017–2022 trends, 2023 report, 2024 8 charts, 2015–2025 decade",
       "AMPI / MLS Vallarta / AMPI Riviera Nayarit Q3 2025 city-wide MXN/m²",
-      "Inmuebles24 listing cards already on file (Aug 2026 only)"
+      "Inmuebles24 listing cards already on file (Aug 2026 only)",
+      "Homia hunt write-up: /workspace/coastal-grade/price-search-homia-inmuebles24.md (extra-year asking empty; Wayback CDX no guia snapshots)"
     ],
     "one_point_rule": "If only Aug 2026 exists, history is that one point and verified_cagr5 is null.",
     "rejected_not_in_history": [
@@ -53,6 +54,10 @@
             "year": "2017-2021",
             "what": "Region sales volume and average condo sold +25%. No town asking USD/m².",
             "url": "https://www.mlsvallarta.com/news/puerto-vallarta-real-estate-trends-2017-2022/"
+          },
+          {
+            "year": 2026,
+            "what": "Homia Feb 10 2026 comparison: Bucerías $3,842 and NV El Tigre $2,632 labeled Average Sale / MLS transactional, not asking. Bay-wide 2023–2025 USD/m² table is not town-level; 2026 is Projected."
           }
         ]
       },
@@ -89,6 +94,9 @@
           {
             "what": "Nami Realty AMPI MLS inventory USD/m² by colonia, updated 2026-08-28. Current asking, not a prior year. Not an AMPI annual report.",
             "url": "https://namirealty.com/datos-del-mercado/"
+          },
+          {
+            "what": "Homia Jul 25 2026 Bucerías vs NV live MLS medians. Year is still 2026."
           }
         ]
       }
