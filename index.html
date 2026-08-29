@@ -518,6 +518,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     return row.composite.overall;
   }
 
+  function fmt10(n) {
+    if (n == null) return null;
+    return (Number(n) / 10).toFixed(1);
+  }
+
   function axisScore(row, key) {
     const a = row && row.axes && row.axes[key];
     if (!a || a.status === "unknown" || a.score == null) return null;
@@ -854,7 +859,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     if (id === "score") {
       const row = scoreRow(t);
       if (!row || !row.composite || row.composite.overall == null) return "\u2014";
-      return String(row.composite.overall) + " \u00b7 Partial \u00b7 3 of 7 axes";
+      return fmt10(row.composite.overall) + " \u00b7 Partial \u00b7 3 of 7 axes";
     }
     return "unknown \u2014 not invented";
   }
@@ -939,7 +944,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       "Partial grade. 55/100 weight unknown. Do not present as a complete Coastal Grade.";
     return '<div class="spider-block"><div class="group-h">Partial grade \u00b7 3 of 7 axes</div>' +
       '<div class="partial-head"><button type="button" class="score-tap" data-metric="score" aria-haspopup="dialog">' +
-      '<span class="partial-score">' + (overall == null ? "\u2014" : esc(String(overall))) + "</span>" +
+      '<span class="partial-score">' + (overall == null ? "\u2014" : esc(fmt10(overall))) + "</span>" +
       partialChip() + "</button></div>" +
       '<div class="chart-wrap"><canvas id="radar" aria-label="Partial grade radar"></canvas><div class="radar-hits" id="radarHits"></div></div>' +
       '<p class="caption">Partial \u00b7 3 of 7. ' + esc(warn) + "</p></div>";
@@ -1024,18 +1029,26 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ctx.globalAlpha = 1;
 
     ctx.beginPath();
+    let polyStarted = false;
     for (let i = 0; i < n; i++) {
-      const r = values[i] == null ? 0 : R * (Math.max(0, Math.min(100, Number(values[i]))) / 100);
+      if (values[i] == null) continue;
+      const r = R * (Math.max(0, Math.min(100, Number(values[i]))) / 100);
       const p = pt(i, r);
-      if (i === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
+      if (!polyStarted) {
+        ctx.moveTo(p.x, p.y);
+        polyStarted = true;
+      } else {
+        ctx.lineTo(p.x, p.y);
+      }
     }
-    ctx.closePath();
-    ctx.fillStyle = fill;
-    ctx.fill();
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    if (polyStarted) {
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
 
     ctx.fillStyle = accent;
     for (let i = 0; i < n; i++) {
@@ -1063,7 +1076,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       if (sin > 0.45) ctx.textBaseline = "top";
       else if (sin < -0.45) ctx.textBaseline = "bottom";
       else ctx.textBaseline = "middle";
-      ctx.fillText(RADAR_AXES[i].label, p.x, p.y);
+      ctx.fillText(RADAR_AXES[i].label + " " + (known ? fmt10(values[i]) : "\u2014"), p.x, p.y);
       hitHtml.push(
         '<button type="button" class="radar-hit" data-axis="' + RADAR_AXES[i].def +
         '" aria-label="' + esc(RADAR_AXES[i].label) + '" style="left:' + p.x.toFixed(1) +
@@ -1832,7 +1845,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       const inCmp = state.compare.indexOf(t.id) !== -1;
       const sc = scoreOf(t);
       const left = state.listSort === "drive" ? esc(driveLabel(t).replace(" est.", ""))
-        : state.listSort === "score" ? (sc == null ? "—" : String(sc))
+        : state.listSort === "score" ? (sc == null ? "—" : fmt10(sc))
         : (t._rank == null ? "—" : String(t._rank));
       return '<div class="rank-line">' +
         '<button type="button" class="rank-row" data-id="' + esc(t.id) + '">' +
@@ -1845,7 +1858,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         '<div class="rank-usd' + (h == null ? " unk" : "") + '">' + (h == null ? "unknown" : (locked ? "Pro" : fmtUsd(h))) + "</div>" +
         '<div class="rank-meta"><span class="vs ' + ((locked && h != null) ? "" : vscc.cls) + '">vs Conchas Chinas ' + esc((locked && h != null) ? "Pro" : vscc.text) + "</span>" +
         '<span class="vs ' + ((locked && h != null) ? "" : vscb.cls) + '">vs Cabo Médano ' + esc((locked && h != null) ? "Pro" : vscb.text) + "</span>" +
-        '<span class="score-col">score ' + (sc == null ? "—" : String(sc)) + "</span>" +
+        '<span class="score-col">score ' + (sc == null ? "—" : esc(fmt10(sc))) + "</span>" +
         (state.listSort === "price" ? "<span>" + esc(driveLabel(t)) + "</span>" : "") +
         "</div></button>" +
         '<button type="button" class="icon-btn" data-detail="' + esc(t.id) + '" aria-label="Open ' + esc(shortName(t)) + '">i</button></div>';
@@ -1898,7 +1911,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       html += "—";
     } else {
       html += '<button type="button" class="score-tap" data-metric="score" aria-haspopup="dialog">' +
-        esc(String(sc)) + " " + partialChip() + "</button>";
+        esc(fmt10(sc)) + " " + partialChip() + "</button>";
     }
     html += "</b></div>";
     html += "</div></div>";
@@ -1983,7 +1996,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     }) + "</tr>";
     html += "<tr>" + metricTh("score", "Score") + cells(function (t) {
       const s = scoreOf(t);
-      return s == null ? "—" : esc(String(s));
+      return s == null ? "—" : esc(fmt10(s));
     }) + "</tr>";
     html += "</tbody></table></div>";
 
@@ -1995,10 +2008,10 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         const row = scoreRow(t);
         const sc = scoreOf(t);
         html += '<div class="fact-col"><h3>' + esc(shortName(t)) + "</h3>";
-        html += "<div><span>Score</span><b>" + (sc == null ? "—" : esc(String(sc))) + "</b></div>";
+        html += "<div><span>Score</span><b>" + (sc == null ? "—" : esc(fmt10(sc))) + "</b></div>";
         SCORED_AXES.forEach(function (ax) {
           const v = axisScore(row, ax.key);
-          html += "<div><span>" + esc(ax.label) + "</span><b>" + (v == null ? "—" : esc(String(v))) + "</b></div>";
+          html += "<div><span>" + esc(ax.label) + "</span><b>" + (v == null ? "—" : esc(fmt10(v))) + "</b></div>";
         });
         html += '<div><span></span><b>' + partialChip() + "</b></div>";
         html += "</div>";
