@@ -326,8 +326,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .price-block.with-scen .scen-row{grid-area:pills;margin:0 0 10px}
 .price-block.with-scen .price-ctrls{grid-area:ctrls}
 .price-block.with-scen > .caption{grid-area:cap}
-.price-wrap{height:320px;position:relative;margin:4px 0 8px;width:100%}
-.price-wrap canvas{display:block;width:100%;height:100%}
+.price-wrap{height:320px;position:relative;margin:4px 0 8px;width:100%;touch-action:none}
+.price-wrap canvas{display:block;width:100%;height:100%;pointer-events:none}
+.play-hit{position:absolute;inset:0;cursor:ew-resize;touch-action:none;z-index:2;-webkit-user-select:none;user-select:none}
+.play-tag{position:absolute;top:6px;transform:translateX(-50%);font:700 11px/1.2 var(--font-body);color:var(--foam);background:rgba(15,20,25,.86);border:1px solid var(--line);padding:5px 8px;border-radius:8px;pointer-events:none;z-index:3;white-space:nowrap;font-variant-numeric:tabular-nums;max-width:90%}
+.rank-usd.sample{color:var(--sand);font-weight:600;font-style:normal;font-size:11px}
 .price-unk{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
 .price-readout{display:grid;gap:4px;margin:0 0 10px;font-size:13px;font-weight:600;color:var(--foam);font-variant-numeric:tabular-nums}
 .price-readout .assumed{color:var(--sand);font-weight:500;font-size:11px;letter-spacing:.02em}
@@ -619,8 +622,13 @@ a.home-card:hover{border-color:var(--accent-3)}
   let SERIES = {};
   let GATES = null;
   let HOMES = null;
+  let ILLUST = { towns: {}, skipped: {} };
   let ANCLOTE = null;
+  let chartScale = null;
   const NOW_YEAR = 2026;
+  const MARKET_N = 10;
+  const ILLUST_START = 2015;
+  const INSIDE_BAND_COPY = "6 Resort listings with price+m\u00b2, no neighborhood print yet.";
   /* assumption rates: Conservative 4% / Base 8% / Abundance 12% — not JSX seeds or CAGRs */
   const R_CONSERVATIVE = 0.07;
   const R_BASE = 0.10;
@@ -874,6 +882,42 @@ a.home-card:hover{border-color:var(--accent-3)}
     return null;
   }
 
+  function nOf(t) {
+    if (!t || !t.usd_m2 || t.usd_m2.n == null) return null;
+    const n = Number(t.usd_m2.n);
+    return isFinite(n) ? n : null;
+  }
+
+  function isMarketN(n) {
+    return n != null && n >= MARKET_N;
+  }
+
+  function sampleNote(n) {
+    return (n != null ? ("n=" + n + " \u00b7 ") : "") + "sample, not a market print";
+  }
+
+  function ingestIllust(data) {
+    ILLUST = { towns: {}, skipped: {} };
+    ((data && data.towns) || []).forEach(function (row) {
+      if (row && row.id && Array.isArray(row.series)) ILLUST.towns[row.id] = row;
+    });
+    ((data && data.skipped) || []).forEach(function (row) {
+      if (row && row.id) ILLUST.skipped[row.id] = row;
+    });
+  }
+
+  function illustrativeSeries(townId) {
+    const row = ILLUST.towns && ILLUST.towns[townId];
+    if (!row || !row.series) return [];
+    return row.series.map(function (pt) {
+      return { year: Number(pt.year), usd_m2: Number(pt.usd_m2) };
+    }).filter(function (pt) { return isFinite(pt.year) && isFinite(pt.usd_m2); });
+  }
+
+  function playMinYear() {
+    return ILLUST.towns && Object.keys(ILLUST.towns).length ? ILLUST_START : NOW_YEAR;
+  }
+
   function tierOf(t) {
     const h = headlineOf(t);
     if (h != null && (t.peer || t.off_map)) return "primary";
@@ -1039,10 +1083,21 @@ a.home-card:hover{border-color:var(--accent-3)}
     const row = scoreRowById("el-anclote");
     if (!row) { ANCLOTE = null; return; }
     const pm = TOWNS.find(function (t) { return t.id === "punta-mita"; });
+    let usd = row.usd_m2 || null;
+    const gateOut = GATES && GATES.outside;
+    if (gateOut && gateOut.headline_usd_m2 != null && gateOut.n != null && gateOut.n >= MARKET_N) {
+      usd = {
+        headline: gateOut.headline_usd_m2,
+        n: gateOut.n,
+        source: gateOut.source || (usd && usd.source),
+        band: gateOut.band || (usd && usd.band),
+        sample_n_unknown: false
+      };
+    }
     ANCLOTE = {
       id: "el-anclote",
       name: "El Anclote",
-      usd_m2: row.usd_m2 || null,
+      usd_m2: usd,
       peer: false,
       off_map: false,
       rank_only: true,
@@ -1292,7 +1347,10 @@ a.home-card:hover{border-color:var(--accent-3)}
     if (id === "timezone") return axisWhy(t, "timezone_overlap");
     if (id === "usd") {
       const h = headlineOf(t);
-      return h == null ? "unknown \u2014 not invented" : fmtUsd(toDisplay(h)) + " " + unitLabel();
+      const n = nOf(t);
+      if (h == null) return "unknown \u2014 not invented";
+      if (!isMarketN(n)) return sampleNote(n);
+      return fmtUsd(toDisplay(h)) + " " + unitLabel();
     }
     if (id === "source") {
       if (t.usd_m2 && t.usd_m2.source) return t.usd_m2.source;
@@ -1313,7 +1371,7 @@ a.home-card:hover{border-color:var(--accent-3)}
         const inChip = isCompleteRow(inside) ? "7 of 7" : ("Partial \u00b7 " + inN + " of 7");
         const outChip = isCompleteRow(out) ? "7 of 7" : ("Partial \u00b7 " + outN + " of 7");
         const outLab = outOv == null ? "" : (fmtOverall(outOv) + " ");
-        return "Peer pin 5196 \u2014 not a ranked market. Overlay inside \u00b7 " + inChip + " (no overall \u2014 no Homia headline) + El Anclote " + outLab + "(" + outChip + "). Hacienda 12589 n=3 and Las Terrazas 5992 n=2 are samples, not averaged.";
+        return "Peer pin 5196 n=38 \u2014 not a ranked market. Overlay inside \u00b7 " + inChip + " (no overall). " + INSIDE_BAND_COPY + " El Anclote neighborhood " + (outOv == null ? "" : (fmtOverall(outOv) + " ")) + "(" + outChip + "). Old development 3401 n=3 is a sample.";
       }
       const ov = overallOfRow(row);
       if (ov == null) return "\u2014";
@@ -1610,7 +1668,7 @@ a.home-card:hover{border-color:var(--accent-3)}
       html += '<button type="button" class="scen-chip' + (state.scenOn.custom ? " on" : "") + '" data-scen="custom" id="scenCustom">Custom ' + pctLabel(state.growthR) + "</button>";
       html += "</div>";
     }
-    html += '<div class="price-wrap"><canvas id="priceChart" aria-label="' + esc(title) + '"></canvas></div>';
+    html += '<div class="price-wrap"><canvas id="priceChart" aria-label="' + esc(title) + '"></canvas><div class="play-hit" id="playHit"></div><div class="play-tag" id="playTag" hidden></div></div>';
     if (!cmp) {
       html += '<div class="price-readout" id="priceReadout"></div>';
       html += '<div class="price-ctrls">';
@@ -1619,9 +1677,9 @@ a.home-card:hover{border-color:var(--accent-3)}
       html += '<div class="price-ctrl custom"><label id="priceGrowthLab" for="priceGrowth">Custom \u00b7 assumption, not a measured forecast \u00b7 ' + pctLabel(state.growthR) + "</label>";
       html += '<input type="range" id="priceGrowth" min="0" max="15" step="1" value="' + (state.growthR * 100) + '" aria-labelledby="priceGrowthLab"></div>';
       html += '<div class="price-ctrl"><label id="pricePlayLab" for="pricePlay">Year ' + state.playYear + "</label>";
-      html += '<input type="range" id="pricePlay" min="' + NOW_YEAR + '" max="' + (NOW_YEAR + state.horizon) + '" step="1" value="' + state.playYear + '" aria-labelledby="pricePlayLab"></div>';
+      html += '<input type="range" id="pricePlay" min="' + playMinYear() + '" max="' + (NOW_YEAR + state.horizon) + '" step="1" value="' + state.playYear + '" aria-labelledby="pricePlayLab"></div>';
       html += "</div>";
-      html += '<p class="caption">TODAY at 2026. Paths from headline, never back-cast. Conservative ' + pctLabel(R_CONSERVATIVE) + " teal dash \u00b7 Base " + pctLabel(R_BASE) + " coral \u00b7 Abundance " + pctLabel(R_ABUNDANCE) + " gold dash \u00b7 Custom purple live. P(y) = headline \u00d7 (1+r)^(y\u22122026) \u00b7 assumption, not a measured forecast.</p>";
+      html += '<p class="caption">Past path is the original model shape, locked to today\'s Homia print. Not a verified MLS time series. Conservative ' + pctLabel(R_CONSERVATIVE) + " teal dash \u00b7 Base " + pctLabel(R_BASE) + " coral \u00b7 Abundance " + pctLabel(R_ABUNDANCE) + " gold dash \u00b7 Custom purple live. P(y) = headline \u00d7 (1+r)^(y\u22122026) \u00b7 assumption, not a measured forecast.</p>";
     } else {
       const endY = NOW_YEAR + (state.cmpYears === 10 ? 10 : 5);
       html += '<p class="caption">Historical = 2026 dots only. Base dashed = ' + pctLabel(R_BASE) + " assumption \u00b7 not a measured forecast. Projection 5yr \u2192 2031 \u00b7 10yr \u2192 2036 (now " + endY + ").</p>";
@@ -1657,7 +1715,14 @@ a.home-card:hover{border-color:var(--accent-3)}
     } else if (towns.length) {
       const t = towns[0];
       const h = headlineOf(t);
-      if (h != null) {
+      if (playY < NOW_YEAR) {
+        const pt = illustrativeSeries(t.id).filter(function (x) { return x.year === playY; })[0];
+        if (pt) {
+          bits = ["<div>Past path \u00b7 " + playY + " \u00b7 " + fmtUsd(toDisplay(pt.usd_m2)) + " " + unitLabel() + ' <span class="assumed">original model shape</span></div>'];
+        }
+      } else if (playY === NOW_YEAR && h != null) {
+        bits = ["<div>TODAY \u00b7 " + playY + " \u00b7 " + fmtUsd(toDisplay(h)) + " " + unitLabel() + ' <span class="verified">Homia print</span></div>'];
+      } else if (h != null) {
         bits = scenarioSpecs().filter(function (sc) { return state.scenOn[sc.key]; }).map(function (sc) {
           const val = projPrice(h, sc.rate, playY);
           return "<div>" + esc(sc.label) + " " + pctLabel(sc.rate) + " \u00b7 " + playY + " \u00b7 " + fmtUsd(toDisplay(val)) + " " + unitLabel() + ' <span class="assumed">assumption</span></div>';
@@ -1675,16 +1740,17 @@ a.home-card:hover{border-color:var(--accent-3)}
     const gro = document.getElementById("priceGrowth");
     const play = document.getElementById("pricePlay");
     function clampPlay() {
+      const minY = playMinYear();
       const maxY = NOW_YEAR + state.horizon;
       if (state.playYear > maxY) state.playYear = maxY;
-      if (state.playYear < NOW_YEAR) state.playYear = NOW_YEAR;
+      if (state.playYear < minY) state.playYear = minY;
     }
     function refresh() {
       clampPlay();
       if (hor) hor.value = String(state.horizon);
       if (gro) gro.value = String(state.growthR * 100);
       if (play) {
-        play.min = String(NOW_YEAR);
+        play.min = String(playMinYear());
         play.max = String(NOW_YEAR + state.horizon);
         play.value = String(state.playYear);
       }
@@ -1705,7 +1771,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     }
     if (play) {
       play.oninput = function () {
-        state.playYear = Math.max(NOW_YEAR, Math.min(NOW_YEAR + state.horizon, Math.round(Number(play.value) || NOW_YEAR)));
+        state.playYear = Math.max(playMinYear(), Math.min(NOW_YEAR + state.horizon, Math.round(Number(play.value) || NOW_YEAR)));
         refresh();
       };
     }
@@ -1734,6 +1800,72 @@ a.home-card:hover{border-color:var(--accent-3)}
       { key: "abundance", rate: R_ABUNDANCE, color: brandColor("--gold") || "#FFD166", dash: [2, 3], width: 2, label: "Abundance" },
       { key: "custom", rate: state.growthR, color: brandColor("--purple") || "#A78BFA", dash: [4, 3], width: 2, label: "Custom" }
     ];
+  }
+
+  function playheadBits(t, year) {
+    if (!t || year == null) return "";
+    const unit = unitLabel();
+    if (year < NOW_YEAR) {
+      const pt = illustrativeSeries(t.id).filter(function (x) { return x.year === year; })[0];
+      if (!pt) return String(year);
+      return year + " \u00b7 " + fmtUsd(toDisplay(pt.usd_m2)) + " " + unit;
+    }
+    const h0 = headlineOf(t);
+    if (year === NOW_YEAR && h0 != null) return year + " \u00b7 " + fmtUsd(toDisplay(h0)) + " " + unit;
+    if (h0 == null) return String(year);
+    const on = scenarioSpecs().filter(function (sc) { return state.scenOn[sc.key]; });
+    if (!on.length) return year + " \u00b7 " + fmtUsd(toDisplay(projPrice(h0, R_BASE, year))) + " " + unit;
+    return year + " \u00b7 " + on.map(function (sc) {
+      return sc.label[0] + " " + fmtUsd(toDisplay(projPrice(h0, sc.rate, year)));
+    }).join(" \u00b7 ") + " " + unit;
+  }
+
+  function yearFromClientX(clientX) {
+    if (!chartScale) return state.playYear;
+    const canvas = document.getElementById("priceChart");
+    if (!canvas) return state.playYear;
+    const r = canvas.getBoundingClientRect();
+    const x = (clientX - r.left) * (chartScale.w / Math.max(1, r.width));
+    const nowX = chartScale.padL + 0.4 * chartScale.plotW;
+    let y;
+    if (x <= nowX) {
+      const pastSpan = Math.max(0.001, NOW_YEAR - chartScale.axisMin);
+      y = chartScale.axisMin + ((x - chartScale.padL) / Math.max(1, 0.4 * chartScale.plotW)) * pastSpan;
+    } else {
+      y = NOW_YEAR + ((x - nowX) / Math.max(1, 0.6 * chartScale.plotW)) * (chartScale.xMax - NOW_YEAR);
+    }
+    return Math.round(Math.max(playMinYear(), Math.min(NOW_YEAR + state.horizon, y)));
+  }
+
+  function bindPlayhead() {
+    const hit = document.getElementById("playHit");
+    if (!hit) return;
+    let dragging = false;
+    function applyX(clientX) {
+      const y = yearFromClientX(clientX);
+      if (y === state.playYear) return;
+      state.playYear = y;
+      const play = document.getElementById("pricePlay");
+      if (play) play.value = String(y);
+      updatePriceLabels();
+      renderPriceChart();
+    }
+    function onDown(e) {
+      dragging = true;
+      hit.setPointerCapture && e.pointerId != null && hit.setPointerCapture(e.pointerId);
+      applyX(e.clientX);
+      e.preventDefault();
+    }
+    function onMove(e) {
+      if (!dragging) return;
+      applyX(e.clientX);
+      e.preventDefault();
+    }
+    function onUp() { dragging = false; }
+    hit.addEventListener("pointerdown", onDown);
+    hit.addEventListener("pointermove", onMove);
+    hit.addEventListener("pointerup", onUp);
+    hit.addEventListener("pointercancel", onUp);
   }
 
   function renderPriceChart() {
@@ -1774,17 +1906,16 @@ a.home-card:hover{border-color:var(--accent-3)}
       const h0 = headlineOf(t);
       const paths = [];
       const histPts = [];
-      const byY = {};
-      seriesEntry(t.id).points.forEach(function (pt) {
-        if (pt.year < NOW_YEAR && pt.usd_m2 != null) byY[pt.year] = pt.usd_m2;
+      const rawIll = illustrativeSeries(t.id);
+      const atNow = rawIll.filter(function (pt) { return pt.year === NOW_YEAR; })[0];
+      const factor = (h0 != null && atNow && atNow.usd_m2) ? (h0 / atNow.usd_m2) : 1;
+      rawIll.forEach(function (pt) {
+        if (pt.year > NOW_YEAR) return;
+        const usd = pt.year === NOW_YEAR && h0 != null ? h0 : Math.round(pt.usd_m2 * factor);
+        histPts.push({ year: pt.year, usd_m2: usd });
       });
-      const histYears = Object.keys(byY).map(Number);
-      if (histYears.length) {
-        const minY = Math.min.apply(null, histYears);
-        for (let y = minY; y < NOW_YEAR; y++) {
-          histPts.push(byY[y] != null ? { year: y, usd_m2: byY[y] } : { year: y, usd_m2: null });
-        }
-        if (h0 != null) histPts.push({ year: NOW_YEAR, usd_m2: h0 });
+      if (histPts.length && h0 != null && histPts[histPts.length - 1].year !== NOW_YEAR) {
+        histPts.push({ year: NOW_YEAR, usd_m2: h0 });
       }
       if (cmp) {
         const future = [];
@@ -1889,18 +2020,27 @@ a.home-card:hover{border-color:var(--accent-3)}
     ctx.textBaseline = "bottom";
     ctx.fillText("TODAY", xNow + 6, padT - 4);
 
+    chartScale = { padL: padL, plotW: plotW, axisMin: axisMin, xMax: xMax, w: w, h: h };
     if (!cmp && state.playYear != null) {
       const xPlay = xOf(state.playYear);
       ctx.save();
-      ctx.strokeStyle = brandColor("--purple") || "#A78BFA";
-      ctx.globalAlpha = 0.7;
-      ctx.lineWidth = 1.2;
-      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = foam;
+      ctx.globalAlpha = 0.85;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(xPlay, padT);
       ctx.lineTo(xPlay, padT + plotH);
       ctx.stroke();
       ctx.restore();
+      const tag = document.getElementById("playTag");
+      if (tag && pack[0]) {
+        const bits = playheadBits(pack[0].t, state.playYear);
+        tag.hidden = !bits;
+        tag.textContent = bits;
+        const pct = (xPlay / w) * 100;
+        tag.style.left = Math.max(8, Math.min(92, pct)) + "%";
+      }
     }
 
     function drawPath(pts, color, dash, width) {
@@ -1933,21 +2073,15 @@ a.home-card:hover{border-color:var(--accent-3)}
 
     pack.forEach(function (row) {
       if (row.hist && row.hist.length) {
-        drawPath(row.hist, foam, null, 2);
-        row.hist.forEach(function (pt) {
-          if (!pt || pt.usd_m2 == null || pt.year >= NOW_YEAR) return;
-          ctx.fillStyle = foam;
-          ctx.beginPath();
-          ctx.arc(xOf(pt.year), yOf(toDisplay(pt.usd_m2)), 3, 0, Math.PI * 2);
-          ctx.fill();
-        });
+        const coral = brandColor("--coral") || "#FF6B47";
+        drawPath(row.hist, coral, null, 2.5);
       }
       row.paths.forEach(function (path) {
         drawPath(path.pts, path.color, path.dash, path.width);
       });
-      ctx.fillStyle = cmp ? row.color : (foam);
+      ctx.fillStyle = foam;
       ctx.beginPath();
-      ctx.arc(xOf(NOW_YEAR), yOf(toDisplay(row.h0)), 4, 0, Math.PI * 2);
+      ctx.arc(xOf(NOW_YEAR), yOf(toDisplay(row.h0)), 5, 0, Math.PI * 2);
       ctx.fill();
     });
 
@@ -2568,7 +2702,11 @@ a.home-card:hover{border-color:var(--accent-3)}
         if (!r.ok) return null;
         return r.json();
       }).catch(function () { return null }),
-      loadHomes()
+      loadHomes(),
+      fetch("price-path-illustrative-2015-2026.json", { cache: "no-store" }).then(function (r) {
+        if (!r.ok) return null;
+        return r.json();
+      }).catch(function () { return null })
     ]);
   }
 
@@ -2605,7 +2743,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     ((data && data.towns) || []).forEach(function (row) { if (row && row.id) SERIES[row.id] = row; });
   }
 
-  function boot(data, hotelData, scoreData, seriesData, gatesData, homesData) {
+  function boot(data, hotelData, scoreData, seriesData, gatesData, homesData, illustData) {
     DATASET = data;
     CATALOG = data.catalysts_catalog || {};
     HURR_REGION = data.hurricane_region || null;
@@ -2626,6 +2764,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     ingestSeries(seriesData || {});
     GATES = gatesData && typeof gatesData === "object" ? gatesData : null;
     HOMES = homesData && homesData.towns ? homesData : null;
+    ingestIllust(illustData);
     buildAnclote();
 
     const brandH = document.querySelector(".brand h1");
@@ -3014,7 +3153,9 @@ a.home-card:hover{border-color:var(--accent-3)}
       const locked = !unlocked(t.id);
       const inCmp = state.compare.indexOf(t.id) !== -1;
       const sc = scoreOf(t);
-      const usd = h == null ? "unknown" : (locked ? "Pro" : fmtUsd(toDisplay(h)));
+      const n = nOf(t);
+      const usd = t.id === "punta-mita-inside" ? "\u2014"
+        : (h == null ? "unknown" : (locked ? "Pro" : (isMarketN(n) ? fmtUsd(toDisplay(h)) : sampleNote(n))));
       const vsTxt = (locked && h != null) ? "Pro" : vscc.text;
       const vsCls = (locked && h != null) ? "" : vscc.cls;
       return '<div class="rank-line">' +
@@ -3029,7 +3170,7 @@ a.home-card:hover{border-color:var(--accent-3)}
         (t.id === "punta-mita-inside" && insideSamplesLine(t) ? '<div class="rank-samples">' + esc(insideSamplesLine(t)) + "</div>" : "") +
         "</div>" +
         '<div class="rank-tier">' + tierChipHtml(t) + "</div>" +
-        '<div class="rank-usd' + (h == null ? " unk" : "") + '">' + (t.id === "punta-mita-inside" ? "\u2014" : usd) + "</div>" +
+        '<div class="rank-usd' + (h == null || t.id === "punta-mita-inside" ? " unk" : (isMarketN(n) ? "" : " sample")) + '">' + usd + "</div>" +
         '<div class="rank-cagr">' + fmtCagr(cagrOf(t)) + "</div>" +
         '<div class="rank-vs vs ' + vsCls + '">' + esc(vsTxt) + "</div>" +
         '<div class="rank-score">' + (sc == null ? "\u2014" : esc(fmtOverall(sc))) + "</div>" +
@@ -3038,14 +3179,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     }
 
     function insideSamplesLine(t) {
-      const srow = scoreRow(t);
-      const samples = srow && srow.usd_m2 && srow.usd_m2.inside_development_samples;
-      if (!samples || !samples.length) return "";
-      return samples.map(function (samp) {
-        const usd = samp.headline_usd_m2 != null ? fmtUsd(toDisplay(samp.headline_usd_m2)) : "";
-        const n = samp.n != null ? " n=" + samp.n : "";
-        return (samp.name || "sample") + " " + usd + n;
-      }).join(" · ");
+      return INSIDE_BAND_COPY;
     }
 
     const shown = rows.slice();
@@ -3062,7 +3196,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     if (shown.length) html += shown.map(row).join("");
     else html += '<p class="caption">No towns in this filter.</p>';
     html += "</div>";
-    html += '<p class="caption">vs PV is vs Conchas Chinas ' + esc(fmtUsd(toDisplay(ccH))) + " (Homia), percent only. Cheaper green, dearer coral. Cabo M\u00e9dano " + esc(fmtUsd(toDisplay(caboH))) + " is MLS BCS, off-map, Pro-locked \u2014 not ranked. 5yr CAGR is verified_cagr5 or \u2014 \u2014 not invented. Score is file overall 0\u2013100 (green); Rank is file rank. PRIMARY = peer + headline, SECONDARY = priced headline, WATCH = unknown. Punta Mita mixed 5196 is the peer pin, not a ranked market. Inside has no overall (no Homia headline). El Anclote 3401 is rank 2, no pin. Default sort file rank.</p>";
+    html += '<p class="caption">vs PV is vs Conchas Chinas ' + esc(fmtUsd(toDisplay(ccH))) + " (Homia), percent only. Cheaper green, dearer coral. Cabo M\u00e9dano " + esc(fmtUsd(toDisplay(caboH))) + " is MLS BCS, off-map, Pro-locked \u2014 not ranked. 5yr CAGR is verified_cagr5 or \u2014 \u2014 not invented. Score is file overall 0\u2013100 (green); Rank is file rank. A $/m\u00b2 is a market print only if n\u226510. Punta Mita mixed 5196 n=38 is the peer pin, not a ranked market. Inside: " + INSIDE_BAND_COPY + " El Anclote neighborhood 3612 n=11. Old development 3401 n=3 is a sample. Default sort file rank.</p>";
     if (HURR_REGION && HURR_REGION.noaa_since_1945) {
       html += '<p class="caption">Region: ' + esc(HURR_REGION.noaa_since_1945) + " Not stamped on each town.</p>";
     }
@@ -3082,23 +3216,23 @@ a.home-card:hover{border-color:var(--accent-3)}
     const hacienda = devel[0] || {};
     const terrazas = devel[1] || {};
 
-    function row(label, n, usd, chipCls, chipLab) {
-      if (usd == null) return "";
+    function row(label, n, usd, chipCls, chipLab, forceNote) {
       const nBit = n != null ? " n=" + n : "";
+      const market = isMarketN(n);
+      const val = forceNote ? forceNote : (market && usd != null ? (fmtUsd(toDisplay(usd)) + " " + unitLabel()) : sampleNote(n));
       return "<div><span>" + esc(label) + nBit + '</span><span class="chip ' + chipCls + '">' + esc(chipLab) + "</span><b>" +
-        esc(fmtUsd(toDisplay(usd))) + " " + unitLabel() + "</b></div>";
+        esc(val) + "</b></div>";
     }
 
     const rows =
       row("Mixed / Homia", mixedN, mixedUsd, "unknown", "MIXED") +
       row("El Anclote / outside", outside.n, outside.headline_usd_m2, "priced", "OUTSIDE") +
-      row("Hacienda de Mita (inside)", hacienda.n, hacienda.headline_usd_m2, "primary", "INSIDE") +
-      row("Las Terrazas (inside)", terrazas.n, terrazas.headline_usd_m2, "primary", "INSIDE");
+      row("Inside / Resort", 6, null, "primary", "INSIDE", INSIDE_BAND_COPY);
     if (!rows) return "";
 
     return '<div class="gates-bands"><div class="group-h">Gate bands</div><div class="rows">' +
       rows +
-      '</div><p class="caption">5196 is mixed peer-set only, not ranked. Hacienda 12589 n=3 and Las Terrazas 5992 n=2 are samples, not averaged, not an inside headline. Inside overall is \u2014.</p></div>';
+      '</div><p class="caption">5196 n=38 is mixed peer-set only, not ranked. A $/m\u00b2 is a market print only if n\u226510. Hacienda and Las Terrazas are samples, not shown as inside-the-gates market numbers. Inside overall is \u2014.</p></div>';
   }
 
   function detailHtml(t) {
@@ -3119,43 +3253,38 @@ a.home-card:hover{border-color:var(--accent-3)}
       const mixedN = t.usd_m2 && t.usd_m2.n;
       html += '<div class="v unk">Split market</div>';
       html += '<div class="rows">';
-      samples.forEach(function (samp) {
-        const usd = samp.headline_usd_m2 != null ? fmtUsd(toDisplay(samp.headline_usd_m2)) : "—";
-        const n = samp.n != null ? " n=" + samp.n : "";
-        html += "<div><span>" + esc(samp.name || "sample") + n + '</span><span class="chip primary">INSIDE</span><b>' + esc(usd) + " " + unitLabel() + "</b></div>";
-      });
-      const outH = outRow && outRow.usd_m2 && outRow.usd_m2.headline;
-      const outN = outRow && outRow.usd_m2 && outRow.usd_m2.n;
-      if (outH != null) {
-        html += "<div><span>El Anclote" + (outN != null ? " n=" + outN : "") + '</span><span class="chip priced">OUTSIDE</span><b>' + esc(fmtUsd(toDisplay(outH))) + " " + unitLabel() + "</b></div>";
-      }
+      html += "<div><span>Inside / Resort</span><span class=\"chip primary\">INSIDE</span><b>" + esc(INSIDE_BAND_COPY) + "</b></div>";
+      const outTown = town("el-anclote");
+      const outH = headlineOf(outTown);
+      const outN = nOf(outTown);
+      html += "<div><span>El Anclote" + (outN != null ? " n=" + outN : "") + '</span><span class="chip priced">OUTSIDE</span><b>' +
+        esc(isMarketN(outN) && outH != null ? (fmtUsd(toDisplay(outH)) + " " + unitLabel()) : sampleNote(outN)) + "</b></div>";
       if (mixedH != null) {
         html += "<div><span>Mixed Homia" + (mixedN != null ? " n=" + mixedN : "") + '</span><span class="chip unknown">PEER PIN</span><b>' + esc(fmtUsd(toDisplay(mixedH))) + " " + unitLabel() + "</b></div>";
       }
       html += "<div><span>Score</span><b>— · mixed is not a ranked market</b></div>";
       html += "</div></div>";
     } else {
-      html += '<div class="v' + (unknown ? " unk" : "") + '">' + (unknown ? "unknown" : fmtUsd(toDisplay(h))) + "</div>";
+      const nHero = nOf(t);
+      const marketHero = isMarketN(nHero);
+      html += '<div class="v' + (unknown || !marketHero ? " unk" : "") + '">' + (unknown ? "unknown" : (marketHero ? fmtUsd(toDisplay(h)) : sampleNote(nHero))) + "</div>";
       html += '<div class="rows">';
-      if (!unknown) {
+      if (!unknown && marketHero) {
         html += "<div><span>Source</span><b>" + esc(t.usd_m2.source || "—") + "</b></div>";
         if (t.usd_m2.n != null) html += "<div><span>n</span><b>" + esc(String(t.usd_m2.n)) + "</b></div>";
         if (t.usd_m2.band) html += "<div><span>Band</span><b>" + esc(t.usd_m2.band) + "</b></div>";
         html += '<div><span>vs Conchas Chinas</span><b class="vs ' + vscc.cls + '">' + esc(vscc.text) + "</b></div>";
         html += '<div><span>vs Cabo Médano</span><b class="vs ' + vscb.cls + '">' + esc(vscb.text) + "</b></div>";
+      } else if (!unknown) {
+        html += "<div><span>n</span><b>" + esc(sampleNote(nHero)) + "</b></div>";
       } else {
         html += "<div><span>Seed</span><b>unknown — not invented</b></div>";
         if (t.ampi_not_mls) {
           html += "<div><span>AMPI (not MLS)</span><b>not used as asking " + unitLabel() + "</b></div>";
         }
-        const samples = t.usd_m2 && t.usd_m2.inside_development_samples;
-        if (samples && samples.length) {
-          samples.forEach(function (samp) {
-            const usd = samp.headline_usd_m2 != null ? fmtUsd(toDisplay(samp.headline_usd_m2)) : "—";
-            const n = samp.n != null ? " n=" + samp.n : "";
-            html += "<div><span>" + esc(samp.name || "sample") + n + "</span><b>" + esc(usd) + " " + unitLabel() + "</b></div>";
-          });
-          html += "<div><span>Inside headline</span><b>none — samples not averaged</b></div>";
+        if (t.id === "punta-mita-inside" || (t.usd_m2 && t.usd_m2.inside_development_samples)) {
+          html += "<div><span>Inside</span><b>" + esc(INSIDE_BAND_COPY) + "</b></div>";
+          html += "<div><span>Inside headline</span><b>none \u2014 no neighborhood print yet</b></div>";
         }
       }
       const sc = scoreOf(t);
@@ -3341,13 +3470,14 @@ a.home-card:hover{border-color:var(--accent-3)}
       };
     });
     bindPriceControls();
+    bindPlayhead();
     requestAnimationFrame(function () {
       if (document.getElementById("radar")) renderChart(chartTownIds());
       if (document.getElementById("priceChart")) renderPriceChart();
     });
   }
 
-  loadData().then(function (pack) { boot(pack[0], pack[1], pack[2], pack[3], pack[4], pack[5]); }).catch(function (err) {
+  loadData().then(function (pack) { boot(pack[0], pack[1], pack[2], pack[3], pack[4], pack[5], pack[6]); }).catch(function (err) {
     const el = document.getElementById("sheetBody");
     if (el) el.innerHTML = "<p class=\"caption\">Could not load pvr-towns-aug2026.json / scores-spider-aug2026.json. Serve this folder over http.</p>";
     document.getElementById("sheet").classList.add("open");
