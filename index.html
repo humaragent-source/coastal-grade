@@ -10,55 +10,64 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <style>
-
-:root{--bg:#061016;--foam:#e7fbf6;--dim:#9bbfb8;--mint:#3eebc9;--mint-d:rgba(62,235,201,.16);--sand:#e6c878;--sand-d:rgba(230,200,120,.16);--storm:#ff7a6a;--uc:#ffb020;--tender:#7ab3ff;--rumor:#c9a0ff;--muted:#6f8f94;--line:rgba(180,230,220,.12);--sheet:rgba(8,18,24,.94);--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);--dock-h:88px}
+:root{--bg:#061016;--foam:#e7fbf6;--dim:#9bbfb8;--mint:#3eebc9;--mint-d:rgba(62,235,201,.16);--sand:#e6c878;--sand-d:rgba(230,200,120,.16);--storm:#ff7a6a;--uc:#ffb020;--tender:#7ab3ff;--rumor:#c9a0ff;--muted:#6f8f94;--line:rgba(180,230,220,.12);--sheet:rgba(8,18,24,.94);--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);--dock-h:88px;--rail-w:400px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100dvh;margin:0;background:#03080c;color:var(--foam);font-family:"DM Sans",system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
-#app{height:100dvh;width:100%;max-width:430px;margin:0 auto;position:relative;overflow:hidden;overscroll-behavior:none;background:var(--bg);box-shadow:0 0 0 1px rgba(255,255,255,.04),0 20px 80px rgba(0,0,0,.45)}
+html,body{height:100dvh;width:100%;margin:0;background:#03080c;color:var(--foam);font-family:"DM Sans",system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
+#app{height:100dvh;width:100%;position:relative;overflow:hidden;overscroll-behavior:none;background:var(--bg)}
+#stage{position:absolute;inset:0;overflow:hidden}
 #map{position:absolute;inset:0;background:#08141c}
 .leaflet-container{background:#08141c;font-family:inherit}
 .leaflet-control-attribution{display:none!important}
 .leaflet-attribution-flag,.leaflet-control-attribution svg,.leaflet-control-attribution img{display:none!important}
 .leaflet-control-zoom{display:none}
 .vignette{pointer-events:none;position:absolute;inset:0;z-index:400;background:radial-gradient(120% 70% at 50% 100%,rgba(6,16,22,.55),transparent 55%),linear-gradient(180deg,rgba(6,16,22,.55) 0%,transparent 18%,transparent 70%,rgba(6,16,22,.25) 100%)}
-.topbar{position:absolute;top:0;left:0;right:0;z-index:800;padding:calc(10px + var(--st)) 14px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.topbar{position:absolute;top:0;left:0;right:0;z-index:800;padding:calc(10px + var(--st)) 14px 0 calc(14px + var(--sl));display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .brand h1{font-family:Syne,sans-serif;font-weight:800;letter-spacing:.04em;font-size:15px;margin:0;line-height:1.1}
 .brand .sub{font-size:10.5px;color:var(--dim);letter-spacing:.04em;margin-top:2px}
-.seed-chip{font-size:10px;color:var(--sand);background:var(--sand-d);border:1px solid rgba(230,200,120,.25);border-radius:999px;padding:6px 9px;white-space:nowrap}
-.drive{position:absolute;top:calc(58px + var(--st));left:12px;right:12px;z-index:800;display:flex;gap:6px;padding:4px;background:rgba(8,18,24,.78);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(10px)}
+.top-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.seed-chip,.list-btn,.qa-chip{font-size:10px;border-radius:999px;padding:6px 9px;white-space:nowrap;border:1px solid rgba(230,200,120,.25);display:inline-flex;align-items:center;justify-content:center}
+.seed-chip{color:var(--sand);background:var(--sand-d)}
+.qa-chip{color:var(--mint);background:var(--mint-d);border-color:rgba(62,235,201,.3)}
+.qa-chip[hidden]{display:none!important}
+.list-btn{color:var(--foam);background:rgba(8,18,24,.78);border-color:var(--line);cursor:pointer;font:600 12px/1 "DM Sans",sans-serif;min-height:44px;min-width:44px}
+.drive{position:absolute;top:calc(58px + var(--st));left:calc(12px + var(--sl));right:calc(12px + var(--sr));z-index:800;display:flex;gap:6px;padding:4px;background:rgba(8,18,24,.78);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(10px)}
 .drive button{flex:1;border:0;background:transparent;color:var(--dim);font:600 12px/1 "DM Sans",sans-serif;padding:9px 0;border-radius:11px;cursor:pointer;min-height:44px}
 .drive button.on{background:var(--mint-d);color:var(--mint)}
-.drive-label{position:absolute;top:calc(102px + var(--st));left:16px;z-index:800;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-.count-pill{position:absolute;top:calc(100px + var(--st));right:14px;z-index:800;font-size:11px;color:var(--foam);background:rgba(8,18,24,.78);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+.drive-label{position:absolute;top:calc(102px + var(--st));left:calc(16px + var(--sl));z-index:800;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.count-pill{position:absolute;top:calc(100px + var(--st));right:calc(14px + var(--sr));z-index:800;font-size:11px;color:var(--foam);background:rgba(8,18,24,.78);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+
 .dot{width:14px;height:14px;border-radius:50%;border:2px solid #061016;box-shadow:0 0 0 1px rgba(62,235,201,.35),0 0 12px rgba(62,235,201,.35);background:var(--mint);transform:translate(-7px,-7px)}
 .dot.unknown{background:#4a6a72;box-shadow:0 0 0 1px rgba(150,180,180,.25),0 0 8px rgba(80,110,120,.3)}
-.dot.ampi{background:#7ab3ff;box-shadow:0 0 0 1px rgba(122,179,255,.4),0 0 10px rgba(122,179,255,.3)}
-.dot.peer{background:var(--sand);width:16px;height:16px;transform:translate(-8px,-8px);box-shadow:0 0 0 1px rgba(230,200,120,.45),0 0 14px rgba(230,200,120,.45)}
+.dot.primary{background:var(--sand);width:16px;height:16px;transform:translate(-8px,-8px);box-shadow:0 0 0 1px rgba(230,200,120,.45),0 0 14px rgba(230,200,120,.45)}
+.dot.locked{opacity:.72}
 .dot.sel{box-shadow:0 0 0 3px rgba(62,235,201,.55),0 0 18px rgba(62,235,201,.7)}
-.dot.boat{background:#7ab3ff;border-radius:4px}
+.dot.boat{border-radius:4px}
 .airport{width:22px;height:22px;transform:translate(-11px,-11px);border-radius:6px;background:#12303a;border:1px solid var(--mint);display:grid;place-items:center;color:var(--mint);font-size:10px;font-weight:700;box-shadow:0 0 16px rgba(62,235,201,.35)}
 .lbl{background:none;border:0;box-shadow:none;font-size:10px;font-weight:600;color:#cfeae4;text-shadow:0 1px 4px #061016,0 0 8px #061016;margin-left:8px;margin-top:-2px;white-space:nowrap;pointer-events:none}
-.compare-dock{position:absolute;left:10px;right:10px;bottom:calc(12px + var(--sb));z-index:960;background:rgba(8,18,24,.9);border:1px solid var(--line);border-radius:16px;padding:10px 12px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:8px;transition:transform .25s ease}
-.compare-dock.sheet-open{transform:translateY(-6px)}
-.slot{flex:1;min-width:44px;min-height:44px;background:rgba(255,255,255,.04);border-radius:10px;padding:8px 9px;font-size:11px;color:var(--muted);display:flex;flex-direction:column;justify-content:center}
-.slot strong{display:block;color:var(--foam);font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.slot.filled strong{color:var(--mint)}
-.slot.b.filled strong{color:var(--sand)}
+
+#rail{position:absolute;inset:0;z-index:900;pointer-events:none;display:flex;flex-direction:column;justify-content:flex-end}
+.compare-dock{position:absolute;left:calc(10px + var(--sl));right:calc(10px + var(--sr));bottom:calc(12px + var(--sb));z-index:960;background:rgba(8,18,24,.9);border:1px solid var(--line);border-radius:16px;padding:10px 12px;backdrop-filter:blur(12px);display:flex;align-items:flex-start;gap:8px;pointer-events:auto;flex-wrap:nowrap}
+.dock-chips{flex:1 1 0;display:flex;flex-wrap:wrap;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;-webkit-overflow-scrolling:touch}
+.dock-chips::-webkit-scrollbar{display:none;width:0;height:0}
+.dock-chip,.dock-empty{flex-shrink:0;min-height:44px;min-width:44px;border-radius:12px;padding:6px 10px;display:flex;align-items:center;gap:6px;font-size:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--foam);white-space:nowrap}
+.dock-chip button{border:0;background:transparent;color:var(--dim);cursor:pointer;min-width:32px;min-height:32px;font-size:14px}
+.dock-empty{color:var(--muted);border-style:dashed}
+.dock-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .go-compare,.clear-compare{border:0;cursor:pointer;font:600 11px/1 "DM Sans",sans-serif;border-radius:999px;padding:10px 11px;white-space:nowrap;flex-shrink:0;min-height:44px;min-width:44px}
 .go-compare{background:var(--mint);color:#052019}
 .go-compare:disabled{opacity:.35;cursor:default}
 .clear-compare{background:transparent;color:var(--dim);padding:10px 6px}
 
-.sheet{position:absolute;left:0;right:0;bottom:0;z-index:900;background:var(--sheet);border-top:1px solid var(--line);border-radius:22px 22px 0 0;backdrop-filter:blur(16px);transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.8,.2,1);max-height:64dvh;display:flex;flex-direction:column;box-shadow:0 -20px 60px rgba(0,0,0,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:900;background:var(--sheet);border-top:1px solid var(--line);border-radius:22px 22px 0 0;backdrop-filter:blur(16px);transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.8,.2,1);max-height:64dvh;display:flex;flex-direction:column;box-shadow:0 -20px 60px rgba(0,0,0,.45);pointer-events:auto}
 .sheet.open{transform:translateY(0)}
 .sheet.compare-mode{max-height:86dvh}
-.handle{width:42px;height:4px;border-radius:4px;background:rgba(255,255,255,.18);margin:10px auto 6px}
-.sheet-scroll{overflow:auto;padding:0 16px calc(var(--dock-h) + 16px + var(--sb));flex:1;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior:contain}
+.handle{width:42px;height:4px;border-radius:4px;background:rgba(255,255,255,.18);margin:10px auto 6px;flex-shrink:0}
+.sheet-scroll{overflow:auto;padding:0 16px calc(var(--dock-h) + 24px + var(--sb));flex:1;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior:contain}
 .sheet-scroll::-webkit-scrollbar{width:0;height:0;display:none}
 .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
 .sheet-head h2{margin:0;font-family:Syne,sans-serif;font-size:22px;letter-spacing:-.02em}
 .meta{font-size:12px;color:var(--dim);margin-top:3px}
-.x{border:0;background:rgba(255,255,255,.06);color:var(--foam);width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:16px;flex-shrink:0}
+.x,.icon-btn{border:0;background:rgba(255,255,255,.06);color:var(--foam);width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:16px;flex-shrink:0}
 .price-card{background:linear-gradient(180deg,rgba(62,235,201,.08),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:12px}
 .price-card .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .price-card .v{font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:2px}
@@ -67,7 +76,6 @@ html,body{height:100dvh;margin:0;background:#03080c;color:var(--foam);font-famil
 .rows div{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);gap:8px}
 .rows b{color:var(--foam);font-weight:600;text-align:right}
 .hurr{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:rgba(255,122,106,.08);border:1px solid rgba(255,122,106,.22);font-size:12px;margin-bottom:10px;color:#ffd0c8}
-.hurr.quiet{background:rgba(255,255,255,.03);border-color:var(--line);color:var(--dim)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .chip{font-size:10.5px;font-weight:600;letter-spacing:.03em;border-radius:999px;padding:5px 9px;border:1px solid transparent}
 .chip.open{background:var(--mint-d);color:var(--mint);border-color:rgba(62,235,201,.3)}
@@ -75,217 +83,847 @@ html,body{height:100dvh;margin:0;background:#03080c;color:var(--foam);font-famil
 .chip.complete{background:rgba(230,200,120,.12);color:var(--sand);border-color:rgba(230,200,120,.3)}
 .chip.tender{background:rgba(122,179,255,.12);color:var(--tender);border-color:rgba(122,179,255,.3)}
 .chip.rumor{background:rgba(201,160,255,.12);color:var(--rumor);border-color:rgba(201,160,255,.3)}
+.chip.dispute{background:rgba(255,176,32,.14);color:var(--uc);border-color:rgba(255,176,32,.4)}
 .chip.none{color:var(--muted);background:rgba(255,255,255,.03);border-color:var(--line);font-weight:500;letter-spacing:0}
-.chart-wrap{height:210px;position:relative;margin:4px -6px 8px}
+.chip.primary{background:var(--sand-d);color:var(--sand);border-color:rgba(230,200,120,.3)}
+.chip.priced{background:var(--mint-d);color:var(--mint);border-color:rgba(62,235,201,.3)}
+.chip.unknown{background:rgba(255,255,255,.04);color:var(--muted);border-color:var(--line)}
+.chip.lock{background:rgba(255,255,255,.04);color:var(--dim);border-color:var(--line)}
 .caption{font-size:10.5px;color:var(--muted);margin:0 0 12px;line-height:1.4}
 .actions{display:flex;gap:8px;margin-bottom:6px}
-.actions button{flex:1;border:0;border-radius:12px;padding:11px;cursor:pointer;font:600 13px/1 "DM Sans",sans-serif;min-height:44px;min-width:44px}
+.actions button,.back-btn{flex:1;border:0;border-radius:12px;padding:11px;cursor:pointer;font:600 13px/1 "DM Sans",sans-serif;min-height:44px;min-width:44px}
 .btn-a{background:var(--mint-d);color:var(--mint)}
-.btn-b{background:var(--sand-d);color:var(--sand)}
-.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.col-card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px}
-.col-card h3{margin:0 0 6px;font-size:13px}
-.col-card .p{font-size:16px;font-weight:700}
-.col-card .p.unk{font-style:italic;color:var(--muted);font-weight:500;font-size:14px}
-.col-card .d{font-size:11px;color:var(--dim);margin-top:4px}
-.bars{display:grid;gap:7px;margin:6px 0 4px}
-.bar-row{display:grid;grid-template-columns:96px 1fr 58px;gap:8px;align-items:center;font-size:11px}
-.bar-row .n{color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar-row .n.hi{color:var(--foam);font-weight:600}
-.track{height:8px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
-.fill{height:100%;border-radius:99px;background:#3a5a62}
-.fill.peer-gold{background:linear-gradient(90deg,#c9a24a,var(--sand))}
-.fill.hi-a{background:var(--mint)}
-.fill.hi-b{background:var(--sand)}
-.bar-row .usd{text-align:right;font-variant-numeric:tabular-nums;color:var(--foam)}
-.bar-row .usd.unk{color:var(--muted);font-style:italic}
-.legend{display:flex;flex-wrap:wrap;gap:8px 10px;margin:8px 0 0;font-size:10px;color:var(--muted)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--dim)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 10px;margin:8px 0 12px;font-size:10px;color:var(--muted)}
 .legend i{display:inline-block;width:7px;height:7px;border-radius:99px;margin-right:4px}
-.map-credit{position:absolute;right:12px;bottom:calc(var(--dock-h) + 16px + var(--sb));z-index:500;display:flex;align-items:center;height:16px;min-width:16px;min-height:16px;padding:0;border:1px solid var(--line);border-radius:8px;background:rgba(8,18,24,.72);color:var(--muted);font:600 9px/16px "DM Sans",sans-serif;cursor:pointer}
+.map-credit{position:absolute;right:calc(12px + var(--sr));bottom:calc(var(--dock-h) + 16px + var(--sb));z-index:500;display:flex;align-items:center;height:16px;min-width:16px;min-height:16px;padding:0;border:1px solid var(--line);border-radius:8px;background:rgba(8,18,24,.72);color:var(--muted);font:600 9px/16px "DM Sans",sans-serif;cursor:pointer}
 .map-credit-i{width:16px;height:16px;display:grid;place-items:center;flex-shrink:0;font-style:italic;font-weight:700}
 .map-credit-text{max-width:0;overflow:hidden;white-space:nowrap;opacity:0;padding-right:0;transition:max-width .2s ease,opacity .2s ease,padding .2s ease}
 .map-credit.open .map-credit-text{max-width:88px;opacity:1;padding-right:7px}
+
+.filters{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter-chip,.sort-chip{border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:999px;padding:10px 12px;font:600 11px/1 "DM Sans",sans-serif;cursor:pointer;min-height:44px;white-space:nowrap}
+.filter-chip.on{background:var(--mint-d);color:var(--mint);border-color:rgba(62,235,201,.3)}
+.sort-chip.on{background:var(--sand-d);color:var(--sand);border-color:rgba(230,200,120,.3)}
+.sort-row{display:flex;gap:6px;margin-bottom:12px}
+
+.rank-line{display:flex;align-items:stretch;gap:4px;border-bottom:1px solid var(--line)}
+.rank-line .icon-btn{align-self:center;flex-shrink:0}
+.rank-row{display:grid;grid-template-columns:28px 1fr auto;gap:8px 10px;align-items:center;padding:10px 4px;border-bottom:0;min-height:52px;cursor:pointer;width:100%;text-align:left;background:transparent;border-left:0;border-right:0;border-top:0;color:inherit;font:inherit}
+.rank-num{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;font-weight:600}
+.rank-name{font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rank-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:11px;color:var(--dim);grid-column:2 / -1}
+.rank-usd{font-variant-numeric:tabular-nums;font-weight:700;color:var(--foam);font-size:13px}
+.rank-usd.unk{color:var(--muted);font-style:italic;font-weight:500}
+.vs{font-variant-numeric:tabular-nums}
+.vs.pos{color:var(--mint)}
+.vs.neg{color:var(--sand)}
+.score-col{color:var(--muted);font-variant-numeric:tabular-nums}
+.group-h{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.lock-ico{font-size:10px;color:var(--dim)}
+
+.cmp-wrap{overflow-x:auto;margin:0 -4px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.cmp-wrap::-webkit-scrollbar{display:none}
+.cmp-table{border-collapse:separate;border-spacing:0;min-width:100%;font-size:12px}
+.cmp-table th,.cmp-table td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top;min-width:92px}
+.cmp-table th:first-child,.cmp-table td:first-child{position:sticky;left:0;z-index:1;background:#08181f;min-width:104px;color:var(--muted);font-weight:600}
+.cmp-table th{color:var(--foam);font-size:12px;text-align:left}
+.facts{display:grid;gap:8px;margin:8px 0 12px}
+.facts-row{display:grid;grid-template-columns:88px 1fr;gap:8px;font-size:12px}
+.facts-row .k{color:var(--muted)}
+.facts-grid{display:grid;gap:8px;overflow-x:auto;scrollbar-width:none}
+.facts-grid::-webkit-scrollbar{display:none}
+.fact-col{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:140px}
+.fact-col h3{margin:0 0 8px;font-size:13px}
+.fact-col div{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--dim);padding:4px 0;border-bottom:1px solid var(--line)}
+.fact-col div:last-child{border-bottom:0}
+.fact-col b{color:var(--foam);font-weight:600;text-align:right}
+
+.modal{position:fixed;inset:0;z-index:1100;background:rgba(3,8,12,.58);display:grid;place-items:center;padding:24px;pointer-events:auto}
+.modal[hidden]{display:none}
+.modal-card{width:min(380px,100%);background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.modal-card h2{font-family:Syne,sans-serif;margin:0 0 8px;font-size:22px}
+.price-pair{display:flex;gap:8px;margin:14px 0}
+.price-pair span{flex:1;background:var(--mint-d);color:var(--mint);border-radius:10px;padding:12px 8px;text-align:center;font-weight:700;font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(var(--dock-h) + 20px + var(--sb));transform:translateX(-50%);z-index:1200;background:#12303a;border:1px solid var(--sand);color:var(--sand);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;min-height:44px;display:flex;align-items:center;pointer-events:none;white-space:nowrap}
+.toast[hidden]{display:none}
+
+
+.spider-block{margin:0 0 16px}
+.spider-empty{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
+.spider{display:grid;grid-template-columns:minmax(92px,1fr) 100px minmax(92px,1fr);grid-template-rows:48px 52px 52px 48px;grid-template-areas:". access ." "signal hex storm" "catalyst hex comps" ". beach .";align-items:center;justify-items:center;gap:4px 6px;margin:4px 0 8px}
+.spider-core{grid-area:hex;width:100%;height:100%;display:grid;place-items:center;pointer-events:none}
+.spider-core svg{width:96px;height:96px;display:block}
+.spider-lab{min-width:44px;min-height:44px;padding:8px 8px;border-radius:12px;border:1px solid rgba(62,235,201,.3);background:var(--mint-d);color:var(--mint);font:700 10px/1 "DM Sans",sans-serif;letter-spacing:.08em;cursor:pointer;white-space:nowrap}
+.spider-lab[data-axis="access"]{grid-area:access}
+.spider-lab[data-axis="signal"]{grid-area:signal}
+.spider-lab[data-axis="storm"]{grid-area:storm}
+.spider-lab[data-axis="catalyst"]{grid-area:catalyst}
+.spider-lab[data-axis="comps"]{grid-area:comps}
+.spider-lab[data-axis="beach"]{grid-area:beach}
+
+.chip.here{background:rgba(255,255,255,.04);color:var(--muted);border-color:var(--line);font-weight:600}
+.coming{margin:0 0 16px}
+.coming-fil{margin-bottom:12px}
+.coming-list{margin:0;padding:0;list-style:none;position:relative}
+.coming-list::before{content:"";position:absolute;left:13px;top:8px;bottom:8px;width:1px;background:var(--line)}
+.coming-row{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:0 0 14px;position:relative}
+.coming-row:last-child{padding-bottom:0}
+.coming-row.here{opacity:.62}
+.coming-row.here .coming-title{color:var(--dim);font-weight:500}
+.mono{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:700 12px/1 "DM Sans",sans-serif;flex-shrink:0;position:relative;z-index:1}
+.mono.mint{background:var(--mint-d);color:var(--mint);border:1px solid rgba(62,235,201,.28)}
+.mono.sand{background:var(--sand-d);color:var(--sand);border:1px solid rgba(230,200,120,.28)}
+.coming-body{min-width:0}
+.coming-title{font-size:13px;font-weight:600;line-height:1.35;margin:0 0 4px}
+.coming-place{font-size:11px;color:var(--dim);margin:0 0 6px}
+.coming-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.coming-date{font-size:11px;color:var(--sand);font-weight:600}
+.coming-hint{font-size:10.5px;color:var(--muted);margin-top:5px;letter-spacing:.01em}
+.coming-dispute{color:#ffd8a0}
+.coming-empty{font-size:12px;color:var(--muted);margin:0;font-style:italic}
+.coming-now{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:center;padding:2px 0 14px;position:relative;list-style:none}
+.coming-now-tick{width:12px;height:12px;border-radius:50%;background:var(--foam);margin:0 auto;box-shadow:0 0 0 3px rgba(231,251,246,.16);position:relative;z-index:1}
+.coming-now-lab{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--foam)}
+
+.homes-shelf{margin:0 0 16px}
+.home-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.03)}
+.home-photo{height:112px;background:linear-gradient(145deg,rgba(62,235,201,.1),rgba(8,18,24,.92) 55%,rgba(230,200,120,.08));display:grid;place-items:center;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.home-body{padding:12px}
+.home-title{font-weight:600;color:var(--muted);font-size:14px}
+.home-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+.home-card .chip{opacity:.55}
+.home-empty{font-size:12.5px;color:var(--foam);margin:10px 0 0;line-height:1.4}
+
+.define-layer{position:absolute;left:0;right:0;top:0;bottom:calc(var(--dock-h) + 8px);z-index:940;display:grid;place-items:center;padding:16px 14px 12px;background:rgba(3,8,12,.55);overflow:auto;pointer-events:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.define-layer[hidden]{display:none}
+.define-card{width:min(360px,100%);background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:16px 16px 18px;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative;max-height:100%;overflow:auto}
+.define-card h3{font-family:Syne,sans-serif;font-size:22px;margin:0 48px 8px 0;letter-spacing:.04em}
+.define-mean{font-size:14px;color:var(--foam);margin:0 0 12px;line-height:1.4}
+.define-grade,.define-town{background:rgba(62,235,201,.06);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.define-town{background:var(--mint-d);margin-bottom:0}
+.define-grade .k,.define-town .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.define-grade p,.define-town p{margin:0 0 4px;font-size:12.5px;color:var(--foam);line-height:1.4}
+.define-grade p:last-child,.define-town p:last-child{margin-bottom:0}
+.define-card .x{position:absolute;top:10px;right:10px}
+
+@media (min-width:900px){
+  #app{display:grid;grid-template-columns:minmax(0,1fr) var(--rail-w);max-width:none;grid-template-rows:100dvh}
+  #stage{position:relative;height:100dvh;min-width:0}
+  .drive{right:12px;left:12px;max-width:420px}
+  .list-btn{display:none}
+  #rail{position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-left:1px solid var(--line);z-index:2}
+  .sheet{position:relative;bottom:auto;transform:none;max-height:none;flex:1;min-height:0;border-radius:0;border:0;box-shadow:none}
+  .sheet.open,.sheet.compare-mode{transform:none;max-height:none}
+  .handle{display:none}
+  .sheet-scroll{padding:14px 16px 16px}
+  .compare-dock{position:relative;left:auto;right:auto;bottom:auto;border-radius:0;border:0;border-top:1px solid var(--line)}
+  .map-credit{bottom:14px;right:14px}
+  .toast{left:auto;right:calc(var(--rail-w) + 16px);transform:none;bottom:24px}
+  .rank-line{display:flex;align-items:stretch;gap:4px;border-bottom:1px solid var(--line)}
+.rank-line .icon-btn{align-self:center;flex-shrink:0}
+.rank-row{grid-template-columns:28px 1fr auto}
+}
 </style>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 <body>
 <div id="app">
-  <div id="map"></div>
-  <button class="map-credit" id="mapCredit" type="button" aria-label="Map credit" aria-expanded="false"><span class="map-credit-i">i</span><span class="map-credit-text">Tiles © Esri</span></button>
-  <div class="vignette"></div>
-  <div class="topbar">
-    <div class="brand">
-      <h1>COASTAL GRADE</h1>
-      <div class="sub">PVR center · Homia asking USD/m²</div>
+  <div id="stage">
+    <div id="map"></div>
+    <button class="map-credit" id="mapCredit" type="button" aria-label="Map credit" aria-expanded="false"><span class="map-credit-i">i</span><span class="map-credit-text">Tiles © Esri</span></button>
+    <div class="vignette"></div>
+    <div class="topbar">
+      <div class="brand">
+        <h1>COASTAL GRADE</h1>
+        <div class="sub">PVR center · Homia asking USD/m²</div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="list-btn" id="openList">List</button>
+        <div class="seed-chip">Aug 2026</div>
+        <div class="qa-chip" id="qaChip" hidden>QA</div>
+      </div>
     </div>
-    <div class="seed-chip">Aug 2026</div>
+    <div class="drive" role="tablist" aria-label="Drive-time radius">
+      <button type="button" data-min="30">30 min</button>
+      <button type="button" data-min="60">60</button>
+      <button type="button" data-min="90" class="on">90</button>
+      <button type="button" data-min="120">120</button>
+    </div>
+    <div class="drive-label">Drive-time radius from PVR · estimated</div>
+    <div class="count-pill" id="count">—</div>
   </div>
-  <div class="drive" role="tablist" aria-label="Drive-time radius">
-    <button data-min="30">30 min</button>
-    <button data-min="60">60</button>
-    <button data-min="90" class="on">90</button>
-    <button data-min="120">120</button>
+  <div id="rail">
+    <div class="sheet" id="sheet">
+      <div class="handle"></div>
+      <div class="sheet-scroll" id="sheetBody"></div>
+    </div>
+    <div class="define-layer" id="defineLayer" hidden></div>
+    <div class="compare-dock" id="dock"></div>
   </div>
-  <div class="drive-label">Drive-time radius from PVR</div>
-  <div class="count-pill" id="count">—</div>
-  <div class="compare-dock" id="dock">
-    <div class="slot" id="slotA"><span>A</span><strong>Tap a town</strong></div>
-    <div class="slot b" id="slotB"><span>B</span><strong>Then another</strong></div>
-    <button class="clear-compare" id="clearCmp" hidden>Clear</button>
-    <button class="go-compare" id="goCmp" disabled>Compare</button>
-  </div>
-  <div class="sheet" id="sheet">
-    <div class="handle"></div>
-    <div class="sheet-scroll" id="sheetBody"></div>
-  </div>
+  <div class="modal" id="modal" hidden></div>
+  <div class="toast" id="toast" hidden></div>
 </div>
 <script>
-
 (function () {
-  const SEED = "Aug 2026";
-  const PVR = [20.68083, -105.25556];
-  const AXES = ["Access", "Signal", "Storm", "Catalyst", "Comps", "Beach"];
-  const PEERS = [
-    { id: "cabo-medano", name: "Cabo Médano", usd: 11500, offMap: true },
-    { id: "conchas-chinas", name: "Conchas Chinas", usd: 7066 },
-    { id: "punta-mita", name: "Punta Mita", usd: 5196 },
-    { id: "sayulita", name: "Sayulita", usd: 4848 }
-  ];
-  const AUTOPISTA = { type: "open", label: "Las Varas-Bucerías autopista", meta: "OPEN / priced-in" };
-  const AMADO = { type: "complete", label: "Puente Amado Nervo", meta: "COMPLETE / NOT OPEN" };
-  const LITIBU_CLUB = { type: "uc", label: "Litibú Bay Club", meta: "UNDER CONSTRUCTION / winter 2026" };
-  const HOTELS = { type: "rumor", label: "Hotels permitting", meta: "RUMOR" };
-
-  const TOWNS = [
-    { id: "san-blas", name: "San Blas", lat: 21.53972, lng: -105.28556, drive: [130, 150], region: "north",
-      homia: null, ampi: null, hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "chacala", name: "Chacala", lat: 21.16764, lng: -105.22829, drive: [80, 100], region: "north",
-      homia: null, ampi: null, hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "guayabitos", name: "Guayabitos", lat: 21.0240, lng: -105.2678, drive: [50, 70], region: "north",
-      homia: null, ampi: 920, ampiNote: "AMPI only, not MLS", hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "lo-de-marcos", name: "Lo de Marcos", lat: 20.95509, lng: -105.35223, drive: [60, 75], region: "north",
-      homia: null, ampi: 1070, ampiNote: "AMPI only", hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "san-pancho", name: "San Pancho", lat: 20.9025, lng: -105.4133, drive: [55, 70], region: "north",
-      homia: null, ampi: 1850, ampiNote: "AMPI only", hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "sayulita", name: "Sayulita", lat: 20.86889, lng: -105.44083, drive: [45, 60], region: "north", peer: true,
-      homia: 4848, homiaBand: "condo", hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "litibu", name: "Litibú", lat: 20.809, lng: -105.478, drive: [45, 45], region: "north",
-      homia: null, ampi: null, hurricane: null, catalysts: [AUTOPISTA, LITIBU_CLUB] },
-    { id: "punta-mita", name: "Punta Mita", lat: 20.7752, lng: -105.5270, drive: [40, 50], region: "north", peer: true,
-      homia: 5196, homiaBand: "condo", hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "la-cruz", name: "La Cruz", lat: 20.74889, lng: -105.38222, drive: [30, 40], region: "north",
-      homia: 3881, hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "bucerias", name: "Bucerías", lat: 20.7582, lng: -105.3362, drive: [20, 30], region: "north",
-      homia: 4150, homiaBand: "condo", hurricane: null, catalysts: [AUTOPISTA] },
-    { id: "flamingos", name: "Flamingos", lat: 20.73, lng: -105.31, drive: [20, 20], region: "bay",
-      homia: 3590, hurricane: null, catalysts: [] },
-    { id: "nuevo-vallarta", name: "Nuevo Vallarta", lat: 20.700, lng: -105.300, drive: [15, 20], region: "bay",
-      homia: 3456, homiaBand: "condo", hurricane: null, catalysts: [AMADO] },
-    { id: "pv-5dedic", name: "PV 5 de Dic", short: "5 de Dic", lat: 20.6534, lng: -105.2253, drive: null, inPV: true, region: "pv",
-      homia: 4759, hurricane: null, catalysts: [] },
-    { id: "amapas", name: "Amapas", lat: 20.605, lng: -105.234, drive: null, inPV: true, region: "pv",
-      homia: 4536, hurricane: null, catalysts: [] },
-    { id: "conchas-chinas", name: "Conchas Chinas", short: "Conchas Chinas", lat: 20.590, lng: -105.245, drive: null, inPV: true, region: "pv", peer: true,
-      homia: 7066, homiaBand: "Lower", hurricane: null, catalysts: [] },
-    { id: "mismaloya", name: "Mismaloya", lat: 20.53102, lng: -105.29263, drive: [40, 60], region: "south",
-      homia: null, ampi: null, hurricane: null, catalysts: [] },
-    { id: "boca", name: "Boca de Tomatlán", short: "Boca", lat: 20.51194, lng: -105.31389, drive: [50, 70], region: "south",
-      homia: null, ampi: null, hurricane: null, catalysts: [] },
-    { id: "yelapa", name: "Yelapa", lat: 20.48833, lng: -105.44528, drive: null, boat: true, region: "south",
-      homia: null, ampi: null, hurricane: null, catalysts: [] },
-    { id: "tehuamixtle", name: "Tehuamixtle", lat: 20.27, lng: -105.58, drive: [120, 140], region: "south",
-      homia: null, ampi: null, hurricane: null, catalysts: [HOTELS] }
-  ];
-
-  const fmt = n => n == null ? "unknown" : "$" + Math.round(n).toLocaleString("en-US");
-  const driveLabel = t => {
-    if (t.boat) return "BOAT";
-    if (t.inPV) return "in PV";
-    if (!t.drive) return "unknown";
-    return t.drive[0] === t.drive[1] ? "~" + t.drive[0] + " min" : "~" + t.drive[0] + "-" + t.drive[1] + " min";
+  const FREE = ["bucerias", "nuevo-vallarta", "sayulita", "punta-mita", "conchas-chinas"];
+  const SHORT = {
+    "pv-5dedic": "5 de Dic",
+    "boca": "Boca",
+    "la-cruz": "La Cruz",
+    "cabo-medano": "Cabo Médano"
   };
-  const typicalMin = t => {
-    if (t.boat) return 70;
-    if (t.inPV) return 12;
-    if (!t.drive) return 90;
-    return Math.round((t.drive[0] + t.drive[1]) / 2);
+  const STAGE_CHIP = {
+    open: "open",
+    complete_not_open: "complete",
+    under_construction: "uc",
+    rumor: "rumor",
+    tender: "tender"
+  };
+  const STAGE_LABEL = {
+    open: "OPEN / priced-in",
+    complete_not_open: "COMPLETE / NOT OPEN",
+    under_construction: "UNDER CONSTRUCTION",
+    rumor: "RUMOR",
+    tender: "TENDER"
   };
 
-  function headline(t) {
-    if (t.homia != null) {
-      const rows = [["Source", "Homia asking"], ["Unit", "USD/m²"]];
-      if (t.homiaBand) rows.push(["Band", t.homiaBand]);
-      return { main: fmt(t.homia), unknown: false, rows: rows };
-    }
-    if (t.ampi != null) {
-      return { main: "~" + fmt(t.ampi).replace("$", "$"), unknown: false, rows: [["Source", t.ampiNote || "AMPI only"], ["Not", "Homia / MLS"]] };
-    }
-    return { main: "unknown", unknown: true, rows: [["Seed", "unknown - not invented"]] };
+  const preview = new URLSearchParams(location.search).get("preview") === "1"
+    || localStorage.getItem("cg_owner_preview") === "1";
+
+  const state = {
+    minutes: 90,
+    selected: null,
+    compare: [],
+    view: "map",
+    listFilter: "all",
+    listSort: "price",
+    comingFilter: "all",
+    proId: null
+  };
+
+  let DATASET = null;
+  let TOWNS = [];
+  let CABO = null;
+  let CC = null;
+  let CATALOG = {};
+  let HURR_REGION = null;
+  let PIPELINE = [];
+  let markers = {};
+  let map, radius;
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+    });
   }
 
-  function barValue(t) {
-    if (t.homia != null) return t.homia;
-    if (t.ampi != null) return t.ampi;
+  function isDesktop() {
+    return window.matchMedia("(min-width: 900px)").matches;
+  }
+
+  function unlocked(id) {
+    return preview || FREE.indexOf(id) !== -1;
+  }
+
+  function shortName(t) {
+    return SHORT[t.id] || t.name;
+  }
+
+  function headlineOf(t) {
+    if (t && t.usd_m2 && t.usd_m2.headline != null) return t.usd_m2.headline;
     return null;
   }
 
-  function spider(t) {
-    const access = t.boat ? 28 : Math.round(Math.max(8, 100 * (1 - (typicalMin(t) - 10) / 140)));
-    let signal = 12;
-    if (t.homia != null) signal = 88;
-    else if (t.ampi != null) signal = 36;
-    const storm = t.hurricane ? 20 : 70;
-    let catalyst = 18;
-    const types = new Set((t.catalysts || []).map(c => c.type));
-    if (types.has("open") && (types.has("uc") || types.has("complete"))) catalyst = 86;
-    else if (types.has("complete")) catalyst = 68;
-    else if (types.has("uc")) catalyst = 64;
-    else if (types.has("open")) catalyst = 58;
-    else if (types.has("tender")) catalyst = 44;
-    else if (types.has("rumor")) catalyst = 30;
-    const comps = t.peer ? 92 : t.homia != null ? 62 : t.ampi != null ? 34 : 14;
-    let beach = 22;
-    if (t.homiaBand && /Lower|beach/i.test(t.homiaBand)) beach = 90;
-    else if (t.peer) beach = 82;
-    else if (t.homia != null) beach = 70;
-    else if (t.inPV) beach = 74;
-    else if (t.boat) beach = 80;
-    return [access, signal, storm, catalyst, comps, beach];
+  function tierOf(t) {
+    const h = headlineOf(t);
+    if (h != null && (t.peer || t.off_map)) return "primary";
+    if (h != null) return "priced";
+    return "unknown";
   }
 
-  const state = { minutes: 90, selected: null, a: null, b: null, compareView: false, chart: null };
-  const markers = {};
+  function fmtUsd(n) {
+    if (n == null) return "unknown";
+    return "$" + Math.round(n).toLocaleString("en-US");
+  }
 
-  const map = L.map("map", { zoomControl: false, attributionControl: false, minZoom: 7, maxZoom: 13 }).setView(PVR, 9);
-  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
-    attribution: "", maxZoom: 16
-  }).addTo(map);
+  function vsFmt(a, b) {
+    if (a == null || b == null) return { text: "—", cls: "" };
+    const d = Math.round(a - b);
+    if (d === 0) return { text: "0", cls: "" };
+    const pct = Math.round((d / b) * 100);
+    const sign = d > 0 ? "+" : "\u2212";
+    return {
+      text: sign + "$" + Math.abs(d).toLocaleString("en-US") + " · " + sign + Math.abs(pct) + "%",
+      cls: d > 0 ? "pos" : "neg"
+    };
+  }
 
-  const radius = L.circle(PVR, {
-    radius: 90 * 700, color: "#3eebc9", weight: 1.2, dashArray: "5 8",
-    fillColor: "#3eebc9", fillOpacity: 0.05, interactive: false
-  }).addTo(map);
+  function driveLabel(t) {
+    const d = t.drive_min_to_pvr || {};
+    if (t.off_map || d.basis === "off_map") return d.label || "off-map";
+    if (d.basis === "boat" || t.access === "boat") return d.label || "BOAT";
+    if (d.basis === "in_pv" || t.access === "in_pv") return d.label || "in PV";
+    if (d.low == null && d.high == null) return "unknown";
+    if (d.low === d.high) return "~" + d.low + " min est.";
+    return "~" + d.low + "\u2013" + d.high + " min est.";
+  }
 
-  L.marker(PVR, {
-    icon: L.divIcon({ className: "", html: '<div class="airport">PVR</div>', iconSize: [22, 22] }),
-    zIndexOffset: 500, interactive: false
-  }).addTo(map);
+  function driveKey(t) {
+    const d = t.drive_min_to_pvr || {};
+    if (d.basis === "in_pv" || t.access === "in_pv") return 0;
+    if (d.basis === "boat" || t.access === "boat") return 1000;
+    if (t.off_map || d.basis === "off_map") return 2000;
+    if (d.low == null) return 900;
+    return d.low;
+  }
+
+  function typicalMin(t) {
+    const d = t.drive_min_to_pvr || {};
+    if (d.basis === "boat" || t.access === "boat") return 70;
+    if (d.basis === "in_pv" || t.access === "in_pv") return 12;
+    if (d.low == null) return 90;
+    if (d.high == null) return d.low;
+    return Math.round((d.low + d.high) / 2);
+  }
 
   function inRadius(t) {
-    if (t.boat) return state.minutes >= 60;
-    if (t.inPV) return true;
-    if (!t.drive) return true;
-    if (state.minutes >= 120) return t.drive[0] <= 150;
-    return t.drive[0] <= state.minutes;
+    if (t.off_map) return false;
+    const d = t.drive_min_to_pvr || {};
+    if (d.basis === "boat" || t.access === "boat") return state.minutes >= 60;
+    if (d.basis === "in_pv" || t.access === "in_pv") return true;
+    if (d.low == null) return true;
+    if (state.minutes >= 120) return d.low <= 150;
+    return d.low <= state.minutes;
+  }
+
+  function town(id) {
+    if (CABO && CABO.id === id) return CABO;
+    return TOWNS.find(function (t) { return t.id === id; });
+  }
+
+  function allPlaces() {
+    return CABO ? TOWNS.concat([CABO]) : TOWNS.slice();
+  }
+
+  function catalystObjs(t) {
+    return (t.catalysts || []).map(function (id) {
+      const c = CATALOG[id];
+      if (!c) return { id: id, label: id, stage: "none", priced_in: false, meta: "" };
+      return { id: id, label: c.label, stage: c.stage, priced_in: !!c.priced_in, meta: c.meta || "" };
+    });
+  }
+
+  function chipHtml(c) {
+    const klass = STAGE_CHIP[c.stage] || "none";
+    return '<span class="chip ' + klass + '">' + esc(c.label) + (c.meta ? " · " + esc(c.meta) : "") + "</span>";
+  }
+
+
+  const AXES = {
+    access: {
+      name: "ACCESS",
+      mean: "Drive time to PVR.",
+      grade: [
+        "Gate is about 2 hours of an international airport.",
+        "Shorter drive scores higher.",
+        "Times in the file are estimates."
+      ]
+    },
+    signal: {
+      name: "SIGNAL",
+      mean: "Do we have a verified asking USD/m\u00b2 (Homia MLS / Inmuebles24).",
+      grade: [
+        "This is data quality, not a vibe score.",
+        "No headline price = no score."
+      ]
+    },
+    storm: {
+      name: "STORM",
+      mean: "Hurricane history and damage, not a hurricane-free badge.",
+      grade: [
+        "The 46-storm NOAA count is PV-centered (60 nmi) and is not stamped on every town.",
+        "Town note only when one exists (e.g. Lidia / Tomatl\u00e1n)."
+      ]
+    },
+    catalyst: {
+      name: "CATALYST",
+      mean: "Future upside only.",
+      grade: [
+        "Stages: rumor \u2192 tender \u2192 under construction \u2192 complete-not-open \u2192 open.",
+        "Open is priced-in and does not count as future upside."
+      ]
+    },
+    comps: {
+      name: "COMPS",
+      mean: "Price runway vs peers: Puerto Vallarta, Sayulita, Punta Mita, Cabo M\u00e9dano.",
+      grade: [
+        "How cheap or expensive this town is per m\u00b2 versus those markets.",
+        "No verified USD/m\u00b2 = no Comps score.",
+        "AMPI averages are not comps."
+      ]
+    },
+    beach: {
+      name: "BEACH",
+      mean: "Beach quality and sargassum.",
+      grade: [
+        "Pacific is usually lighter on sargassum than the Caribbean; still grade the beach, never a free badge."
+      ]
+    }
+  };
+
+  function catalystDate(meta) {
+    if (!meta) return null;
+    const s = String(meta);
+    const seasonal = s.match(/\b((?:early|mid|late|winter|spring|summer|fall|autumn)\s+20\d{2})\b/i);
+    if (seasonal) return seasonal[1];
+    const dmy = s.match(/\b(\d{1,2}\/\d{1,2}\/\d{2,4})\b/);
+    if (dmy) return dmy[1];
+    const rangeMon = s.match(/\b(\d{1,2}[\u2013\-]\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+20\d{2})\b/i);
+    if (rangeMon) return rangeMon[1];
+    const mon = s.match(/\b((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+20\d{2})\b/i);
+    if (mon) return mon[1];
+    return null;
+  }
+
+  function thisAccess(t) {
+    const d = t.drive_min_to_pvr || {};
+    if (d.basis === "boat" || t.access === "boat") return (d.label || "BOAT") + " \u00b7 boat";
+    if (d.basis === "in_pv" || t.access === "in_pv") return (d.label || "in PV") + " \u00b7 in PV";
+    if (d.basis === "off_map" || t.access === "off_map") return "off-map";
+    if (d.low == null && d.high == null) return "unknown \u2014 not invented";
+    return driveLabel(t) + " \u00b7 " + (d.basis || "estimated");
+  }
+
+  function thisSignal(t) {
+    const u = t.usd_m2;
+    if (!u || u.headline == null) return "unknown \u2014 not invented";
+    let s = fmtUsd(u.headline);
+    if (u.source) s += " \u00b7 " + u.source;
+    if (u.n != null) s += " \u00b7 n=" + u.n;
+    return s;
+  }
+
+  function thisStorm(t) {
+    if (t.hurricane && t.hurricane.note) return t.hurricane.note;
+    return "unknown \u2014 not invented";
+  }
+
+  function thisCatalyst(t) {
+    const cats = catalystObjs(t);
+    if (!cats.length) return "Nothing new on file.";
+    const bits = cats.map(function (c) {
+      return c.label + " \u00b7 " + (STAGE_LABEL[c.stage] || c.stage);
+    });
+    const future = cats.filter(function (c) {
+      return c.stage !== "open" && !c.priced_in;
+    });
+    if (!future.length) {
+      return bits.join(". ") + " Open is priced-in and does not count as future upside.";
+    }
+    return bits.join(". ");
+  }
+
+  function thisComps(t) {
+    const h = headlineOf(t);
+    if (h == null) return "unknown \u2014 not invented";
+    const vscc = vsFmt(h, headlineOf(CC));
+    const vscb = vsFmt(h, headlineOf(CABO));
+    return "vs Conchas Chinas " + vscc.text + ". vs Cabo M\u00e9dano " + vscb.text + ".";
+  }
+
+  function thisBeach(t) {
+    const band = t.usd_m2 && t.usd_m2.band;
+    if (band && /beach|lower/i.test(String(band))) return String(band);
+    return "unknown \u2014 not invented";
+  }
+
+  function thisTownLine(axis, t) {
+    if (axis === "access") return thisAccess(t);
+    if (axis === "signal") return thisSignal(t);
+    if (axis === "storm") return thisStorm(t);
+    if (axis === "catalyst") return thisCatalyst(t);
+    if (axis === "comps") return thisComps(t);
+    if (axis === "beach") return thisBeach(t);
+    return "unknown \u2014 not invented";
+  }
+
+  function closeDefine() {
+    const layer = document.getElementById("defineLayer");
+    if (!layer) return;
+    layer.hidden = true;
+    layer.innerHTML = "";
+    layer.onclick = null;
+  }
+
+  function openDefine(axisId, t) {
+    const axis = AXES[axisId];
+    const layer = document.getElementById("defineLayer");
+    if (!axis || !layer || !t) return;
+    const grade = axis.grade.map(function (line) {
+      return "<p>" + esc(line) + "</p>";
+    }).join("");
+    layer.hidden = false;
+    layer.innerHTML =
+      '<div class="define-card" role="dialog" aria-modal="true" aria-labelledby="defineTitle">' +
+      '<button type="button" class="x" id="closeDefine" aria-label="Close">\u00d7</button>' +
+      '<h3 id="defineTitle">' + esc(axis.name) + "</h3>" +
+      '<p class="define-mean">' + esc(axis.mean) + "</p>" +
+      '<div class="define-grade"><div class="k">How we grade it</div>' + grade + "</div>" +
+      '<div class="define-town"><div class="k">This town</div><p>' + esc(thisTownLine(axisId, t)) + "</p></div>" +
+      "</div>";
+    document.getElementById("closeDefine").onclick = function (e) {
+      e.stopPropagation();
+      closeDefine();
+    };
+    layer.onclick = function (e) {
+      if (!e.target.closest(".define-card")) closeDefine();
+    };
+  }
+
+  function spiderHtml() {
+    const hex = '<div class="spider-core" aria-hidden="true"><svg viewBox="0 0 100 100">' +
+      '<polygon points="50,6 93,28 93,72 50,94 7,72 7,28" fill="none" stroke="rgba(62,235,201,.45)" stroke-width="1.5"/>' +
+      '<polygon points="50,24 77,38 77,62 50,76 23,62 23,38" fill="none" stroke="rgba(180,230,220,.14)" stroke-width="1"/>' +
+      '<line x1="50" y1="6" x2="50" y2="94" stroke="rgba(180,230,220,.1)" stroke-width="1"/>' +
+      '<line x1="7" y1="28" x2="93" y2="72" stroke="rgba(180,230,220,.1)" stroke-width="1"/>' +
+      '<line x1="93" y1="28" x2="7" y2="72" stroke="rgba(180,230,220,.1)" stroke-width="1"/>' +
+      "</svg></div>";
+    const order = ["access", "signal", "storm", "catalyst", "comps", "beach"];
+    const labs = order.map(function (id) {
+      return '<button type="button" class="spider-lab" data-axis="' + id + '" aria-haspopup="dialog">' + AXES[id].name + "</button>";
+    }).join("");
+    return '<div class="spider-block"><div class="group-h">Spider \u00b7 tap to define</div><div class="spider">' + hex + labs + "</div></div>";
+  }
+
+  function isAlreadyHere(item) {
+    return item.stage === "open" || !!item.priced_in;
+  }
+
+  function isComingItem(item) {
+    return item.stage !== "open";
+  }
+
+  function nowTickLabel() {
+    const d = new Date();
+    const mo = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return d.getDate() + " " + mo[d.getMonth()] + " " + d.getFullYear();
+  }
+
+  function yearWindow(item) {
+    if (item.guests_from) {
+      const m = String(item.guests_from).match(/^(20\d{2})/);
+      if (m) return "Guests " + m[1];
+    }
+    const w = item.window || item.date_or_window || item.meta || "";
+    const seasonal = String(w).match(/\b((?:early|mid|late|winter|spring|summer|fall|autumn)\s+20\d{2})\b/i);
+    if (seasonal) return seasonal[1];
+    const y = String(w).match(/\b(20\d{2})\b/);
+    if (y) return "Guests " + y[1];
+    return null;
+  }
+
+  function comingLetter(item) {
+    const s = String(item.name || item.brand || "?").replace(/^\s+/, "");
+    return (s.charAt(0) || "?").toUpperCase();
+  }
+
+  function regionNoteFor(h) {
+    const name = h.official_name || h.brand || "";
+    if (/edition/i.test(name) || /edition/i.test(h.brand || "")) return "Nayarit \u00b7 unlocated";
+    const town = h.town || "";
+    if (/thompson/i.test(name) || (/puerto vallarta/i.test(town) && !h.town_id)) return "Puerto Vallarta";
+    if (/milaroca|belmond/i.test(name)) return "Riviera Nayarit";
+    if (/siari/i.test(name)) return "La Pe\u00f1ita de Jaltemba";
+    if (/mandarina/i.test(name)) return "Mandarina";
+    if (town) return town;
+    return "unlocated";
+  }
+
+  function buildPipeline(hotelData) {
+    const items = [];
+    const wc = {};
+    ((hotelData && hotelData.whats_coming_not_priced_in) || []).forEach(function (row) {
+      if (row && row.name) wc[row.name] = row;
+    });
+    ((hotelData && hotelData.pvr_radius) || []).forEach(function (h) {
+      const name = h.official_name || h.brand;
+      const hit = wc[name];
+      const townIds = h.town_id ? [h.town_id] : [];
+      items.push({
+        name: name,
+        brand: h.brand,
+        stage: h.stage,
+        priced_in: !!h.priced_in,
+        town_ids: townIds,
+        regionNote: townIds.length ? null : regionNoteFor(h),
+        guests_from: h.guests_from || null,
+        date_or_window: h.date_or_window || null,
+        window: (hit && hit.window) || null,
+        dispute: h.dispute || null,
+        kind: "hotel"
+      });
+    });
+    const auto = CATALOG.autopista_las_varas_bucerias_pv;
+    if (auto) {
+      const ids = TOWNS.filter(function (t) {
+        return (t.catalysts || []).indexOf("autopista_las_varas_bucerias_pv") !== -1;
+      }).map(function (t) { return t.id; });
+      items.push({
+        name: auto.label,
+        stage: auto.stage,
+        priced_in: !!auto.priced_in,
+        town_ids: ids,
+        regionNote: null,
+        guests_from: null,
+        date_or_window: auto.meta || null,
+        window: null,
+        kind: "infra"
+      });
+    }
+    const amado = CATALOG.puente_amado_nervo;
+    if (amado) {
+      items.push({
+        name: amado.label,
+        stage: amado.stage,
+        priced_in: !!amado.priced_in,
+        town_ids: ["nuevo-vallarta"],
+        regionNote: null,
+        guests_from: null,
+        date_or_window: amado.meta || null,
+        window: null,
+        kind: "infra"
+      });
+    }
+    const lit = CATALOG.litibu_bay_club;
+    if (lit) {
+      const hit = wc["Litib\u00fa Bay Club"];
+      items.push({
+        name: lit.label,
+        stage: lit.stage,
+        priced_in: !!lit.priced_in,
+        town_ids: ["litibu"],
+        regionNote: null,
+        guests_from: null,
+        date_or_window: lit.meta || (hit && hit.window) || null,
+        window: (hit && hit.window) || null,
+        kind: "infra"
+      });
+    }
+    const teh = CATALOG.tehuamixtle_hotels;
+    if (teh) {
+      items.push({
+        name: "Tehuamixtle / Mayto eco-hotels",
+        stage: teh.stage,
+        priced_in: !!teh.priced_in,
+        town_ids: ["tehuamixtle"],
+        regionNote: null,
+        guests_from: null,
+        date_or_window: null,
+        window: null,
+        kind: "infra"
+      });
+    }
+    return items;
+  }
+
+  function itemsForTown(townId) {
+    return PIPELINE.filter(function (it) { return it.town_ids.indexOf(townId) !== -1; });
+  }
+
+  function regionItems() {
+    return PIPELINE.filter(function (it) { return !it.town_ids.length; });
+  }
+
+  function comingYearKey(item) {
+    const w = yearWindow(item) || "";
+    const y = w.match(/20\d{2}/);
+    return y ? Number(y[0]) : 9999;
+  }
+
+  function partitionComing(list) {
+    const here = [];
+    const future = [];
+    list.forEach(function (it) {
+      if (isAlreadyHere(it)) here.push(it);
+      else future.push(it);
+    });
+    future.sort(function (a, b) { return comingYearKey(a) - comingYearKey(b); });
+    return { here: here, future: future };
+  }
+
+  function comingFilterBar() {
+    const f = state.comingFilter || "all";
+    const chip = function (id, label) {
+      return '<button type="button" class="filter-chip' + (f === id ? " on" : "") + '" data-cfil="' + id + '">' + label + "</button>";
+    };
+    return '<div class="filters coming-fil">' + chip("all", "All") + chip("coming", "Coming") + chip("here", "Already here") + "</div>";
+  }
+
+  function comingRowHtml(item, i, showPlace) {
+    const here = isAlreadyHere(item);
+    const pal = i % 2 ? "sand" : "mint";
+    const stageChip = here
+      ? '<span class="chip here">already here</span>'
+      : '<span class="chip ' + (STAGE_CHIP[item.stage] || "none") + '">' + esc(STAGE_LABEL[item.stage] || item.stage) + "</span>";
+    const win = here ? null : yearWindow(item);
+    let html = '<li class="coming-row' + (here ? " here" : "") + '">';
+    html += '<div class="mono ' + pal + '" aria-hidden="true">' + esc(comingLetter(item)) + "</div>";
+    html += '<div class="coming-body">';
+    html += '<div class="coming-title">' + esc(item.name) + "</div>";
+    if (showPlace && item.regionNote) html += '<div class="coming-place">' + esc(item.regionNote) + "</div>";
+    html += '<div class="coming-meta">' + stageChip;
+    if (item.dispute && item.dispute.status === "disputed") {
+      html += '<span class="chip dispute">DISPUTED</span>';
+    }
+    if (win) html += '<span class="coming-date">' + esc(win) + "</span>";
+    html += "</div>";
+    if (!here) html += '<div class="coming-hint">buy before it prices in</div>';
+    if (item.dispute && item.dispute.status === "disputed" && item.dispute.rule) {
+      html += '<div class="coming-hint coming-dispute">' + esc(item.dispute.rule) + "</div>";
+    }
+    html += "</div></li>";
+    return html;
+  }
+
+  function comingTrackHtml(items, opts) {
+    const showPlace = !!(opts && opts.showPlace);
+    const f = state.comingFilter || "all";
+    const parts = partitionComing(items);
+    const showHere = f === "all" || f === "here";
+    const showFut = f === "all" || f === "coming";
+    const hereV = showHere ? parts.here : [];
+    const futV = showFut ? parts.future.filter(isComingItem) : [];
+    if (!hereV.length && !futV.length) return '<p class="coming-empty">Nothing new on file.</p>';
+    let html = '<ol class="coming-list">';
+    hereV.forEach(function (it, i) { html += comingRowHtml(it, i, showPlace); });
+    html += '<li class="coming-now"><span class="coming-now-tick"></span><span class="coming-now-lab">NOW \u00b7 ' + esc(nowTickLabel()) + "</span></li>";
+    futV.forEach(function (it, i) { html += comingRowHtml(it, i + hereV.length, showPlace); });
+    html += "</ol>";
+    return html;
+  }
+
+  function comingHtml(t) {
+    let html = '<div class="coming"><div class="group-h">What\'s coming</div>';
+    html += comingFilterBar();
+    html += comingTrackHtml(itemsForTown(t.id), { showPlace: false });
+    html += "</div>";
+    return html;
+  }
+
+  function regionComingHtml() {
+    let html = '<div class="coming coming-region"><div class="group-h">What\'s coming \u00b7 region</div>';
+    html += comingFilterBar();
+    html += comingTrackHtml(regionItems(), { showPlace: true });
+    html += "</div>";
+    return html;
+  }
+
+  function homesHtml() {
+    return '<div class="homes-shelf"><div class="group-h">Homes</div>' +
+      '<div class="home-card">' +
+      '<div class="home-photo" aria-hidden="true">Photo</div>' +
+      '<div class="home-body">' +
+      '<div class="home-title">\u2014</div>' +
+      '<div class="home-meta"><span>\u2014</span><span>\u2014 USD/m\u00b2</span><span class="chip none">beachfront</span></div>' +
+      '<p class="home-empty">Homes load overnight. Nothing scraped yet.</p>' +
+      "</div></div></div>";
+  }
+
+  function loadData() {
+    return Promise.all([
+      fetch("pvr-towns-aug2026.json", { cache: "no-store" }).then(function (r) {
+        if (!r.ok) throw new Error("fetch " + r.status);
+        return r.json();
+      }),
+      fetch("hotel-pipeline-aug2026.json", { cache: "no-store" }).then(function (r) {
+        if (!r.ok) throw new Error("hotels " + r.status);
+        return r.json();
+      })
+    ]);
+  }
+
+  function boot(data, hotelData) {
+    DATASET = data;
+    CATALOG = data.catalysts_catalog || {};
+    HURR_REGION = data.hurricane_region || null;
+    TOWNS = (data.towns || []).map(function (t) {
+      return Object.assign({}, t, { off_map: false });
+    });
+    CABO = (data.peers_off_map && data.peers_off_map[0]) ? Object.assign({}, data.peers_off_map[0], {
+      peer: true,
+      off_map: true,
+      catalysts: [],
+      hurricane: { note: null },
+      drive_min_to_pvr: { basis: "off_map", label: "off-map" },
+      access: "off_map"
+    }) : null;
+    CC = TOWNS.find(function (t) { return t.id === "conchas-chinas"; }) || null;
+    PIPELINE = buildPipeline(hotelData || {});
+
+    if (preview) {
+      const qa = document.getElementById("qaChip");
+      if (qa) qa.hidden = false;
+    }
+
+    const pvr = data.meta && data.meta.center
+      ? [data.meta.center.lat, data.meta.center.lng]
+      : [20.68083, -105.25556];
+
+    map = L.map("map", { zoomControl: false, attributionControl: false, minZoom: 7, maxZoom: 13 }).setView(pvr, 9);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+      attribution: "", maxZoom: 16
+    }).addTo(map);
+
+    radius = L.circle(pvr, {
+      radius: 90 * 700, color: "#3eebc9", weight: 1.2, dashArray: "5 8",
+      fillColor: "#3eebc9", fillOpacity: 0.05, interactive: false
+    }).addTo(map);
+
+    L.marker(pvr, {
+      icon: L.divIcon({ className: "", html: '<div class="airport">PVR</div>', iconSize: [22, 22] }),
+      zIndexOffset: 500, interactive: false
+    }).addTo(map);
+
+    TOWNS.forEach(function (t) {
+      const m = L.marker([t.lat, t.lng], { icon: iconFor(t), keyboard: true, title: t.name }).addTo(map);
+      m.on("click", function () { onTownTap(t.id, "map"); });
+      markers[t.id] = m;
+    });
+
+    document.querySelector(".drive").addEventListener("click", function (e) {
+      const b = e.target.closest("button");
+      if (b) setMinutes(Number(b.dataset.min));
+    });
+
+    document.getElementById("openList").onclick = function () { openView("list"); };
+
+    const credit = document.getElementById("mapCredit");
+    if (credit) {
+      credit.onclick = function () {
+        const open = credit.classList.toggle("open");
+        credit.setAttribute("aria-expanded", open ? "true" : "false");
+      };
+    }
+
+    window.addEventListener("resize", onResize);
+    setMinutes(90);
+    if (isDesktop()) openView("list");
+    else {
+      paintDock();
+      measureDock();
+    }
   }
 
   function markerClass(t) {
-    const sel = state.selected === t.id || state.a === t.id || state.b === t.id;
+    const sel = state.selected === t.id || state.compare.indexOf(t.id) !== -1;
     let c = "dot";
-    if (t.boat) c += " boat";
-    else if (t.peer) c += " peer";
-    else if (t.homia == null && t.ampi != null) c += " ampi";
-    else if (t.homia == null) c += " unknown";
+    if (t.access === "boat") c += " boat";
+    const tier = tierOf(t);
+    if (tier === "primary") c += " primary";
+    else if (tier === "unknown") c += " unknown";
+    if (!unlocked(t.id)) c += " locked";
     if (sel) c += " sel";
     return c;
   }
@@ -293,19 +931,13 @@ html,body{height:100dvh;margin:0;background:#03080c;color:var(--foam);font-famil
   function iconFor(t) {
     return L.divIcon({
       className: "",
-      html: '<div class="' + markerClass(t) + '"></div><div class="lbl">' + (t.short || t.name) + "</div>",
+      html: '<div class="' + markerClass(t) + '"></div><div class="lbl">' + esc(shortName(t)) + "</div>",
       iconSize: [14, 14]
     });
   }
 
-  TOWNS.forEach(t => {
-    const m = L.marker([t.lat, t.lng], { icon: iconFor(t), keyboard: true, title: t.name }).addTo(map);
-    m.on("click", function () { openTown(t.id); });
-    markers[t.id] = m;
-  });
-
   function refreshMarkers() {
-    TOWNS.forEach(t => {
+    TOWNS.forEach(function (t) {
       markers[t.id].setIcon(iconFor(t));
       if (inRadius(t)) {
         if (!map.hasLayer(markers[t.id])) markers[t.id].addTo(map);
@@ -320,277 +952,148 @@ html,body{height:100dvh;margin:0;background:#03080c;color:var(--foam);font-famil
 
   function setMinutes(min) {
     state.minutes = min;
-    document.querySelectorAll(".drive button").forEach(b => {
+    document.querySelectorAll(".drive button").forEach(function (b) {
       b.classList.toggle("on", Number(b.dataset.min) === min);
     });
     radius.setRadius(min * 700);
     refreshMarkers();
     const vis = TOWNS.filter(inRadius);
     if (vis.length) {
-      const b = L.latLngBounds(vis.map(t => [t.lat, t.lng]));
-      b.extend(PVR);
+      const pvr = DATASET.meta.center;
+      const b = L.latLngBounds(vis.map(function (t) { return [t.lat, t.lng]; }));
+      b.extend([pvr.lat, pvr.lng]);
       map.fitBounds(b.pad(0.18), { animate: true, maxZoom: min <= 30 ? 11 : min <= 60 ? 10 : 9 });
     }
+    if (state.view === "list") paintSheet();
   }
 
-  document.querySelector(".drive").addEventListener("click", function (e) {
-    const b = e.target.closest("button");
-    if (b) setMinutes(Number(b.dataset.min));
-  });
-
-  function town(id) { return TOWNS.find(t => t.id === id); }
-
-  function chipHtml(c) {
-    return '<span class="chip ' + c.type + '">' + c.label + " · " + c.meta + "</span>";
-  }
-
-  function priceBlock(t) {
-    const h = headline(t);
-    let html = '<div class="price-card"><div class="k">Asking USD/m² · ' + SEED + "</div>";
-    html += '<div class="v' + (h.unknown ? " unk" : "") + '">' + h.main + "</div>";
-    html += '<div class="rows">';
-    h.rows.forEach(r => { html += "<div><span>" + r[0] + "</span><b>" + r[1] + "</b></div>"; });
-    html += "</div></div>";
-    return html;
-  }
-
-  function hurricaneBlock(t) {
-    if (t.hurricane) {
-      return '<div class="hurr"><div>◉</div><div><b>Hurricane ' + t.hurricane.event + " · " + t.hurricane.year + "</b><br>" + t.hurricane.note + "</div></div>";
-    }
-    return '<div class="hurr quiet"><div>○</div><div>Hurricane note: no event in seed.</div></div>';
-  }
-
-  function catalystsBlock(t) {
-    if (!t.catalysts.length) return '<div class="chips"><span class="chip none">No catalyst in seed</span></div>';
-    return '<div class="chips">' + t.catalysts.map(chipHtml).join("") + "</div>";
-  }
-
-  function renderChart(ids) {
-    ids = (ids || []).filter(function (id) { return !!town(id); });
-    const canvas = document.getElementById("radar");
-    if (!canvas || !ids.length) return;
-    const wrap = canvas.parentElement;
-    const w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 300;
-    const h = 210;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    canvas.style.width = w + "px";
-    canvas.style.height = h + "px";
-    const ctx = canvas.getContext("2d");
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    const cx = w / 2, cy = h / 2 + 6, R = Math.min(w, h) * 0.32;
-    const n = AXES.length;
-    const colors = [
-      { s: "rgba(62,235,201,.9)", f: "rgba(62,235,201,.22)" },
-      { s: "rgba(230,200,120,.95)", f: "rgba(230,200,120,.18)" }
-    ];
-    ctx.strokeStyle = "rgba(90,180,190,.18)";
-    ctx.fillStyle = "#9ec9c8";
-    ctx.font = "10px DM Sans, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    for (let ring = 1; ring <= 4; ring++) {
-      ctx.beginPath();
-      for (let i = 0; i <= n; i++) {
-        const a = -Math.PI / 2 + (i % n) * 2 * Math.PI / n;
-        const r = R * ring / 4;
-        const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.stroke();
-    }
-    for (let i = 0; i < n; i++) {
-      const a = -Math.PI / 2 + i * 2 * Math.PI / n;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
-      ctx.stroke();
-      const lx = cx + Math.cos(a) * (R + 16);
-      const ly = cy + Math.sin(a) * (R + 16);
-      ctx.fillText(AXES[i], lx, ly);
-    }
-    ids.forEach(function (id, di) {
-      const data = spider(town(id));
-      const col = colors[di];
-      ctx.beginPath();
-      data.forEach(function (v, i) {
-        const a = -Math.PI / 2 + i * 2 * Math.PI / n;
-        const r = R * (v / 100);
-        const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
-      ctx.closePath();
-      ctx.fillStyle = col.f;
-      ctx.fill();
-      ctx.strokeStyle = col.s;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.fillStyle = col.s;
-      data.forEach(function (v, i) {
-        const a = -Math.PI / 2 + i * 2 * Math.PI / n;
-        const r = R * (v / 100);
-        ctx.beginPath();
-        ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 2.4, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    });
-    if (ids.length > 1) {
-      ctx.font = "11px DM Sans, sans-serif";
-      ctx.textAlign = "left";
-      ids.forEach(function (id, di) {
-        const t = town(id);
-        ctx.fillStyle = colors[di].s;
-        ctx.fillRect(8, 8 + di * 16, 8, 8);
-        ctx.fillStyle = "#9bbfb8";
-        ctx.fillText(t.short || t.name, 20, 12 + di * 16);
-      });
-    }
-  }
-
-  function barRowsHtml(highlight) {
-    const hi = highlight || [];
-    const rows = PEERS.map(p => ({ id: p.id, name: p.name + (p.offMap ? " · off-map" : ""), usd: p.usd, kind: "peer" }));
-    hi.forEach(id => {
-      if (rows.some(r => r.id === id)) return;
-      const t = town(id);
-      rows.push({ id: t.id, name: t.short || t.name, usd: barValue(t), kind: "town" });
-    });
-    const nums = rows.map(r => r.usd || 0);
-    const max = Math.max(11500, nums.length ? Math.max.apply(null, nums) : 11500);
-    return rows.map(r => {
-      const isA = r.id === hi[0], isB = r.id === hi[1];
-      const w = r.usd == null ? 0 : Math.max(4, (r.usd / max) * 100);
-      let fill = "fill";
-      if (isA) fill += " hi-a";
-      else if (isB) fill += " hi-b";
-      else if (r.kind === "peer") fill += " peer-gold";
-      return '<div class="bar-row"><div class="n' + (isA || isB ? " hi" : "") + '">' + r.name + '</div><div class="track"><div class="' + fill + '" style="width:' + w + '%"></div></div><div class="usd' + (r.usd == null ? " unk" : "") + '">' + (r.usd == null ? "unknown" : fmt(r.usd)) + "</div></div>";
-    }).join("");
-  }
-
-  function detailHtml(t) {
-    const inA = state.a === t.id, inB = state.b === t.id;
-    return (
-      '<div class="sheet-head"><div><h2>' + (t.short || t.name) + "</h2>" +
-      '<div class="meta">' + t.region + " · " + driveLabel(t) + (t.peer ? " · peer" : "") + (t.boat ? " · not a drive" : "") + "</div></div>" +
-      '<button class="x" id="closeSheet" aria-label="Close">x</button></div>' +
-      priceBlock(t) + hurricaneBlock(t) + catalystsBlock(t) +
-      '<div class="chart-wrap"><canvas id="radar"></canvas></div>' +
-      '<p class="caption">Spider indexes seed attributes (access, data signal, storm note, catalyst, comps, beach mix). It is not a price. Unknown USD/m² stays unknown.</p>' +
-      '<div class="actions">' +
-      '<button class="btn-a" id="setA">' + (inA ? "A · selected" : "Set as A") + "</button>" +
-      '<button class="btn-b" id="setB">' + (inB ? "B · selected" : "Set as B") + "</button>" +
-      "</div>" +
-      '<div class="legend"><span><i style="background:var(--mint)"></i>Homia / A</span><span><i style="background:var(--sand)"></i>peer / B</span><span><i style="background:#7ab3ff"></i>AMPI only</span><span><i style="background:#4a6a72"></i>unknown</span></div>'
-    );
-  }
-
-  function compareHtml() {
-    const a = town(state.a), b = town(state.b);
-    const ha = headline(a), hb = headline(b);
-    return (
-      '<div class="sheet-head"><div><h2>Compare</h2><div class="meta">Two towns · peer asking USD/m² · ' + SEED + "</div></div>" +
-      '<button class="x" id="closeSheet" aria-label="Close">x</button></div>' +
-      '<div class="compare-grid">' +
-      '<div class="col-card"><h3 style="color:var(--mint)">' + (a.short || a.name) + "</h3>" +
-      '<div class="p' + (ha.unknown ? " unk" : "") + '">' + ha.main + "</div>" +
-      '<div class="d">' + driveLabel(a) + "</div></div>" +
-      '<div class="col-card"><h3 style="color:var(--sand)">' + (b.short || b.name) + "</h3>" +
-      '<div class="p' + (hb.unknown ? " unk" : "") + '">' + hb.main + "</div>" +
-      '<div class="d">' + driveLabel(b) + "</div></div></div>" +
-      '<div class="chart-wrap"><canvas id="radar"></canvas></div>' +
-      '<p class="caption">Overlay spider from seed attributes. Bars use Homia typical / named peers. Unknown stays unknown. AMPI-only is labeled, not treated as Homia.</p>' +
-      '<div class="k" style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Peer price bars</div>' +
-      '<div class="bars">' + barRowsHtml([a.id, b.id]) + "</div>" +
-      '<div class="legend"><span><i style="background:var(--rumor)"></i>rumor</span><span><i style="background:var(--tender)"></i>tender</span><span><i style="background:var(--uc)"></i>under construction</span><span><i style="background:var(--mint)"></i>open</span></div>' +
-      '<p class="caption" style="margin-top:8px">Seed catalysts: autopista OPEN/priced-in; Litibú Bay Club UNDER CONSTRUCTION winter 2026; Amado Nervo COMPLETE NOT OPEN. No tender in this seed.</p>'
-    );
-  }
-
-  function paintSheet() {
-    const body = document.getElementById("sheetBody");
-    const sheet = document.getElementById("sheet");
-    if (state.compareView && state.a && state.b) {
-      sheet.classList.add("compare-mode");
-      body.innerHTML = compareHtml();
-      const ids = [state.a, state.b];
-      requestAnimationFrame(function () { renderChart(ids); });
-    } else if (state.selected) {
-      sheet.classList.remove("compare-mode");
-      body.innerHTML = detailHtml(town(state.selected));
-      const id = state.selected;
-      requestAnimationFrame(function () { renderChart([id]); });
-    }
-    const close = document.getElementById("closeSheet");
-    if (close) close.onclick = closeSheet;
-    const sa = document.getElementById("setA");
-    const sb = document.getElementById("setB");
-    if (sa) sa.onclick = function () { setSlot("a", state.selected); closeSheet(); };
-    if (sb) sb.onclick = function () { setSlot("b", state.selected); closeSheet(); };
-  }
-
-  function openTown(id) {
-    state.selected = id;
-    state.compareView = false;
-    document.getElementById("sheet").classList.add("open");
-    document.getElementById("dock").classList.add("sheet-open");
-    paintSheet();
-    refreshMarkers();
+  function onTownTap(id, src) {
     const t = town(id);
-    map.panTo([t.lat, t.lng], { animate: true });
-  }
-
-  function openCompare() {
-    if (!state.a || !state.b) return;
-    state.compareView = true;
-    document.getElementById("sheet").classList.add("open");
-    document.getElementById("dock").classList.add("sheet-open");
-    paintSheet();
-  }
-
-  function closeSheet() {
-    state.compareView = false;
-    document.getElementById("sheet").classList.remove("open", "compare-mode");
-    document.getElementById("dock").classList.remove("sheet-open");
-    state.selected = null;
-    refreshMarkers();
-  }
-
-  function setSlot(which, id) {
-    if (which === "a") {
-      if (state.b === id) state.b = state.a;
-      state.a = id;
-    } else {
-      if (state.a === id) state.a = state.b;
-      state.b = id;
+    if (!t) return;
+    if (!unlocked(id)) {
+      openPro(id);
+      return;
     }
+    if (src === "list" || src === "map") addToCompare(id);
+    if (src === "map" || src === "list-detail") openView("detail", id);
+    else {
+      paintDock();
+      refreshMarkers();
+      if (state.view === "list") paintSheet();
+    }
+  }
+
+  function addToCompare(id) {
+    if (!unlocked(id)) {
+      openPro(id);
+      return false;
+    }
+    if (state.compare.indexOf(id) !== -1) return true;
+    if (state.compare.length >= 4) {
+      showToast("Compare is capped at 4 towns");
+      return false;
+    }
+    state.compare.push(id);
     paintDock();
-    paintSheet();
     refreshMarkers();
+    return true;
+  }
+
+  function removeFromCompare(id) {
+    state.compare = state.compare.filter(function (x) { return x !== id; });
+    paintDock();
+    refreshMarkers();
+    if (state.view === "compare") {
+      if (state.compare.length) paintSheet();
+      else openView(isDesktop() ? "list" : "map");
+    }
+  }
+
+  function openPro(id) {
+    state.proId = id;
+    const t = town(id);
+    const modal = document.getElementById("modal");
+    modal.hidden = false;
+    modal.innerHTML =
+      '<div class="modal-card" role="dialog" aria-labelledby="proTitle">' +
+      '<h2 id="proTitle">Pro</h2>' +
+      '<p class="meta" style="margin:0 0 10px">' + esc(t ? t.name : "This pin") + " is locked on the free PVR map.</p>" +
+      "<p>Free towns: Bucerías, Nuevo Vallarta, Sayulita, Punta Mita, Conchas Chinas. Other pins and Cabo Médano are Pro.</p>" +
+      '<div class="price-pair"><span>$19 / mo</span><span>$99 / yr</span></div>' +
+      '<p class="caption">No invented asking USD/m². Unknown stays unknown.</p>' +
+      '<button type="button" class="btn-a" id="closePro" style="width:100%">Close</button></div>';
+    document.getElementById("closePro").onclick = closePro;
+    modal.onclick = function (e) { if (e.target === modal) closePro(); };
+  }
+
+  function closePro() {
+    const modal = document.getElementById("modal");
+    modal.hidden = true;
+    modal.innerHTML = "";
+    state.proId = null;
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function () { el.hidden = true; }, 2200);
+  }
+
+  function openView(view, id) {
+    closeDefine();
+    if (view === "detail") state.selected = id;
+    if (view === "map") state.selected = null;
+    state.view = view;
+    const sheet = document.getElementById("sheet");
+    if (view === "map" && !isDesktop()) {
+      sheet.classList.remove("open", "compare-mode");
+      paintDock();
+      refreshMarkers();
+      return;
+    }
+    sheet.classList.add("open");
+    sheet.classList.toggle("compare-mode", view === "compare" || view === "list");
+    paintSheet();
+    paintDock();
+    refreshMarkers();
+    if (view === "detail" && id) {
+      const t = town(id);
+      if (t && t.lat != null) map.panTo([t.lat, t.lng], { animate: true });
+    }
   }
 
   function paintDock() {
-    const a = state.a ? town(state.a) : null;
-    const b = state.b ? town(state.b) : null;
-    document.getElementById("slotA").classList.toggle("filled", !!a);
-    document.getElementById("slotB").classList.toggle("filled", !!b);
-    document.getElementById("slotA").innerHTML = a ? "<span>A</span><strong>" + (a.short || a.name) + "</strong>" : "<span>A</span><strong>Tap a town</strong>";
-    document.getElementById("slotB").innerHTML = b ? "<span>B</span><strong>" + (b.short || b.name) + "</strong>" : "<span>B</span><strong>Then another</strong>";
-    document.getElementById("goCmp").disabled = !(a && b);
-    document.getElementById("clearCmp").hidden = !(a || b);
+    const dock = document.getElementById("dock");
+    const chips = state.compare.map(function (id) {
+      const t = town(id);
+      return '<div class="dock-chip"><span>' + esc(shortName(t)) + '</span><button type="button" data-rm="' + esc(id) + '" aria-label="Remove">×</button></div>';
+    }).join("");
+    const empties = state.compare.length ? "" : '<div class="dock-empty">Tap towns · up to 4</div>';
+    dock.innerHTML =
+      '<div class="dock-chips" id="dockChips">' + chips + empties + "</div>" +
+      '<div class="dock-actions">' +
+      '<button type="button" class="clear-compare" id="clearCmp"' + (state.compare.length ? "" : " hidden") + ">Clear</button>" +
+      '<button type="button" class="go-compare" id="goCmp"' + (state.compare.length >= 2 ? "" : " disabled") + ">Compare</button>" +
+      "</div>";
+    dock.querySelectorAll("[data-rm]").forEach(function (b) {
+      b.onclick = function (e) {
+        e.stopPropagation();
+        removeFromCompare(b.getAttribute("data-rm"));
+      };
+    });
+    document.getElementById("goCmp").onclick = function () {
+      if (state.compare.length >= 2) openView("compare");
+    };
+    document.getElementById("clearCmp").onclick = function () {
+      state.compare = [];
+      paintDock();
+      refreshMarkers();
+      if (state.view === "compare") openView(isDesktop() ? "list" : "map");
+    };
+    measureDock();
   }
-
-  document.getElementById("goCmp").onclick = openCompare;
-  document.getElementById("clearCmp").onclick = function () {
-    state.a = state.b = null;
-    paintDock();
-    refreshMarkers();
-    if (state.compareView) closeSheet();
-  };
 
   function measureDock() {
     const dock = document.getElementById("dock");
@@ -600,24 +1103,288 @@ html,body{height:100dvh;margin:0;background:#03080c;color:var(--foam);font-famil
     app.style.setProperty("--dock-h", (h > 0 ? h : 88) + "px");
   }
 
-  const _paintDock = paintDock;
-  paintDock = function () {
-    _paintDock();
+  function onResize() {
     measureDock();
-  };
-
-  const credit = document.getElementById("mapCredit");
-  if (credit) {
-    credit.onclick = function () {
-      const open = credit.classList.toggle("open");
-      credit.setAttribute("aria-expanded", open ? "true" : "false");
-    };
+    if (map) map.invalidateSize();
+    if (isDesktop() && state.view === "map") openView("list");
   }
 
-  window.addEventListener("resize", measureDock);
-  setMinutes(90);
-  paintDock();
-  measureDock();
+  function ranked() {
+    const priced = allPlaces().filter(function (t) { return headlineOf(t) != null; })
+      .sort(function (a, b) { return headlineOf(b) - headlineOf(a); })
+      .map(function (t, i) { return Object.assign({ _rank: i + 1 }, t); });
+    const unk = allPlaces().filter(function (t) { return headlineOf(t) == null; })
+      .map(function (t) { return Object.assign({ _rank: null }, t); });
+    return { priced: priced, unk: unk };
+  }
+
+  function filterTowns(list) {
+    if (state.listFilter === "all") return list;
+    if (state.listFilter === "coming") {
+      return list.filter(function (t) {
+        return itemsForTown(t.id).some(isComingItem);
+      });
+    }
+    return list.filter(function (t) { return tierOf(t) === state.listFilter; });
+  }
+
+  function listHtml() {
+    const groups = ranked();
+    let priced = filterTowns(groups.priced);
+    let unk = state.listFilter === "primary" || state.listFilter === "priced" ? [] : filterTowns(groups.unk);
+    if (state.listSort === "drive") {
+      const key = function (t) { return driveKey(t); };
+      priced = priced.slice().sort(function (a, b) { return key(a) - key(b); });
+      unk = unk.slice().sort(function (a, b) { return key(a) - key(b); });
+    }
+    const ccH = headlineOf(CC);
+    const caboH = headlineOf(CABO);
+    const fil = function (id, label) {
+      return '<button type="button" class="filter-chip' + (state.listFilter === id ? " on" : "") + '" data-fil="' + id + '">' + label + "</button>";
+    };
+    let html = '<div class="sheet-head"><div><h2>Ranks</h2><div class="meta">Verified asking USD/m² only · Aug 2026 · score unverified</div></div>';
+    if (!isDesktop()) html += '<button type="button" class="x" id="closeSheet" aria-label="Close">×</button>';
+    html += "</div>";
+    html += '<div class="filters">' + fil("all", "All") + fil("primary", "Primary") + fil("priced", "Priced") + fil("unknown", "Unknown") + fil("coming", "Coming") + "</div>";
+    html += '<div class="sort-row">' +
+      '<button type="button" class="sort-chip' + (state.listSort === "price" ? " on" : "") + '" data-sort="price">By USD/m²</button>' +
+      '<button type="button" class="sort-chip' + (state.listSort === "drive" ? " on" : "") + '" data-sort="drive">By drive</button></div>';
+    html += '<div class="legend"><span><i style="background:var(--sand)"></i>PRIMARY peer + headline</span><span><i style="background:var(--mint)"></i>PRICED headline</span><span><i style="background:#4a6a72"></i>UNKNOWN</span></div>';
+
+    function row(t) {
+      const h = headlineOf(t);
+      const vscc = vsFmt(h, ccH);
+      const vscb = vsFmt(h, caboH);
+      const locked = !unlocked(t.id);
+      const inCmp = state.compare.indexOf(t.id) !== -1;
+      const left = state.listSort === "drive" ? esc(driveLabel(t).replace(" est.", "")) : (t._rank == null ? "—" : String(t._rank));
+      return '<div class="rank-line">' +
+        '<button type="button" class="rank-row" data-id="' + esc(t.id) + '">' +
+        '<div class="rank-num">' + left + "</div>" +
+        '<div class="rank-name">' + esc(shortName(t)) +
+        (locked ? '<span class="lock-ico">Pro</span>' : "") +
+        (t.off_map ? '<span class="chip lock">off-map</span>' : "") +
+        (inCmp ? '<span class="chip priced">in compare</span>' : "") +
+        '<span class="chip ' + tierOf(t) + '">' + tierOf(t).toUpperCase() + "</span></div>" +
+        '<div class="rank-usd' + (h == null ? " unk" : "") + '">' + (h == null ? "unknown" : (locked ? "Pro" : fmtUsd(h))) + "</div>" +
+        '<div class="rank-meta"><span class="vs ' + ((locked && h != null) ? "" : vscc.cls) + '">vs Conchas Chinas ' + esc((locked && h != null) ? "Pro" : vscc.text) + "</span>" +
+        '<span class="vs ' + ((locked && h != null) ? "" : vscb.cls) + '">vs Cabo Médano ' + esc((locked && h != null) ? "Pro" : vscb.text) + "</span>" +
+        '<span class="score-col">score —</span>' +
+        (state.listSort === "price" ? "<span>" + esc(driveLabel(t)) + "</span>" : "") +
+        "</div></button>" +
+        '<button type="button" class="icon-btn" data-detail="' + esc(t.id) + '" aria-label="Open ' + esc(shortName(t)) + '">i</button></div>';
+    }
+
+    if (priced.length) {
+      html += '<div class="group-h">' + (state.listSort === "drive" ? "By estimated drive to PVR" : "Ranked by asking USD/m²") + "</div>";
+      html += priced.map(row).join("");
+    }
+    if (unk.length) {
+      html += '<div class="group-h">Unknown price · not ranked</div>';
+      html += unk.map(row).join("");
+    }
+    if (!priced.length && !unk.length) html += '<p class="caption">No towns in this filter.</p>';
+    html += '<p class="caption">Peer is Conchas Chinas ' + esc(fmtUsd(ccH)) + ' (Homia). Cabo Médano is MLS BCS, off-map, Pro-locked. AMPI municipal averages are not USD/m² and are not used to rank. Score column is an em dash — no verified composite in file. Drive times are estimated.</p>';
+    if (HURR_REGION && HURR_REGION.noaa_since_1945) {
+      html += '<p class="caption">Region: ' + esc(HURR_REGION.noaa_since_1945) + " Not stamped on each town.</p>";
+    }
+    html += regionComingHtml();
+    return html;
+  }
+
+  function detailHtml(t) {
+    const h = headlineOf(t);
+    const unknown = h == null;
+    const inCmp = state.compare.indexOf(t.id) !== -1;
+    const vscc = vsFmt(h, headlineOf(CC));
+    const vscb = vsFmt(h, headlineOf(CABO));
+    let html = '<div class="sheet-head"><div><h2>' + esc(t.name) + "</h2>" +
+      '<div class="meta">' + esc(driveLabel(t)) + " · " + tierOf(t).toUpperCase() + (t.peer ? " · peer" : "") + (t.off_map ? " · off-map" : "") + "</div></div>" +
+      '<button type="button" class="x" id="closeSheet" aria-label="Close">×</button></div>';
+    html += '<div class="price-card"><div class="k">Asking USD/m² · Aug 2026</div>';
+    html += '<div class="v' + (unknown ? " unk" : "") + '">' + (unknown ? "unknown" : fmtUsd(h)) + "</div>";
+    html += '<div class="rows">';
+    if (!unknown) {
+      html += "<div><span>Source</span><b>" + esc(t.usd_m2.source || "—") + "</b></div>";
+      if (t.usd_m2.n != null) html += "<div><span>n</span><b>" + esc(String(t.usd_m2.n)) + "</b></div>";
+      if (t.usd_m2.band) html += "<div><span>Band</span><b>" + esc(t.usd_m2.band) + "</b></div>";
+      html += '<div><span>vs Conchas Chinas</span><b class="vs ' + vscc.cls + '">' + esc(vscc.text) + "</b></div>";
+      html += '<div><span>vs Cabo Médano</span><b class="vs ' + vscb.cls + '">' + esc(vscb.text) + "</b></div>";
+    } else {
+      html += "<div><span>Seed</span><b>unknown — not invented</b></div>";
+      if (t.ampi_not_mls) {
+        html += "<div><span>AMPI (not MLS)</span><b>not used as USD/m²</b></div>";
+      }
+    }
+    html += "<div><span>Score</span><b>—</b></div>";
+    html += "</div></div>";
+
+    if (unknown) {
+      html += '<p class="spider-empty">no spider — unknown USD/m²</p>';
+    } else {
+      html += spiderHtml();
+    }
+
+    html += comingHtml(t);
+    html += homesHtml();
+
+    html += '<div class="actions">';
+    html += '<button type="button" class="btn-a" id="addCmp">' + (inCmp ? "In compare" : "Add to compare") + "</button>";
+    if (isDesktop()) html += '<button type="button" class="btn-ghost" id="backList">All towns</button>';
+    html += "</div>";
+    return html;
+  }
+
+  function compareHtml() {
+    const towns = state.compare.map(town).filter(Boolean);
+    let html = '<div class="sheet-head"><div><h2>Compare</h2><div class="meta">' + towns.length + " of 4 · metrics from file · Aug 2026</div></div>" +
+      '<button type="button" class="x" id="closeSheet" aria-label="Close">×</button></div>';
+
+    html += '<div class="filters" id="cmpPicker">';
+    allPlaces().forEach(function (t) {
+      const on = state.compare.indexOf(t.id) !== -1;
+      const lock = !unlocked(t.id);
+      html += '<button type="button" class="filter-chip' + (on ? " on" : "") + '" data-pick="' + esc(t.id) + '">' +
+        esc(shortName(t)) + (lock ? " · Pro" : "") + (t.off_map ? " · off-map" : "") + "</button>";
+    });
+    html += "</div>";
+    html += '<p class="caption">Chip picker · 4-cap. Table is metrics × towns. Spider only if usd_m2.headline exists. No price-history series in this seed.</p>';
+
+    html += '<div class="cmp-wrap"><table class="cmp-table"><thead><tr><th>Metric</th>';
+    towns.forEach(function (t) {
+      html += "<th>" + esc(shortName(t)) + "</th>";
+    });
+    html += "</tr></thead><tbody>";
+
+    function cells(fn) {
+      return towns.map(function (t) { return "<td>" + fn(t) + "</td>"; }).join("");
+    }
+    html += "<tr><th>Asking USD/m²</th>" + cells(function (t) {
+      const h = headlineOf(t);
+      return h == null ? '<span class="rank-usd unk">unknown</span>' : esc(fmtUsd(h));
+    }) + "</tr>";
+    html += "<tr><th>Source</th>" + cells(function (t) {
+      return esc((t.usd_m2 && t.usd_m2.source) || (headlineOf(t) == null ? "unknown" : "—"));
+    }) + "</tr>";
+    html += "<tr><th>n</th>" + cells(function (t) {
+      return t.usd_m2 && t.usd_m2.n != null ? esc(String(t.usd_m2.n)) : "—";
+    }) + "</tr>";
+    html += "<tr><th>Drive to PVR</th>" + cells(function (t) { return esc(driveLabel(t)); }) + "</tr>";
+    html += "<tr><th>Catalysts</th>" + cells(function (t) {
+      const cats = catalystObjs(t);
+      return cats.length ? cats.map(function (c) { return esc(c.label); }).join("<br>") : "—";
+    }) + "</tr>";
+    const anyHurr = towns.some(function (t) { return t.hurricane && t.hurricane.note; });
+    if (anyHurr) {
+      html += "<tr><th>Hurricane</th>" + cells(function (t) {
+        return t.hurricane && t.hurricane.note ? esc(t.hurricane.note) : "—";
+      }) + "</tr>";
+    }
+    html += "<tr><th>vs Conchas Chinas</th>" + cells(function (t) {
+      const v = vsFmt(headlineOf(t), headlineOf(CC));
+      return '<span class="vs ' + v.cls + '">' + esc(v.text) + "</span>";
+    }) + "</tr>";
+    html += "<tr><th>Score</th>" + cells(function () { return "—"; }) + "</tr>";
+    html += "</tbody></table></div>";
+    html += '<p class="caption">Swipe sideways for extra columns. Sticky metric names. No invented rows, CAGR, or projections.</p>';
+
+    const scored = towns.filter(function (t) { return headlineOf(t) != null; });
+    if (scored.length) {
+      html += '<div class="group-h">Spider categories · verified headline only</div>';
+      html += '<div class="facts-grid" style="grid-template-columns:repeat(' + scored.length + ',minmax(140px,1fr))">';
+      scored.forEach(function (t) {
+        const cats = catalystObjs(t);
+        html += '<div class="fact-col"><h3>' + esc(shortName(t)) + "</h3>";
+        html += "<div><span>Access</span><b>" + esc(driveLabel(t)) + "</b></div>";
+        html += "<div><span>Signal</span><b>verified USD/m²</b></div>";
+        html += "<div><span>Storm</span><b>" + (t.hurricane && t.hurricane.note ? "note on file" : "—") + "</b></div>";
+        html += "<div><span>Catalyst</span><b>" + (cats.length ? esc(cats.map(function (c) { return STAGE_LABEL[c.stage] || c.stage; }).join(", ")) : "—") + "</b></div>";
+        html += "<div><span>Comps</span><b>" + (t.peer || t.off_map ? "peer" : "priced") + "</b></div>";
+        html += "<div><span>Score</span><b>—</b></div>";
+        html += "</div>";
+      });
+      html += "</div>";
+      html += '<p class="caption">Categories side by side for towns with verified usd_m2.headline. No spider numbers. Unknown towns omitted from this block.</p>';
+    } else {
+      html += '<p class="caption">No spider — none of the selected towns have a verified usd_m2.headline.</p>';
+    }
+    if (isDesktop()) html += '<div class="actions"><button type="button" class="btn-ghost" id="backList">All towns</button></div>';
+    return html;
+  }
+
+  function paintSheet() {
+    const body = document.getElementById("sheetBody");
+    if (state.view === "compare") body.innerHTML = compareHtml();
+    else if (state.view === "detail" && state.selected) body.innerHTML = detailHtml(town(state.selected));
+    else body.innerHTML = listHtml();
+
+    const close = document.getElementById("closeSheet");
+    if (close) close.onclick = function () {
+      if (isDesktop()) openView("list");
+      else openView("map");
+    };
+    const back = document.getElementById("backList");
+    if (back) back.onclick = function () { openView("list"); };
+    const add = document.getElementById("addCmp");
+    if (add) add.onclick = function () {
+      addToCompare(state.selected);
+      paintSheet();
+    };
+    body.querySelectorAll("[data-fil]").forEach(function (b) {
+      b.onclick = function () {
+        state.listFilter = b.getAttribute("data-fil");
+        if (state.listFilter === "coming") state.comingFilter = "coming";
+        paintSheet();
+      };
+    });
+    body.querySelectorAll("[data-sort]").forEach(function (b) {
+      b.onclick = function () { state.listSort = b.getAttribute("data-sort"); paintSheet(); };
+    });
+    body.querySelectorAll("[data-pick]").forEach(function (b) {
+      b.onclick = function () {
+        const id = b.getAttribute("data-pick");
+        if (!unlocked(id)) { openPro(id); return; }
+        if (state.compare.indexOf(id) !== -1) removeFromCompare(id);
+        else addToCompare(id);
+        paintSheet();
+      };
+    });
+    body.querySelectorAll(".rank-row").forEach(function (b) {
+      b.onclick = function () {
+        const id = b.getAttribute("data-id");
+        if (!unlocked(id)) { openPro(id); return; }
+        addToCompare(id);
+        paintSheet();
+      };
+    });
+    body.querySelectorAll("[data-detail]").forEach(function (b) {
+      b.onclick = function (e) {
+        e.stopPropagation();
+        const id = b.getAttribute("data-detail");
+        if (!unlocked(id)) { openPro(id); return; }
+        openView("detail", id);
+      };
+    });
+    body.querySelectorAll("[data-axis]").forEach(function (b) {
+      b.onclick = function () {
+        const t = town(state.selected);
+        if (t) openDefine(b.getAttribute("data-axis"), t);
+      };
+    });
+    body.querySelectorAll("[data-cfil]").forEach(function (b) {
+      b.onclick = function () {
+        state.comingFilter = b.getAttribute("data-cfil");
+        paintSheet();
+      };
+    });
+  }
+
+  loadData().then(function (pair) { boot(pair[0], pair[1]); }).catch(function (err) {
+    const el = document.getElementById("sheetBody");
+    if (el) el.innerHTML = "<p class=\"caption\">Could not load pvr-towns-aug2026.json. Serve this folder over http.</p>";
+    document.getElementById("sheet").classList.add("open");
+    console.error(err);
+  });
 })();
 
 </script>
