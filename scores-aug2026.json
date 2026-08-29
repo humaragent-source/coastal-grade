@@ -1,0 +1,1095 @@
+{
+  "meta": {
+    "model": "mexico-pacific-v1",
+    "as_of": "2026-08-28",
+    "computed": "2026-08-29",
+    "scale": "0-100",
+    "source_towns": "/workspace/coastal-grade/pvr-towns-aug2026.json",
+    "source_hotels": "/workspace/coastal-grade/hotel-pipeline-aug2026.json",
+    "price_rule": "Only verified usd_m2.headline from pvr-towns-aug2026.json. Do not invent listings.",
+    "missing_axis_rule": "If an axis has no town-level evidence, mark unknown and DROP it from the composite. Remaining weights renormalize to 100. Do not fill with regional stamps. A known empty future-catalyst catalog is scored 0 (evidence of no non-open catalyst), not unknown.",
+    "hard_gates": [
+      "ocean/coastal",
+      "timezone within 3h of SF / NY / Miami",
+      "~2h of PVR (estimated drive_min_to_pvr.high ≤ 120, or in_pv)"
+    ],
+    "weights_locked": {
+      "hurricane_history_and_damage": 20,
+      "future_catalysts": 20,
+      "price_runway_vs_peers": 20,
+      "safety": 15,
+      "potable_water": 10,
+      "beach_sargassum": 10,
+      "timezone_overlap": 5
+    },
+    "peers": {
+      "in_radius_headlines_usd_m2": {
+        "pv-5dedic": 4759,
+        "conchas-chinas": 7066,
+        "sayulita": 4848,
+        "punta-mita": 5196
+      },
+      "in_radius_median_usd_m2": 5022.0,
+      "median_rule": "Median of PV 5 de Dic, Conchas Chinas, Sayulita, Punta Mita headlines. Four values → mean of the two middle.",
+      "cabo_medano_ceiling_usd_m2": 11500,
+      "cabo_source": "MLS BCS Médano median, 27 Aug 2026 — not Homia",
+      "cabo_role": "off-map ceiling only — not in the median, not scored as a PVR town"
+    },
+    "formulas": {
+      "price_runway": "clip(50 + 50 * (in_radius_peer_median - headline) / in_radius_peer_median, 0, 100). Headline ≥ Cabo ceiling → 0.",
+      "future_catalysts": {
+        "open": 0,
+        "rumor": 25,
+        "tender": 40,
+        "under_construction": 55,
+        "complete_not_open": 70,
+        "second_non_open_bonus": 15,
+        "assignment": "Only towns[].catalysts plus hotel-pipeline rows with town_id. 'Near San Pancho/Sayulita' and PV-wide rumors are not assigned to a scored neighborhood.",
+        "dispute": "Brand-vs-press dispute does not change stage. No invented cancellation."
+      },
+      "timezone_overlap": "Uniform 90 for every town that passes the 3h gate.",
+      "composite": "(sum score_i * weight_i) / sum(weights of in_composite axes), then round to nearest int."
+    },
+    "not_used": [
+      "AMPI municipal averages",
+      "NOAA 46-storm envelope as a per-town hurricane score",
+      "Pacific-vs-Caribbean sargassum as a per-town beach score",
+      "Belmond Milaroca (town_id null)",
+      "Thompson Puerto Vallarta (town_id null — not pinned to 5 de Dic / Amapas / Conchas)",
+      "EDITION Nayarit (no town)",
+      "Invented hotel guests_from dates"
+    ],
+    "coverage_warning": "v1 composite is partial: hurricane, safety, potable water, and beach/sargassum are unknown for every priced town (55 of 100 weight dropped). Do not present overall as a complete Coastal Grade."
+  },
+  "scored": [
+    {
+      "id": "nuevo-vallarta",
+      "name": "Nuevo Vallarta",
+      "peer": false,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 15–20 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 3456,
+        "source": "Homia MLS asking 27 Aug 2026",
+        "n": 199,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 70,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Non-open on file: Puente Amado Nervo (Río Ameca) (complete_not_open). Rubric complete_not_open=70."
+        },
+        "price_runway_vs_peers": {
+          "score": 66,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 3456 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 70 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 70,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 1
+    },
+    {
+      "id": "punta-mita",
+      "name": "Punta Mita",
+      "peer": true,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 40–50 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 5196,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 38,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 70,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Non-open on file: Montage Punta Mita (under_construction); Pendry Punta Mita (under_construction). Rubric under_construction=55 +15 second project. Montage/Pendry stay under_construction (brand pages); Semarnat press is not gob.mx — no invented cancellation."
+        },
+        "price_runway_vs_peers": {
+          "score": 48,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 5196 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 55 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 62,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 2
+    },
+    {
+      "id": "flamingos",
+      "name": "Flamingos",
+      "peer": false,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 20–20 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 3590,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 164,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 0,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id)."
+        },
+        "price_runway_vs_peers": {
+          "score": 64,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 3590 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 69 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 38,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 3
+    },
+    {
+      "id": "la-cruz",
+      "name": "La Cruz de Huanacaxtle",
+      "peer": false,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 30–40 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 3881,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 203,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 0,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Only open/priced-in on file (SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta). Open is not future upside."
+        },
+        "price_runway_vs_peers": {
+          "score": 61,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 3881 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 66 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 37,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 4
+    },
+    {
+      "id": "bucerias",
+      "name": "Bucerías",
+      "peer": false,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 20–30 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4150,
+        "source": "Homia MLS asking 27 Aug 2026",
+        "n": 363,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 0,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Only open/priced-in on file (SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta). Open is not future upside."
+        },
+        "price_runway_vs_peers": {
+          "score": 59,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 4150 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 64 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 36,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 5
+    },
+    {
+      "id": "amapas",
+      "name": "Amapas",
+      "peer": false,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. in_pv."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4536,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 115,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 0,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id)."
+        },
+        "price_runway_vs_peers": {
+          "score": 55,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 4536 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 61 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 34,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 6
+    },
+    {
+      "id": "pv-5dedic",
+      "name": "PV 5 de Dic",
+      "peer": false,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. in_pv."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4759,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 152,
+        "band": null,
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 0,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id)."
+        },
+        "price_runway_vs_peers": {
+          "score": 53,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 4759 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 59 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 34,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 7
+    },
+    {
+      "id": "sayulita",
+      "name": "Sayulita",
+      "peer": true,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 45–60 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 4848,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 53,
+        "band": "condo typical",
+        "sample_n_unknown": false
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 0,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Only open/priced-in on file (SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta). Open is not future upside."
+        },
+        "price_runway_vs_peers": {
+          "score": 52,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 4848 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 58 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 33,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 8
+    },
+    {
+      "id": "conchas-chinas",
+      "name": "Conchas Chinas",
+      "peer": true,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. in_pv."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2": {
+        "headline": 7066,
+        "source": "Homia MLS asking Aug 2026",
+        "n": null,
+        "band": "Lower / beach-side Homia pin",
+        "sample_n_unknown": true
+      },
+      "axes": {
+        "hurricane_history_and_damage": {
+          "score": null,
+          "status": "unknown",
+          "weight": 20,
+          "in_composite": false,
+          "why": "No town-level storm count or Lidia note. NOAA 46-storm / 60 nmi envelope is PV-centered and is not stamped on this town."
+        },
+        "future_catalysts": {
+          "score": 0,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "No catalyst on file for this town (catalog + hotel rows with town_id)."
+        },
+        "price_runway_vs_peers": {
+          "score": 30,
+          "status": "scored",
+          "weight": 20,
+          "in_composite": true,
+          "why": "Headline 7066 vs in-radius peer median 5022 (5 de Dic 4759, Sayulita 4848, Punta Mita 5196, Conchas 7066). Formula clip(50 + 50*(median-price)/median). vs Cabo ceiling 11500: 39 (diagnostic only)."
+        },
+        "safety": {
+          "score": null,
+          "status": "unknown",
+          "weight": 15,
+          "in_composite": false,
+          "why": "No verified per-town crime or safety series on file."
+        },
+        "potable_water": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No verified per-town potable-water measure on file."
+        },
+        "beach_sargassum": {
+          "score": null,
+          "status": "unknown",
+          "weight": 10,
+          "in_composite": false,
+          "why": "No town-level sargassum count or beach-quality measure. Pacific-vs-Caribbean is regional, not converted into a town score."
+        },
+        "timezone_overlap": {
+          "score": 90,
+          "status": "scored",
+          "weight": 5,
+          "in_composite": true,
+          "why": "All in-radius towns are MST or CST. Aug 2026: 0–1h from SF (PDT), 2–3h from NY/Miami (EDT). Uniform 90; no invented IANA split for Bahía de Banderas."
+        }
+      },
+      "composite": {
+        "overall": 23,
+        "scale": "0-100",
+        "weights_used": 45,
+        "weights_dropped": 55,
+        "formula": "(sum axis_score * axis_weight) / sum weights of scored axes. Unknown axes dropped, not zeroed.",
+        "partial": true
+      },
+      "rank": 9
+    }
+  ],
+  "unscored": [
+    {
+      "id": "san-blas",
+      "name": "San Blas",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input. Also fails hard gate: pvr: Estimated drive high 150 min > ~2h of PVR. estimated 130–150 min (not measured).",
+      "ampi_note": null,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": false,
+          "why": "Estimated drive high 150 min > ~2h of PVR. estimated 130–150 min (not measured)."
+        },
+        "passed": false,
+        "fail_reason": "pvr: Estimated drive high 150 min > ~2h of PVR. estimated 130–150 min (not measured)."
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "chacala",
+      "name": "Chacala",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input.",
+      "ampi_note": null,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 80–100 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "guayabitos",
+      "name": "Guayabitos",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input.",
+      "ampi_note": "ampi_not_mls present — do not score from it.",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 50–70 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "lo-de-marcos",
+      "name": "Lo de Marcos",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input.",
+      "ampi_note": "ampi_not_mls present — do not score from it.",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 60–75 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "san-pancho",
+      "name": "San Pancho",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input.",
+      "ampi_note": "ampi_not_mls present — do not score from it.",
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 55–70 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "litibu",
+      "name": "Litibú",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input.",
+      "ampi_note": null,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 45–45 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "mismaloya",
+      "name": "Mismaloya",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input.",
+      "ampi_note": null,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 40–60 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "boca",
+      "name": "Boca de Tomatlán",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input.",
+      "ampi_note": null,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": true,
+          "why": "Within ~2h of PVR. estimated 50–70 min (not measured)."
+        },
+        "passed": true,
+        "fail_reason": null
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "yelapa",
+      "name": "Yelapa",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input. Also fails hard gate: pvr: Boat-only access; no road drive to PVR in file (boat).",
+      "ampi_note": null,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": false,
+          "why": "Boat-only access; no road drive to PVR in file (boat)."
+        },
+        "passed": false,
+        "fail_reason": "pvr: Boat-only access; no road drive to PVR in file (boat)."
+      },
+      "usd_m2_headline": null
+    },
+    {
+      "id": "tehuamixtle",
+      "name": "Tehuamixtle",
+      "reason": "No verified usd_m2.headline (Homia/Inmuebles24). AMPI-only is not a score input. Also fails hard gate: pvr: Estimated drive high 140 min > ~2h of PVR. estimated 120–140 min (not measured).",
+      "ampi_note": null,
+      "gates": {
+        "ocean_coastal": {
+          "pass": true,
+          "why": "In the locked PVR-radius coastal towns file (ocean/coastal gate). Parcel-level oceanfront not required."
+        },
+        "timezone_3h_sf_ny_miami": {
+          "pass": true,
+          "why": "Nayarit MST (UTC−7) or Jalisco CST (UTC−6); Aug 2026 SF is PDT UTC−7, NY/Miami EDT UTC−4. Both ≤ 3h."
+        },
+        "about_2h_of_pvr": {
+          "pass": false,
+          "why": "Estimated drive high 140 min > ~2h of PVR. estimated 120–140 min (not measured)."
+        },
+        "passed": false,
+        "fail_reason": "pvr: Estimated drive high 140 min > ~2h of PVR. estimated 120–140 min (not measured)."
+      },
+      "usd_m2_headline": null
+    }
+  ],
+  "counts": {
+    "scored": 9,
+    "unscored_no_headline_or_gate": 10,
+    "towns_in_file": 19
+  }
+}
