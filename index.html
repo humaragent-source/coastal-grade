@@ -182,9 +182,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .price-card .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .price-card .v{font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:2px}
 .price-card .v.unk{color:var(--muted);font-style:italic;font-weight:500;font-size:22px}
-.rows{margin-top:8px;display:grid;gap:4px}
-.rows div{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);gap:8px}
-.rows b{color:var(--foam);font-weight:600;text-align:right}
+.rows{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.rows > div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;column-gap:8px;row-gap:0;min-height:28px;font-size:12px;color:var(--dim)}
+.rows > div > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rows > div > .chip{grid-column:2;margin:0;position:static;flex-shrink:0;align-self:center}
+.rows b{grid-column:3;justify-self:end;color:var(--foam);font-weight:600;text-align:right;white-space:nowrap}
 .hurr{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--danger-08);border:1px solid var(--danger-22);font-size:12px;margin-bottom:10px;color:var(--danger-soft)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .chip{font-size:10.5px;font-weight:600;letter-spacing:.03em;border-radius:var(--radius-chip);padding:5px 9px;border:1px solid transparent}
@@ -200,10 +202,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .chip.unknown{background:var(--white-04);color:var(--muted);border-color:var(--line)}
 .chip.lock{background:var(--white-04);color:var(--dim);border-color:var(--line)}
 .caption{font-size:10.5px;color:var(--muted);margin:0 0 12px;line-height:1.4}
-.gates-bands{margin:0 0 4px}
-.gates-bands .rows{margin-top:4px}
-.gates-bands .rows div{align-items:center}
-.gates-bands .chip{flex-shrink:0;margin-left:6px}
+.gates-bands{margin:0 0 12px}
+.gates-bands .rows{margin-top:8px}
 .actions{display:flex;gap:8px;margin-bottom:6px}
 .actions button,.back-btn{flex:1;border:0;border-radius:12px;padding:11px;cursor:pointer;font:600 13px/1 var(--font-body);min-height:44px;min-width:44px}
 .btn-a{background:var(--mint-d);color:var(--mint)}
@@ -2986,8 +2986,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     function row(label, n, usd, chipCls, chipLab) {
       if (usd == null) return "";
       const nBit = n != null ? " n=" + n : "";
-      return "<div><span>" + esc(label) + nBit +
-        ' <span class="chip ' + chipCls + '">' + esc(chipLab) + "</span></span><b>" +
+      return "<div><span>" + esc(label) + nBit + '</span><span class="chip ' + chipCls + '">' + esc(chipLab) + "</span><b>" +
         esc(fmtUsd(toDisplay(usd))) + " " + unitLabel() + "</b></div>";
     }
 
@@ -3024,15 +3023,15 @@ a.home-card:hover{border-color:var(--accent-3)}
       samples.forEach(function (samp) {
         const usd = samp.headline_usd_m2 != null ? fmtUsd(toDisplay(samp.headline_usd_m2)) : "—";
         const n = samp.n != null ? " n=" + samp.n : "";
-        html += "<div><span>" + esc(samp.name || "sample") + n + "</span><b>" + esc(usd) + " " + unitLabel() + ' <span class="chip primary">INSIDE</span></b></div>';
+        html += "<div><span>" + esc(samp.name || "sample") + n + '</span><span class="chip primary">INSIDE</span><b>' + esc(usd) + " " + unitLabel() + "</b></div>";
       });
       const outH = outRow && outRow.usd_m2 && outRow.usd_m2.headline;
       const outN = outRow && outRow.usd_m2 && outRow.usd_m2.n;
       if (outH != null) {
-        html += "<div><span>El Anclote" + (outN != null ? " n=" + outN : "") + "</span><b>" + esc(fmtUsd(toDisplay(outH))) + " " + unitLabel() + ' <span class="chip priced">OUTSIDE</span></b></div>';
+        html += "<div><span>El Anclote" + (outN != null ? " n=" + outN : "") + '</span><span class="chip priced">OUTSIDE</span><b>' + esc(fmtUsd(toDisplay(outH))) + " " + unitLabel() + "</b></div>";
       }
       if (mixedH != null) {
-        html += "<div><span>Mixed Homia" + (mixedN != null ? " n=" + mixedN : "") + "</span><b>" + esc(fmtUsd(toDisplay(mixedH))) + " " + unitLabel() + ' <span class="chip unknown">PEER PIN</span></b></div>';
+        html += "<div><span>Mixed Homia" + (mixedN != null ? " n=" + mixedN : "") + '</span><span class="chip unknown">PEER PIN</span><b>' + esc(fmtUsd(toDisplay(mixedH))) + " " + unitLabel() + "</b></div>";
       }
       html += "<div><span>Score</span><b>— · mixed is not a ranked market</b></div>";
       html += "</div></div>";
