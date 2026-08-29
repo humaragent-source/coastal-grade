@@ -1,0 +1,294 @@
+{
+  "meta": {
+    "as_of": "2026-08-29",
+    "rule": "Dated asking USD/m² only. No interpolation, no back-cast, no invented CAGR. Do not copy old JSX 2015–2026 series.",
+    "headline_for_harry": {
+      "towns_with_verified_headline": 9,
+      "towns_with_more_than_one_year": 0,
+      "verified_cagr5_count": 0
+    },
+    "searched": [
+      "Homia guia / MLS asking pages (2026-08-29)",
+      "https://www.homia.mx/en/puerto-vallarta-real-estate-market-report (Q3 2026, same year)",
+      "MLS Vallarta 2018 condo stats, 2020 report, 2017–2022 trends, 2023 report, 2024 8 charts, 2015–2025 decade",
+      "AMPI / MLS Vallarta / AMPI Riviera Nayarit Q3 2025 city-wide MXN/m²",
+      "Inmuebles24 listing cards already on file (Aug 2026 only)"
+    ],
+    "one_point_rule": "If only Aug 2026 exists, history is that one point and verified_cagr5 is null.",
+    "rejected_not_in_history": [
+      {
+        "why": "Sold, not asking; city/region wide; no USD/m² by town",
+        "items": [
+          {
+            "year": "2017-2018",
+            "what": "Region-wide condo SOLD $1,936/m² (2017) and $2,152/m² (2018). Not asking, not by town.",
+            "url": "https://www.mlsvallarta.com/news/2018-puerto-vallarta-real-estate-report/"
+          },
+          {
+            "year": 2018,
+            "what": "PV downtown+hotel+south shore sold condos $225/ft² ($2,400/m²)",
+            "url": "https://www.mlsvallarta.com/news/puerto-vallarta-condo-stats-for-2018/"
+          },
+          {
+            "year": 2020,
+            "what": "Region average condo SOLD $340,000 at 138 m² (implied $/m² not published as asking)",
+            "url": "https://www.mlsvallarta.com/news/mls-vallarta-2020-real-estate-report/"
+          },
+          {
+            "year": 2023,
+            "what": "Region average condo SOLD $424,000; list/sold spread 4.5%",
+            "url": "https://www.mlsvallarta.com/news/vallarta-nayarit-2023-real-estate-report/"
+          },
+          {
+            "year": 2024,
+            "what": "Region list vs sold dollar totals (2017 listed $304k / 2023 listed $444k). Not USD/m², not per town.",
+            "url": "https://www.mlsvallarta.com/news/2024-vallarta-nayarit-real-estate-market-in-8-charts/"
+          },
+          {
+            "year": "2015-2025",
+            "what": "Region average condo SOLD $310,000 (2015) to $490,000 (2025). Not USD/m², not asking, not per town.",
+            "url": "https://www.mlsvallarta.com/news/puerto-vallarta-real-estate-2015-2025/"
+          },
+          {
+            "year": "2017-2021",
+            "what": "Region sales volume and average condo sold +25%. No town asking USD/m².",
+            "url": "https://www.mlsvallarta.com/news/puerto-vallarta-real-estate-trends-2017-2022/"
+          }
+        ]
+      },
+      {
+        "why": "AMPI / SHF not town asking USD/m²",
+        "items": [
+          {
+            "what": "AMPI Riviera Nayarit Q3 2025: Puerto Vallarta city-wide 35,000 MXN/m². Not a scored town, not converted to USD here.",
+            "url": "https://ampirivieranayarit.com/mercado/es/localidad/puerto-vallarta"
+          },
+          {
+            "what": "Homia guia pages print SHF Nayarit House Price Index +10.6% (Q1 2026 state average). Not a town asking series. Not used as CAGR.",
+            "url": "https://www.homia.mx/en/guia/sayulita"
+          },
+          {
+            "what": "AMPI municipal averages already on file for Guayabitos / Lo de Marcos / San Pancho. Those towns have no headline and are not in this file."
+          },
+          {
+            "what": "AMPI RN / Teseo Q3 2025 Precio/m² MXN (not labeled asking): Punta Mita 85,000; Nuevo Vallarta 34,000; Sayulita 38,000; La Cruz 36,000; Bahía de Banderas 28,500. Not converted to USD, not used as usd_m2.",
+            "url": "https://ampirivieranayarit.com/mercado/es/"
+          },
+          {
+            "what": "AMPI Guía de Colonias USD/m² (Amapas 4076, 5 de Dic 4030, C. Chinas 5400). Not labeled asking; no year on the figures.",
+            "url": "https://ampirivieranayarit.com/blog/2026/03/18/guia-de-colonias-vallarta/"
+          }
+        ]
+      },
+      {
+        "why": "Same year as locked headline, not extra history",
+        "items": [
+          {
+            "what": "Live Homia guia pages 2026-08-29 (Sayulita 4848, Punta Mita 5196, NV 3456, Flamingos 3590, 5 de Dic 4759, Amapas 4536). Bucerías 4152 / La Cruz condo 3913 differ slightly from locked Aug 27–28 pins and stay out of history."
+          },
+          {
+            "what": "Nami Realty AMPI MLS inventory USD/m² by colonia, updated 2026-08-28. Current asking, not a prior year. Not an AMPI annual report.",
+            "url": "https://namirealty.com/datos-del-mercado/"
+          }
+        ]
+      }
+    ],
+    "audit_note": "AMPI/MLS hunt write-up: /workspace/coastal-grade/price-search-ampi-mlsvallarta.md. Confirmed empty asking history."
+  },
+  "towns": [
+    {
+      "id": "sayulita",
+      "name": "Sayulita",
+      "headline_2026": 4848,
+      "n": 53,
+      "source": "Homia MLS asking Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 4848,
+          "source": "Homia MLS asking Aug 2026",
+          "url": "https://www.homia.mx/en/guia/sayulita",
+          "n": 53,
+          "band": "condo typical",
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": null
+    },
+    {
+      "id": "punta-mita",
+      "name": "Punta Mita",
+      "headline_2026": 5196,
+      "n": 38,
+      "source": "Homia MLS asking Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 5196,
+          "source": "Homia MLS asking Aug 2026",
+          "url": "https://www.homia.mx/en/guia/punta-mita",
+          "n": 38,
+          "band": "condo typical",
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": null
+    },
+    {
+      "id": "la-cruz",
+      "name": "La Cruz de Huanacaxtle",
+      "headline_2026": 3881,
+      "n": 203,
+      "source": "Homia MLS asking Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 3881,
+          "source": "Homia MLS asking Aug 2026",
+          "url": "https://www.homia.mx/en/guia/la-cruz-de-huanacaxtle",
+          "n": 203,
+          "band": null,
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": "Live Homia guia 2026-08-29 showed condo-only median 3913 n=162. Locked headline stays zone 3881 n=203. Same year, not a second point."
+    },
+    {
+      "id": "bucerias",
+      "name": "Bucerías",
+      "headline_2026": 4150,
+      "n": 363,
+      "source": "Homia MLS asking 27 Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 4150,
+          "source": "Homia MLS asking 27 Aug 2026",
+          "url": "https://www.homia.mx/en/guia/bucerias",
+          "n": 363,
+          "band": "condo typical",
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": "Live Homia guia 2026-08-29 showed 4152 n=362 condos. Locked headline stays 4150 n=363. Same year, not a second point."
+    },
+    {
+      "id": "flamingos",
+      "name": "Flamingos",
+      "headline_2026": 3590,
+      "n": 164,
+      "source": "Homia MLS asking Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 3590,
+          "source": "Homia MLS asking Aug 2026",
+          "url": "https://www.homia.mx/en/guia/flamingos",
+          "n": 164,
+          "band": null,
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": null
+    },
+    {
+      "id": "nuevo-vallarta",
+      "name": "Nuevo Vallarta",
+      "headline_2026": 3456,
+      "n": 199,
+      "source": "Homia MLS asking 27 Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 3456,
+          "source": "Homia MLS asking 27 Aug 2026",
+          "url": "https://www.homia.mx/en/guia/nuevo-vallarta",
+          "n": 199,
+          "band": "condo typical",
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": null
+    },
+    {
+      "id": "pv-5dedic",
+      "name": "PV 5 de Dic",
+      "headline_2026": 4759,
+      "n": 152,
+      "source": "Homia MLS asking Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 4759,
+          "source": "Homia MLS asking Aug 2026",
+          "url": "https://www.homia.mx/en/guia/cinco-de-diciembre",
+          "n": 152,
+          "band": null,
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": null
+    },
+    {
+      "id": "amapas",
+      "name": "Amapas",
+      "headline_2026": 4536,
+      "n": 115,
+      "source": "Homia MLS asking Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 4536,
+          "source": "Homia MLS asking Aug 2026",
+          "url": "https://www.homia.mx/en/guia/amapas",
+          "n": 115,
+          "band": null,
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": null
+    },
+    {
+      "id": "conchas-chinas",
+      "name": "Conchas Chinas",
+      "headline_2026": 7066,
+      "n": null,
+      "source": "Homia MLS asking Aug 2026",
+      "history": [
+        {
+          "year": 2026,
+          "usd_m2": 7066,
+          "source": "Homia MLS asking Aug 2026",
+          "url": null,
+          "n": null,
+          "band": "Lower / beach-side Homia pin",
+          "as_of": "2026-08-27/28"
+        }
+      ],
+      "verified_cagr5": null,
+      "verified_cagr_source": null,
+      "live_page_note": null
+    }
+  ],
+  "counts": {
+    "towns": 9,
+    "towns_with_more_than_one_year": 0,
+    "verified_cagr5": 0
+  }
+}
