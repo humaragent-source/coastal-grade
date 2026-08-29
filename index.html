@@ -319,11 +319,17 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .spider-block{margin:0 0 16px}
 
 .price-block{margin:0 0 16px}
+.price-block.with-scen{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"title" "chart" "readout" "pills" "ctrls" "cap";gap:0}
+.price-title{grid-area:title;margin:0 0 6px;align-self:center}
+.price-block.with-scen .price-wrap{grid-area:chart;margin:4px 0 8px}
+.price-block.with-scen .price-readout{grid-area:readout;margin:0 0 8px}
+.price-block.with-scen .scen-row{grid-area:pills;margin:0 0 10px}
+.price-block.with-scen .price-ctrls{grid-area:ctrls}
+.price-block.with-scen > .caption{grid-area:cap}
 .price-wrap{height:320px;position:relative;margin:4px 0 8px;width:100%}
 .price-wrap canvas{display:block;width:100%;height:100%}
 .price-unk{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
-.price-head{display:flex;flex-direction:column;gap:8px;margin:0 0 10px}
-.price-readout{display:grid;gap:4px;margin:0;font-size:13px;font-weight:600;color:var(--foam);font-variant-numeric:tabular-nums}
+.price-readout{display:grid;gap:4px;margin:0 0 10px;font-size:13px;font-weight:600;color:var(--foam);font-variant-numeric:tabular-nums}
 .price-readout .assumed{color:var(--sand);font-weight:500;font-size:11px;letter-spacing:.02em}
 .price-readout .verified{color:var(--mint);font-weight:500;font-size:11px;letter-spacing:.02em}
 .price-ctrls{display:grid;gap:4px;margin:2px 0 8px}
@@ -450,9 +456,10 @@ a.home-card:hover{border-color:var(--accent-3)}
   #app.content-full #stage{display:none}
   #stage{grid-area:stage;position:relative;height:100dvh;min-width:0}
   .drive{right:12px;left:12px;max-width:420px}
-  .price-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:8px 12px}
-  .price-head .scen-row{flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;max-width:168px;min-width:140px}
-  .price-head .scen-chip{min-height:36px;padding:8px 10px;text-align:left}
+  .price-block.with-scen{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"title pills" "chart chart" "readout readout" "ctrls ctrls" "cap cap";align-items:center;column-gap:10px}
+  .price-block.with-scen .scen-row{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;align-items:center;max-width:none;min-width:0;margin:0 0 6px;gap:6px}
+  .price-block.with-scen .scen-chip{min-height:36px;padding:8px 10px}
+  .price-title{margin:0 0 6px}
   #openList{display:none}
   #rail{grid-area:rail;position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-right:1px solid var(--line);border-left:0;z-index:2;min-width:0;overflow:hidden}
   .modal,.toast{grid-area:rail}
@@ -1584,7 +1591,8 @@ a.home-card:hover{border-color:var(--accent-3)}
     const title = cmp
       ? "Price Trajectory \u00b7 TODAY + Base Case"
       : "TODAY & Projected";
-    let html = '<div class="price-block"><div class="group-h">' + esc(title) + "</div>";
+    let html = '<div class="price-block' + (cmp ? "" : " with-scen") + '">';
+    html += '<div class="group-h price-title">' + esc(title) + "</div>";
     if (!priced.length) {
       html += '<p class="price-unk">unknown \u2014 not invented</p></div>';
       return html;
@@ -1594,17 +1602,17 @@ a.home-card:hover{border-color:var(--accent-3)}
       html += '<button type="button" class="proj-chip' + (state.cmpYears === 5 ? " on" : "") + '" data-proj="5">Projection 5yr</button>';
       html += '<button type="button" class="proj-chip' + (state.cmpYears === 10 ? " on" : "") + '" data-proj="10">Projection 10yr</button>';
       html += "</div>";
-    }
-    html += '<div class="price-wrap"><canvas id="priceChart" aria-label="' + esc(title) + '"></canvas></div>';
-    if (!cmp) {
-      html += '<div class="price-head">';
-      html += '<div class="price-readout" id="priceReadout"></div>';
+    } else {
       html += '<div class="scen-row" id="scenChips">';
       html += '<button type="button" class="scen-chip' + (state.scenOn.conservative ? " on" : "") + '" data-scen="conservative">Conservative ' + pctLabel(R_CONSERVATIVE) + "</button>";
       html += '<button type="button" class="scen-chip' + (state.scenOn.base ? " on" : "") + '" data-scen="base">Base ' + pctLabel(R_BASE) + "</button>";
       html += '<button type="button" class="scen-chip' + (state.scenOn.abundance ? " on" : "") + '" data-scen="abundance">Abundance ' + pctLabel(R_ABUNDANCE) + "</button>";
       html += '<button type="button" class="scen-chip' + (state.scenOn.custom ? " on" : "") + '" data-scen="custom" id="scenCustom">Custom ' + pctLabel(state.growthR) + "</button>";
-      html += "</div></div>";
+      html += "</div>";
+    }
+    html += '<div class="price-wrap"><canvas id="priceChart" aria-label="' + esc(title) + '"></canvas></div>';
+    if (!cmp) {
+      html += '<div class="price-readout" id="priceReadout"></div>';
       html += '<div class="price-ctrls">';
       html += '<div class="price-ctrl"><label id="priceHorizonLab" for="priceHorizon">Horizon ' + state.horizon + " yr</label>";
       html += '<input type="range" id="priceHorizon" min="1" max="10" step="1" value="' + state.horizon + '" aria-labelledby="priceHorizonLab"></div>';
@@ -1818,6 +1826,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     yMax = yMax * 1.14;
     if (yMax <= 0) yMax = 1;
 
+    const axisMin = Math.min(histMin, NOW_YEAR - Math.ceil((2 / 3) * Math.max(1, horizon)));
     function xOf(year) {
       const nowX = padL + 0.4 * plotW;
       if (year >= NOW_YEAR) {
@@ -1825,8 +1834,8 @@ a.home-card:hover{border-color:var(--accent-3)}
         const span = Math.max(1, xMax - NOW_YEAR);
         return nowX + ((year - NOW_YEAR) / span) * (0.6 * plotW);
       }
-      if (histMin >= NOW_YEAR) return nowX;
-      return padL + ((year - histMin) / (NOW_YEAR - histMin)) * (0.4 * plotW);
+      const pastSpan = Math.max(0.001, NOW_YEAR - axisMin);
+      return padL + ((year - axisMin) / pastSpan) * (0.4 * plotW);
     }
     function yOf(usd) {
       return padT + (1 - (usd - yMin) / (yMax - yMin)) * plotH;
@@ -1855,21 +1864,13 @@ a.home-card:hover{border-color:var(--accent-3)}
 
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    const yearSpan = xMax - NOW_YEAR;
-    const yearStep = yearSpan > 8 ? 2 : 1;
-    const tickYears = {};
-    if (histMin < NOW_YEAR) {
-      pack.forEach(function (row) {
-        (row.hist || []).forEach(function (pt) {
-          if (pt && pt.usd_m2 != null && pt.year < NOW_YEAR) tickYears[pt.year] = true;
-        });
-      });
-    }
-    for (let year = NOW_YEAR; year <= xMax; year += yearStep) tickYears[year] = true;
-    Object.keys(tickYears).map(Number).sort(function (a, b) { return a - b; }).forEach(function (year) {
+    const yearSpan = xMax - axisMin;
+    const yearStep = yearSpan > 10 ? 2 : 1;
+    const tickStart = Math.ceil(axisMin);
+    for (let year = tickStart; year <= xMax; year += yearStep) {
       ctx.fillStyle = muted;
       ctx.fillText(String(year), xOf(year), h - padB + 8);
-    });
+    }
 
     const xNow = xOf(NOW_YEAR);
     ctx.save();
