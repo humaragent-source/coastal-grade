@@ -10,7 +10,10 @@
       "source": "Homia MLS asking Aug 2026",
       "file": "/workspace/coastal-grade/pvr-towns-aug2026.json"
     },
-    "scoring_rule": "Do not average inside-the-gates and El Anclote/public into one Punta Mita Comps score. Keep 5196 as mixed until Homia prints a Punta Mita Resort neighborhood $/m². Score El Anclote as its own location when shown."
+    "scoring_rule": "Do not average inside-the-gates and El Anclote into one Comps score. Neighborhood headline only if n>=10 listings with both asking USD and construction m². Mixed 5196 n=38 stays the peer pin. Hacienda n=3 and Las Terrazas n=2 are samples, not headlines. El Anclote development 3401 n=3 is a sample; neighborhood median uses the 11-listing page.",
+    "research": "/workspace/coastal-grade/punta-mita-gates-research.md",
+    "n_min_for_headline": 10,
+    "listing_scrape": "/workspace/coastal-grade/punta-mita-homia-listings-aug2026.json"
   },
   "mixed": {
     "id": "punta-mita",
@@ -33,13 +36,13 @@
         "name": "El Anclote",
         "listings": 11,
         "from_mxn": 5640000,
-        "note": "Homia prints listing count and from-price only, not USD/m² for the 11."
+        "note": "Guia chip 11 listings from $5.64M MXN, no printed neighborhood USD/m². Neighborhood page 2026-08-29: 11 cards with price+m²; median computed in outside.headline."
       },
       {
         "name": "Punta Mita Resort",
         "listings": 11,
         "from_mxn": 29500000,
-        "note": "Homia prints listing count and from-price only, not USD/m² for the 11."
+        "note": "Guia chip still says 11 listings from $29.5M MXN and does not print neighborhood USD/m². Neighborhood page 2026-08-29 shows 6 active cards with price+m² (n<10 → no headline)."
       }
     ]
   },
@@ -48,10 +51,10 @@
     "name": "Punta Mita Resort / inside the gates",
     "classification": "inside — Homia neighborhood label 'Punta Mita Resort'",
     "headline_usd_m2": null,
-    "headline_note": "Homia does not print a USD/m² for the 11-listing Punta Mita Resort neighborhood. Do not invent one by averaging developments.",
+    "headline_note": "n=6 listings with both asking USD and construction m² on https://www.homia.mx/en/real-estate-puerto-vallarta/punta-mita-resort (chip said 11; page header 6). n<10 so headline stays null. Do not average Hacienda 12589 n=3 and Las Terrazas 5992 n=2. Dropped: none of the 6 cards (all had price+m²).",
     "n_neighborhood_listings": 11,
     "from_mxn": 29500000,
-    "url": "https://www.homia.mx/en/guia/punta-mita",
+    "url": "https://www.homia.mx/en/real-estate-puerto-vallarta/punta-mita-resort",
     "date_seen": "2026-08-29",
     "villas": {
       "headline_usd_m2": null,
@@ -75,7 +78,8 @@
         "source": "Homia MLS asking, median printed on development page",
         "url": "https://www.homia.mx/es/desarrollo/hacienda-de-mita",
         "date_seen": "2026-08-29",
-        "quote": "El precio mediano en Hacienda De Mita ronda los US$12,589 por m² de construcción, con base en las unidades listadas actualmente en el MLS."
+        "quote": "El precio mediano en Hacienda De Mita ronda los US$12,589 por m² de construcción, con base en las unidades listadas actualmente en el MLS.",
+        "role": "sample_not_headline"
       },
       {
         "name": "Las Terrazas",
@@ -91,35 +95,219 @@
         "source": "Homia MLS asking, median printed on development page",
         "url": "https://www.homia.mx/es/desarrollo/las-terrazas",
         "date_seen": "2026-08-29",
-        "quote": "El precio mediano en Las Terrazas ronda los US$5,992 por m² de construcción, con base en las unidades listadas actualmente en el MLS."
+        "quote": "El precio mediano en Las Terrazas ronda los US$5,992 por m² de construcción, con base en las unidades listadas actualmente en el MLS.",
+        "role": "sample_not_headline"
       }
-    ]
+    ],
+    "n_with_price_and_m2": 6,
+    "n_neighborhood_listings_chip": 11,
+    "n_page_header": 6,
+    "listings_kept": [
+      {
+        "mls_id": "00-42167",
+        "title": "Hacienda De Mita",
+        "asking_usd": 2700000,
+        "construction_m2": 325,
+        "usd_m2": 8308,
+        "usd_m2_raw": 8307.69,
+        "url": "https://www.homia.mx/en/propiedad/mls/hacienda-de-mita-punta-de-mita-3-recamaras-00-42167"
+      },
+      {
+        "mls_id": "00-40357",
+        "title": "Hacienda De Mita",
+        "asking_usd": 4490000,
+        "construction_m2": 341,
+        "usd_m2": 13167,
+        "usd_m2_raw": 13167.16,
+        "url": "https://www.homia.mx/en/propiedad/mls/hacienda-de-mita-punta-de-mita-4-recamaras-00-40357"
+      },
+      {
+        "mls_id": "00-39846",
+        "title": "Las Terrazas",
+        "asking_usd": 1450000,
+        "construction_m2": 262,
+        "usd_m2": 5534,
+        "usd_m2_raw": 5534.35,
+        "url": "https://www.homia.mx/en/propiedad/mls/las-terrazas-punta-de-mita-3-recamaras-00-39846"
+      },
+      {
+        "mls_id": "00-40856",
+        "title": "Las Terrazas",
+        "asking_usd": 1685000,
+        "construction_m2": 262,
+        "usd_m2": 6431,
+        "usd_m2_raw": 6431.3,
+        "url": "https://www.homia.mx/en/propiedad/mls/las-terrazas-punta-de-mita-2-recamaras-00-40856"
+      },
+      {
+        "mls_id": "00-39588",
+        "title": "Hacienda De Mita",
+        "asking_usd": 4250000,
+        "construction_m2": 338,
+        "usd_m2": 12574,
+        "usd_m2_raw": 12573.96,
+        "url": "https://www.homia.mx/en/propiedad/mls/hacienda-de-mita-punta-de-mita-4-recamaras-00-39588"
+      },
+      {
+        "mls_id": "00-39755",
+        "title": "Condo in Punta de Mita",
+        "asking_usd": 4200000,
+        "construction_m2": 329,
+        "usd_m2": 12766,
+        "usd_m2_raw": 12765.96,
+        "url": "https://www.homia.mx/en/propiedad/mls/condominio-punta-de-mita-3-recamaras-00-39755"
+      }
+    ],
+    "listings_dropped": []
   },
   "outside": {
     "id": "el-anclote",
     "name": "El Anclote / public Punta de Mita (not the club)",
     "classification": "outside — Homia neighborhood label 'El Anclote'",
-    "headline_usd_m2": 3401,
-    "headline_scope": "El Anclote named condo development only, not all 11 El Anclote neighborhood listings",
-    "n": 3,
-    "band": "condo",
-    "range_usd": [
-      399000,
-      520000
-    ],
-    "m2_range": [
-      71,
-      171
-    ],
-    "source": "Homia MLS asking, median printed on development page",
-    "url": "https://www.homia.mx/es/desarrollo/el-anclote",
+    "headline_usd_m2": 3612,
+    "headline_scope": "Homia El Anclote neighborhood page, 11 listings with asking USD + construction m². Median of per-listing USD/m². Not the El Anclote development 3401 n=3.",
+    "n": 11,
+    "band": "condo / neighborhood mix",
+    "source": "Homia neighborhood listing cards 29 Aug 2026, USD toggle",
+    "url": "https://www.homia.mx/en/real-estate-puerto-vallarta/el-anclote",
     "date_seen": "2026-08-29",
-    "quote": "El precio mediano en El Anclote ronda los US$3,401 por m² de construcción, con base en las unidades listadas actualmente en el MLS.",
+    "quote": null,
     "neighborhood_on_guia": {
       "listings": 11,
       "from_mxn": 5640000,
-      "usd_m2": null,
-      "note": "Guia shows 11 El Anclote listings from $5.64M MXN and does not print a neighborhood USD/m²."
+      "usd_m2": 3612,
+      "note": "Chip 11 listings; neighborhood page n=11 with price+m²; median is the outside headline."
+    },
+    "other_labeled_developments": [
+      {
+        "name": "Faro De Mita",
+        "breadcrumb": "Punta de Mita · El Anclote · Riviera Nayarit",
+        "headline_usd_m2": 3387,
+        "n": 3,
+        "band": "condo",
+        "source": "Homia MLS asking, median printed on development page",
+        "url": "https://www.homia.mx/es/desarrollo/faro-de-mita",
+        "date_seen": "2026-08-29",
+        "quote": "El precio mediano en Faro De Mita ronda los US$3,387 por m² de construcción.",
+        "note": "Do not blend with El Anclote 3401.",
+        "role": "sample_not_headline"
+      }
+    ],
+    "n_rule": "n>=10 required for headline",
+    "median_usd_m2_raw": 3612.5,
+    "listings_kept": [
+      {
+        "mls_id": "00-41537",
+        "title": "Faro De Mita",
+        "asking_usd": 565000,
+        "construction_m2": 167,
+        "usd_m2": 3383,
+        "usd_m2_raw": 3383.23,
+        "url": "https://www.homia.mx/en/propiedad/mls/faro-de-mita-punta-de-mita-2-recamaras-00-41537"
+      },
+      {
+        "mls_id": "00-41125",
+        "title": "Condo in Punta de Mita",
+        "asking_usd": 799000,
+        "construction_m2": 144,
+        "usd_m2": 5549,
+        "usd_m2_raw": 5548.61,
+        "url": "https://www.homia.mx/en/propiedad/mls/condominio-punta-de-mita-2-recamaras-00-41125"
+      },
+      {
+        "mls_id": "00-44565",
+        "title": "El Anclote",
+        "asking_usd": 399000,
+        "construction_m2": 71,
+        "usd_m2": 5620,
+        "usd_m2_raw": 5619.72,
+        "url": "https://www.homia.mx/en/propiedad/mls/el-anclote-punta-de-mita-1-recamaras-00-44565"
+      },
+      {
+        "mls_id": "00-44206",
+        "title": "Bellamar",
+        "asking_usd": 920000,
+        "construction_m2": 170,
+        "usd_m2": 5412,
+        "usd_m2_raw": 5411.76,
+        "url": "https://www.homia.mx/en/propiedad/mls/bellamar-punta-de-mita-2-recamaras-00-44206"
+      },
+      {
+        "mls_id": "00-42240",
+        "title": "Condo in Punta de Mita",
+        "asking_usd": 289000,
+        "construction_m2": 80,
+        "usd_m2": 3612,
+        "usd_m2_raw": 3612.5,
+        "url": "https://www.homia.mx/en/propiedad/mls/condominio-punta-de-mita-1-recamaras-00-42240"
+      },
+      {
+        "mls_id": "00-44193",
+        "title": "Faro De Mita",
+        "asking_usd": 599000,
+        "construction_m2": 172,
+        "usd_m2": 3483,
+        "usd_m2_raw": 3482.56,
+        "url": "https://www.homia.mx/en/propiedad/mls/faro-de-mita-punta-de-mita-2-recamaras-00-44193"
+      },
+      {
+        "mls_id": "00-43626",
+        "title": "Condo in Punta de Mita",
+        "asking_usd": 975000,
+        "construction_m2": 178,
+        "usd_m2": 5478,
+        "usd_m2_raw": 5477.53,
+        "url": "https://www.homia.mx/en/propiedad/mls/condominio-punta-de-mita-3-recamaras-00-43626"
+      },
+      {
+        "mls_id": "00-42301",
+        "title": "Faro De Mita",
+        "asking_usd": 535000,
+        "construction_m2": 165,
+        "usd_m2": 3242,
+        "usd_m2_raw": 3242.42,
+        "url": "https://www.homia.mx/en/propiedad/mls/faro-de-mita-punta-de-mita-2-recamaras-00-42301"
+      },
+      {
+        "mls_id": "00-37119",
+        "title": "El Anclote",
+        "asking_usd": 520000,
+        "construction_m2": 153,
+        "usd_m2": 3399,
+        "usd_m2_raw": 3398.69,
+        "url": "https://www.homia.mx/en/propiedad/mls/el-anclote-punta-de-mita-2-recamaras-00-37119"
+      },
+      {
+        "mls_id": "00-39272",
+        "title": "El Anclote",
+        "asking_usd": 499000,
+        "construction_m2": 171,
+        "usd_m2": 2918,
+        "usd_m2_raw": 2918.13,
+        "url": "https://www.homia.mx/en/propiedad/mls/el-anclote-punta-de-mita-2-recamaras-00-39272"
+      },
+      {
+        "mls_id": "00-41837",
+        "title": "Condo in Punta de Mita",
+        "asking_usd": 600000,
+        "construction_m2": 79,
+        "usd_m2": 7595,
+        "usd_m2_raw": 7594.94,
+        "url": "https://www.homia.mx/en/propiedad/mls/condominio-punta-de-mita-1-recamaras-00-41837"
+      }
+    ],
+    "listings_dropped": [],
+    "development_sample": {
+      "name": "El Anclote (named condo development)",
+      "headline_usd_m2": 3401,
+      "n": 3,
+      "band": "condo",
+      "role": "sample_not_headline",
+      "source": "Homia MLS asking, median printed on development page",
+      "url": "https://www.homia.mx/es/desarrollo/el-anclote",
+      "date_seen": "2026-08-29",
+      "quote": "El precio mediano en El Anclote ronda los US$3,401 por m² de construcción, con base en las unidades listadas actualmente en el MLS.",
+      "note": "Development n=3. Not the neighborhood headline."
     }
   },
   "not_assigned": [
@@ -131,13 +319,6 @@
       "why": "No Homia breadcrumb 'Punta Mita Resort' or 'El Anclote' captured. Do not guess gates from price."
     },
     {
-      "name": "Faro De Mita",
-      "n": 3,
-      "printed_usd_m2": 3387,
-      "url": "https://www.homia.mx/es/desarrollo/faro-de-mita",
-      "why": "No Resort/Anclote breadcrumb captured. Entry-gate amenity is not the club peninsula."
-    },
-    {
       "name": "El Encanto listing",
       "printed_usd_m2": 11629,
       "url": "https://www.homia.mx/en/propiedad/mls/el-encanto-punta-de-mita-4-recamaras-00-44010",
@@ -146,8 +327,12 @@
   ],
   "counts": {
     "mixed_headline": 5196,
-    "outside_headline": 3401,
+    "mixed_n": 38,
+    "outside_headline": 3612,
+    "outside_n": 11,
     "inside_single_headline": null,
+    "inside_n_with_price_m2": 6,
+    "inside_n_min": 10,
     "inside_development_samples": 2
   }
 }
