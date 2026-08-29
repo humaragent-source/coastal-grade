@@ -1,0 +1,788 @@
+{
+  "meta": {
+    "region": "mexico-pacific-pvr",
+    "as_of": "2026-08-27/28",
+    "center": {
+      "id": "pvr",
+      "name": "Puerto Vallarta International (PVR)",
+      "lat": 20.68083,
+      "lng": -105.25556
+    },
+    "fx": {
+      "mxn_per_usd": 16.975,
+      "source": "XE mid-market",
+      "date": "2026-08-28"
+    },
+    "price_rule": "Only Homia MLS and Inmuebles24 asking prices already on file for Aug 2026. Unknown stays unknown. AMPI municipal averages are recorded as ampi_not_mls only and must not be used as usd_m2.",
+    "drive_rule": "drive_min_to_pvr values are the existing estimated ranges from coastal-grade.html. They are not measured drive times.",
+    "sources": [
+      "Homia MLS asking 27–28 Aug 2026 (pins + listing n from existing 7f73becd / 038a4ac1 extracts)",
+      "Inmuebles24 asking 27–28 Aug 2026 construction-area cards (FX 16.975)",
+      "coastal-grade.html TOWNS seed (lat/lng, estimated drive, catalyst tags)",
+      "NOAA HHT 46 storms / 60 nmi of PV (PV-centered only); NHC TCR Lidia"
+    ],
+    "patch": "2026-08-28: added Homia n; Cabo Médano source = MLS BCS not Homia; NOAA 46-storm envelope unstamped from towns."
+  },
+  "hurricane_region": {
+    "scope": "PV-centered NOAA Historical Hurricane Tracks only",
+    "center": {
+      "lat": 20.703,
+      "lng": -105.148,
+      "label": "Puerto Vallarta, Región Costa Norte, Jalisco"
+    },
+    "buffer_nmi": 60,
+    "noaa_since_1945": "46 storms within 60 nmi of Puerto Vallarta (map 20.703, -105.148) since ~1945. Newest: Lidia 2023, Roslyn 2022, Nora 2021.",
+    "do_not_stamp_per_town": true,
+    "town_storm_counts": "unknown — not in files",
+    "lidia": {
+      "name": "Hurricane Lidia",
+      "when": "Oct 2023",
+      "landfall": "Category 4, 120 kt, ~0000 UTC 11 Oct 2023 near Las Peñitas, Jalisco, about 35 nmi SW of Puerto Vallarta",
+      "deaths": 3,
+      "notes": [
+        "Highway 200 blocked",
+        "Tomatlán hit harder than the bay (NHC TCR)",
+        "Jalisco damage estimate $77.6M USD (NHC says likely incomplete)"
+      ]
+    },
+    "scoring_note": "Hurricane is history + damage, not a hurricane-free badge. The 46-storm count is a PV-centered 60 nmi NOAA result. Do not treat it as a per-town envelope. Town-level storm counts are unknown. Lidia damage emphasis on the Tomatlán corridor is from the NHC TCR, not from the 46-storm count."
+  },
+  "catalysts_catalog": {
+    "autopista_las_varas_bucerias_pv": {
+      "label": "SICT/FONADIN Autopista Las Varas–Bucerías–Puerto Vallarta",
+      "stage": "open",
+      "priced_in": true,
+      "meta": "86.5 km; 99.35% complete; Tramos I–III in operation; Entronque Puerto Vallarta unfinished (FONADIN review date 12/02/2026). Open is priced-in."
+    },
+    "puente_amado_nervo": {
+      "label": "Puente Amado Nervo (Río Ameca)",
+      "stage": "complete_not_open",
+      "priced_in": false,
+      "meta": "Structurally complete as of 24–25 Aug 2026; paint/cleanup/safety remaining; inauguration date unset; target late 2026. Not officially open."
+    },
+    "litibu_bay_club": {
+      "label": "Litibú Bay Club",
+      "stage": "under_construction",
+      "priced_in": false,
+      "meta": "Under construction; deliveries winter 2026."
+    },
+    "tehuamixtle_hotels": {
+      "label": "Hotels permitting (Tehuamixtle)",
+      "stage": "rumor",
+      "priced_in": false,
+      "meta": "Existing seed tag only. Rumor. Not a verified tender."
+    }
+  },
+  "towns": [
+    {
+      "id": "san-blas",
+      "name": "San Blas",
+      "lat": 21.53972,
+      "lng": -105.28556,
+      "drive_min_to_pvr": {
+        "low": 130,
+        "high": 150,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": null,
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "chacala",
+      "name": "Chacala",
+      "lat": 21.16764,
+      "lng": -105.22829,
+      "drive_min_to_pvr": {
+        "low": 80,
+        "high": 100,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": null,
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "guayabitos",
+      "name": "Guayabitos",
+      "lat": 21.024,
+      "lng": -105.2678,
+      "drive_min_to_pvr": {
+        "low": 50,
+        "high": 70,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": {
+        "usd_m2_approx": 920,
+        "note": "AMPI only, not MLS. Do not score from this."
+      },
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "lo-de-marcos",
+      "name": "Lo de Marcos",
+      "lat": 20.95509,
+      "lng": -105.35223,
+      "drive_min_to_pvr": {
+        "low": 60,
+        "high": 75,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": {
+        "usd_m2_approx": 1070,
+        "note": "AMPI only. Do not score from this."
+      },
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "san-pancho",
+      "name": "San Pancho",
+      "lat": 20.9025,
+      "lng": -105.4133,
+      "drive_min_to_pvr": {
+        "low": 55,
+        "high": 70,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": {
+        "usd_m2_approx": 1850,
+        "note": "AMPI only. Do not score from this."
+      },
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "sayulita",
+      "name": "Sayulita",
+      "lat": 20.86889,
+      "lng": -105.44083,
+      "drive_min_to_pvr": {
+        "low": 45,
+        "high": 60,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": {
+        "headline": 4848,
+        "band": "condo typical",
+        "source": "Homia MLS asking Aug 2026",
+        "n": 53,
+        "beach": {
+          "usd_m2": [
+            4500,
+            5900
+          ],
+          "unit": "ocean-side houses",
+          "source": "Inmuebles24 asking 27 Aug 2026"
+        },
+        "inland": {
+          "mxn_m2": [
+            91000,
+            93000
+          ],
+          "unit": "centro condos",
+          "source": "Inmuebles24 asking 27 Aug 2026",
+          "usd_m2": null,
+          "usd_m2_note": "MXN recorded; USD not precomputed in file so left unknown"
+        },
+        "inmuebles24_sample": {
+          "n": 8,
+          "range_usd_m2": [
+            1696,
+            14375
+          ],
+          "median_usd_m2": 4985,
+          "note": "noisy n=8",
+          "source": "Inmuebles24 28 Aug 2026, FX 16.975"
+        },
+        "n_band": "condos",
+        "n_all_types": 153
+      },
+      "ampi_not_mls": null,
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": true
+    },
+    {
+      "id": "litibu",
+      "name": "Litibú",
+      "lat": 20.809,
+      "lng": -105.478,
+      "drive_min_to_pvr": {
+        "low": 45,
+        "high": 45,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": null,
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv",
+        "litibu_bay_club"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "punta-mita",
+      "name": "Punta Mita",
+      "lat": 20.7752,
+      "lng": -105.527,
+      "drive_min_to_pvr": {
+        "low": 40,
+        "high": 50,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": {
+        "headline": 5196,
+        "band": "condo typical",
+        "source": "Homia MLS asking Aug 2026",
+        "n": 38,
+        "beach": null,
+        "inland": null,
+        "homia_luxury_band": {
+          "typical_usd_m2": [
+            5700,
+            8200
+          ],
+          "villa_example_usd_m2": 10045,
+          "source": "Inmuebles24 / Homia luxury notes 27 Aug 2026"
+        },
+        "inmuebles24_sample": {
+          "n": 15,
+          "range_usd_m2": [
+            3623,
+            8421
+          ],
+          "median_usd_m2": 5755,
+          "source": "Inmuebles24 28 Aug 2026, FX 16.975"
+        },
+        "inmuebles24_condos_mxn": {
+          "mxn_m2": [
+            100000,
+            143000
+          ],
+          "source": "Inmuebles24 27 Aug 2026"
+        },
+        "n_band": "condos",
+        "n_all_types": 75
+      },
+      "ampi_not_mls": null,
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": true
+    },
+    {
+      "id": "la-cruz",
+      "name": "La Cruz de Huanacaxtle",
+      "lat": 20.74889,
+      "lng": -105.38222,
+      "drive_min_to_pvr": {
+        "low": 30,
+        "high": 40,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": {
+        "headline": 3881,
+        "band": null,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 203,
+        "beach": null,
+        "inland": null,
+        "n_band": "zone",
+        "n_condos": 163
+      },
+      "ampi_not_mls": null,
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "bucerias",
+      "name": "Bucerías",
+      "lat": 20.7582,
+      "lng": -105.3362,
+      "drive_min_to_pvr": {
+        "low": 20,
+        "high": 30,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": {
+        "headline": 4150,
+        "band": "condo typical",
+        "source": "Homia MLS asking 27 Aug 2026",
+        "n": 363,
+        "beach": {
+          "median_usd_m2": 6385,
+          "prime_usd_m2": [
+            6800,
+            8900
+          ],
+          "source": "Homia 27 Aug 2026"
+        },
+        "inland": {
+          "typical_usd_m2": [
+            3400,
+            4000
+          ],
+          "source": "Homia 27 Aug 2026"
+        },
+        "n_band": "condos",
+        "n_houses": 63
+      },
+      "ampi_not_mls": null,
+      "catalysts": [
+        "autopista_las_varas_bucerias_pv"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "flamingos",
+      "name": "Flamingos",
+      "lat": 20.73,
+      "lng": -105.31,
+      "drive_min_to_pvr": {
+        "low": 20,
+        "high": 20,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": {
+        "headline": 3590,
+        "band": null,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 164,
+        "beach": null,
+        "inland": null,
+        "n_band": "zone"
+      },
+      "ampi_not_mls": null,
+      "catalysts": [],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "nuevo-vallarta",
+      "name": "Nuevo Vallarta",
+      "lat": 20.7,
+      "lng": -105.3,
+      "drive_min_to_pvr": {
+        "low": 15,
+        "high": 20,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": {
+        "headline": 3456,
+        "band": "condo typical",
+        "source": "Homia MLS asking 27 Aug 2026",
+        "n": 199,
+        "beach": {
+          "typical_usd_m2": [
+            5000,
+            5800
+          ],
+          "source": "Homia 27 Aug 2026"
+        },
+        "inland": {
+          "typical_usd_m2": [
+            2600,
+            3600
+          ],
+          "note": "inland/golf/canal",
+          "source": "Homia 27 Aug 2026"
+        },
+        "n_band": "condos",
+        "n_all_types": 313,
+        "n_houses": 101
+      },
+      "ampi_not_mls": null,
+      "catalysts": [
+        "puente_amado_nervo"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "pv-5dedic",
+      "name": "PV 5 de Dic",
+      "lat": 20.6534,
+      "lng": -105.2253,
+      "drive_min_to_pvr": {
+        "low": null,
+        "high": null,
+        "basis": "in_pv",
+        "label": "in PV"
+      },
+      "access": "in_pv",
+      "usd_m2": {
+        "headline": 4759,
+        "band": null,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 152,
+        "beach": null,
+        "inland": null,
+        "n_band": "zone"
+      },
+      "ampi_not_mls": null,
+      "catalysts": [],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "amapas",
+      "name": "Amapas",
+      "lat": 20.605,
+      "lng": -105.234,
+      "drive_min_to_pvr": {
+        "low": null,
+        "high": null,
+        "basis": "in_pv",
+        "label": "in PV"
+      },
+      "access": "in_pv",
+      "usd_m2": {
+        "headline": 4536,
+        "band": null,
+        "source": "Homia MLS asking Aug 2026",
+        "n": 115,
+        "beach": null,
+        "inland": null,
+        "n_band": "zone"
+      },
+      "ampi_not_mls": null,
+      "catalysts": [],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "conchas-chinas",
+      "name": "Conchas Chinas",
+      "lat": 20.59,
+      "lng": -105.245,
+      "drive_min_to_pvr": {
+        "low": null,
+        "high": null,
+        "basis": "in_pv",
+        "label": "in PV"
+      },
+      "access": "in_pv",
+      "usd_m2": {
+        "headline": 7066,
+        "band": "Lower / beach-side Homia pin",
+        "source": "Homia MLS asking Aug 2026",
+        "n": null,
+        "beach": null,
+        "inland": null,
+        "inmuebles24_pv_context": {
+          "beachfront_n": 10,
+          "beachfront_range_usd_m2": [
+            4810,
+            8054
+          ],
+          "beachfront_median_usd_m2": 6090,
+          "inland_n": 10,
+          "inland_range_usd_m2": [
+            1715,
+            7837
+          ],
+          "inland_median_usd_m2": 4600,
+          "alt_zona_hotelera_marina_usd_m2": [
+            4700,
+            7500
+          ],
+          "alt_zona_hotelera_marina_median_usd_m2": 5000,
+          "source": "Inmuebles24 27–28 Aug 2026, FX 16.975. City-wide PV context, not Conchas-only."
+        },
+        "n_band": "Lower",
+        "n_upper": 21,
+        "n_upper_note": "Upper Conchas Chinas listings. Lower n not in files."
+      },
+      "ampi_not_mls": null,
+      "catalysts": [],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": false,
+        "note": null,
+        "town_storm_count": null
+      },
+      "peer": true
+    },
+    {
+      "id": "mismaloya",
+      "name": "Mismaloya",
+      "lat": 20.53102,
+      "lng": -105.29263,
+      "drive_min_to_pvr": {
+        "low": 40,
+        "high": 60,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": null,
+      "catalysts": [],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": true,
+        "note": "NHC TCR Lidia: Tomatlán corridor hit harder (Hwy 200 blocked; Jalisco $77.6M, NHC incomplete). Not a 46-storm envelope stamp.",
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "boca",
+      "name": "Boca de Tomatlán",
+      "lat": 20.51194,
+      "lng": -105.31389,
+      "drive_min_to_pvr": {
+        "low": 50,
+        "high": 70,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": null,
+      "catalysts": [],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": true,
+        "note": "NHC TCR Lidia: Tomatlán corridor hit harder (Hwy 200 blocked; Jalisco $77.6M, NHC incomplete). Not a 46-storm envelope stamp.",
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "yelapa",
+      "name": "Yelapa",
+      "lat": 20.48833,
+      "lng": -105.44528,
+      "drive_min_to_pvr": {
+        "low": null,
+        "high": null,
+        "basis": "boat",
+        "label": "BOAT"
+      },
+      "access": "boat",
+      "usd_m2": null,
+      "ampi_not_mls": null,
+      "catalysts": [],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": true,
+        "note": "NHC TCR Lidia: Tomatlán corridor hit harder (Hwy 200 blocked; Jalisco $77.6M, NHC incomplete). Not a 46-storm envelope stamp.",
+        "town_storm_count": null
+      },
+      "peer": false
+    },
+    {
+      "id": "tehuamixtle",
+      "name": "Tehuamixtle",
+      "lat": 20.27,
+      "lng": -105.58,
+      "drive_min_to_pvr": {
+        "low": 120,
+        "high": 140,
+        "basis": "estimated"
+      },
+      "access": "road",
+      "usd_m2": null,
+      "ampi_not_mls": null,
+      "catalysts": [
+        "tehuamixtle_hotels"
+      ],
+      "hurricane": {
+        "noaa_46_envelope": false,
+        "lidia_damage_emphasis": true,
+        "note": "NHC TCR Lidia: Tomatlán corridor hit harder (Hwy 200 blocked; Jalisco $77.6M, NHC incomplete). Not a 46-storm envelope stamp.",
+        "town_storm_count": null
+      },
+      "peer": false
+    }
+  ],
+  "peers_off_map": [
+    {
+      "id": "cabo-medano",
+      "name": "Cabo Médano",
+      "region": "baja-los-cabos",
+      "off_map": true,
+      "usd_m2": {
+        "headline": 11500,
+        "band": "El Médano / Hacienda Beach Club condos typical",
+        "source": "MLS BCS Médano median, 27 Aug 2026 — not Homia",
+        "n": 20,
+        "beach": {
+          "medano_condos_typical_usd_m2": [
+            11000,
+            12800
+          ],
+          "medano_condos_median_usd_m2": 11500,
+          "medano_sand_villas_usd_m2": [
+            19600,
+            22400
+          ],
+          "palmilla_oceanfront_estates_usd_m2": [
+            16600,
+            18600
+          ],
+          "source": "Los Cabos true beachfront asking 27 Aug 2026"
+        },
+        "inland": {
+          "el_tezal_usd_m2": [
+            2500,
+            2900
+          ],
+          "pedregal_hillside_villas_usd_m2": [
+            3900,
+            6000
+          ],
+          "note": "El Tezal is hillside, not oceanfront. Do not treat as beachfront. True Pedregal sand-front was 0 active."
+        }
+      },
+      "note": "V1 peer only. Not in the PVR drive-time radius. Headline 11500 is MLS BCS Médano median, not a Homia pin."
+    }
+  ],
+  "scored_count": {
+    "towns_in_file": 19,
+    "with_homia_or_inmuebles24_headline": 9,
+    "unknown_usd_m2": 10,
+    "do_not_score_until_usd_m2": true
+  },
+  "mexico_pacific_spider_locked_v1": {
+    "hard_gates": [
+      "oceanfront",
+      "timezone within 3 hours of SF / NY / Miami",
+      "within about 2 hours of an international airport"
+    ],
+    "weights": {
+      "hurricane_history_and_damage": 20,
+      "future_catalysts": 20,
+      "price_runway_vs_peers": 20,
+      "safety": 15,
+      "potable_water": 10,
+      "beach_sargassum": 10,
+      "timezone_overlap": 5
+    },
+    "catalyst_stages": [
+      "rumor",
+      "tender",
+      "under_construction",
+      "open"
+    ],
+    "open_is_priced_in": true,
+    "peers": [
+      "Puerto Vallarta",
+      "Sayulita",
+      "Punta Mita",
+      "Cabo"
+    ],
+    "rule": "Do not rate a town without verified usd_m2."
+  }
+}
