@@ -190,6 +190,10 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .chip.unknown{background:var(--white-04);color:var(--muted);border-color:var(--line)}
 .chip.lock{background:var(--white-04);color:var(--dim);border-color:var(--line)}
 .caption{font-size:10.5px;color:var(--muted);margin:0 0 12px;line-height:1.4}
+.gates-bands{margin:0 0 4px}
+.gates-bands .rows{margin-top:4px}
+.gates-bands .rows div{align-items:center}
+.gates-bands .chip{flex-shrink:0;margin-left:6px}
 .actions{display:flex;gap:8px;margin-bottom:6px}
 .actions button,.back-btn{flex:1;border:0;border-radius:12px;padding:11px;cursor:pointer;font:600 13px/1 var(--font-body);min-height:44px;min-width:44px}
 .btn-a{background:var(--mint-d);color:var(--mint)}
@@ -422,6 +426,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 (function () {
   const BRAND = { name: "Coastal Grade", short: "COASTAL GRADE", title: "Coastal Grade \u00b7 PVR" };
   const PLAN_KEY = "coastalgrade.view";
+  const UNIT_KEY = "coastalgrade.unit";
+  const M2_IN_FT2 = 10.7639104167;  // 1 m² = this many ft²
   const FREE = ["bucerias", "nuevo-vallarta", "sayulita", "punta-mita", "conchas-chinas"];
   const SHORT = {
     "pv-5dedic": "5 de Dic",
@@ -455,12 +461,21 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     return "pro";
   }
 
+  function readStoredUnit() {
+    try {
+      const v = localStorage.getItem(UNIT_KEY);
+      if (v === "m2" || v === "ft2") return v;
+    } catch (e) {}
+    return "m2";
+  }
+
   const state = {
     minutes: 90,
     selected: null,
     compare: [],
     view: "map",
     plan: readStoredPlan(),
+    unit: readStoredUnit(),
     listFilter: "all",
     listSort: "price",
     comingFilter: "all",
@@ -480,6 +495,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   let SCORES = {};
   let SCORES_META = null;
   let SERIES = {};
+  let GATES = null;
   const NOW_YEAR = 2026;
   let markers = {};
   let map, radius;
@@ -518,6 +534,21 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     updateSettingsChips();
   }
 
+  function getUnit() {
+    return state.unit === "ft2" ? "ft2" : "m2";
+  }
+
+  function setUnit(unit) {
+    const next = unit === "ft2" ? "ft2" : "m2";
+    state.unit = next;
+    try { localStorage.setItem(UNIT_KEY, next); } catch (e) {}
+    updateTopbarSubtitle();
+    const sheet = document.getElementById("sheet");
+    if (sheet) paintSheet();
+    if (document.getElementById("priceChart")) renderPriceChart();
+    updateSettingsChips();
+  }
+
   function unlocked(id) {
     if (preview || getPlan() === "pro") return !!town(id);
     return FREE.indexOf(id) !== -1;
@@ -530,6 +561,10 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     modal.querySelectorAll("[data-plan]").forEach(function (b) {
       b.classList.toggle("on", b.getAttribute("data-plan") === plan);
     });
+    const unit = getUnit();
+    modal.querySelectorAll("[data-unit]").forEach(function (b) {
+      b.classList.toggle("on", b.getAttribute("data-unit") === unit);
+    });
   }
 
   function bindSettingsChips() {
@@ -538,6 +573,14 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     modal.querySelectorAll("[data-plan]").forEach(function (b) {
       b.onclick = function () { setPlan(b.getAttribute("data-plan")); };
     });
+    modal.querySelectorAll("[data-unit]").forEach(function (b) {
+      b.onclick = function () { setUnit(b.getAttribute("data-unit")); };
+    });
+  }
+
+  function updateTopbarSubtitle() {
+    const sub = document.querySelector(".brand .sub");
+    if (sub) sub.textContent = "PVR center · Homia asking " + unitLabel();
   }
 
   function brandColor(token) {
@@ -581,20 +624,36 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     return "unknown";
   }
 
+  function toDisplay(usd_m2) {
+    if (usd_m2 == null) return null;
+    return getUnit() === "ft2" ? usd_m2 / M2_IN_FT2 : usd_m2;
+  }
+
+  function unitLabel() { return getUnit() === "ft2" ? "USD/ft\u00b2" : "USD/m\u00b2"; }
+
   function fmtUsd(n) {
     if (n == null) return "unknown";
-    return "$" + Math.round(n).toLocaleString("en-US");
+    if (n >= 100) return "$" + Math.round(n).toLocaleString("en-US");
+    return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   }
 
   function vsFmt(a, b) {
     if (a == null || b == null) return { text: "—", cls: "" };
-    const d = Math.round(a - b);
-    if (d === 0) return { text: "0", cls: "" };
-    const pct = Math.round((d / b) * 100);
-    const sign = d > 0 ? "+" : "\u2212";
+    const da = toDisplay(a);
+    const db = toDisplay(b);
+    if (da == null || db == null) return { text: "—", cls: "" };
+    const raw = da - db;
+    const shown = Math.abs(raw) >= 100 ? Math.round(raw) : Math.round(raw * 10) / 10;
+    if (shown === 0) return { text: "0", cls: "" };
+    const pct = Math.round((raw / db) * 100);
+    const sign = raw > 0 ? "+" : "\u2212";
+    const abs = Math.abs(shown);
+    const money = Math.abs(raw) >= 100
+      ? Math.round(abs).toLocaleString("en-US")
+      : abs.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     return {
-      text: sign + "$" + Math.abs(d).toLocaleString("en-US") + " · " + sign + Math.abs(pct) + "%",
-      cls: d > 0 ? "pos" : "neg"
+      text: sign + "$" + money + " · " + sign + Math.abs(pct) + "%",
+      cls: raw > 0 ? "pos" : "neg"
     };
   }
 
@@ -822,7 +881,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   function thisSignal(t) {
     const u = t.usd_m2;
     if (!u || u.headline == null) return "unknown \u2014 not invented";
-    let s = fmtUsd(u.headline);
+    let s = fmtUsd(toDisplay(u.headline)) + " " + unitLabel();
     if (u.source) s += " \u00b7 " + u.source;
     if (u.n != null) s += " \u00b7 n=" + u.n;
     return s;
@@ -882,7 +941,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     if (id === "timezone") return axisWhy(t, "timezone_overlap");
     if (id === "usd") {
       const h = headlineOf(t);
-      return h == null ? "unknown \u2014 not invented" : fmtUsd(h);
+      return h == null ? "unknown \u2014 not invented" : fmtUsd(toDisplay(h)) + " " + unitLabel();
     }
     if (id === "source") {
       if (t.usd_m2 && t.usd_m2.source) return t.usd_m2.source;
@@ -928,10 +987,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       ? '<div class="define-town"><div class="k">This town</div><p>' + esc(thisTownLine(id, t)) + "</p></div>"
       : "";
     layer.hidden = false;
+    const defTitle = id === "usd" ? ("Asking " + unitLabel()) : def.name;
     layer.innerHTML =
       '<div class="define-card" role="dialog" aria-modal="true" aria-labelledby="defineTitle">' +
       '<button type="button" class="x" id="closeDefine" aria-label="Close">\u00d7</button>' +
-      '<h3 id="defineTitle">' + esc(def.name) + "</h3>" +
+      '<h3 id="defineTitle">' + esc(defTitle) + "</h3>" +
       '<p class="define-mean">' + esc(def.mean) + "</p>" +
       '<div class="define-grade"><div class="k">How we grade it</div>' + grade + "</div>" +
       townBlock +
@@ -974,7 +1034,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 
   function partialGradeHtml(t) {
     const row = scoreRow(t);
-    if (!row) return '<p class="spider-empty">no spider \u2014 unknown USD/m\u00b2</p>';
+    if (!row) return '<p class="spider-empty">no spider \u2014 unknown ' + unitLabel() + "</p>";
     const overall = row.composite && row.composite.overall;
     const warn = (SCORES_META && SCORES_META.coverage_warning) ||
       "Partial grade. 55/100 weight unknown. Do not present as a complete Coastal Grade.";
@@ -1059,7 +1119,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     html += '<div class="price-ctrl"><label id="pricePlayLab" for="pricePlay">Year ' + state.playYear + '</label>';
     html += '<input type="range" id="pricePlay" min="' + NOW_YEAR + '" max="' + (NOW_YEAR + state.horizon) + '" step="1" value="' + state.playYear + '" aria-labelledby="pricePlayLab"></div>';
     html += "</div>";
-    html += '<p class="caption">Solid = verified asking USD/m². Dashed = P(y) = headline × (1+r)^(y−2026) · your assumption, not a measured forecast.</p></div>';
+    html += '<p class="caption">Solid = verified asking ' + unitLabel() + ". Dashed = P(y) = headline × (1+r)^(y−2026) · your assumption, not a measured forecast.</p></div>";
     return html;
   }
 
@@ -1077,11 +1137,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       const mark = assumed
         ? ' <span class="assumed">assumed</span>'
         : ' <span class="verified">verified</span>';
-      return '<div>' + esc(shortName(t)) + " · " + fmtUsd(val) + mark + "</div>";
+      return '<div>' + esc(shortName(t)) + " · " + fmtUsd(toDisplay(val)) + " " + unitLabel() + mark + "</div>";
     });
     if (playLab) {
       if (towns.length === 1) {
-        playLab.textContent = "Year " + state.playYear + " · " + fmtUsd(playValue(towns[0])) + (assumed ? " · assumed" : " · verified");
+        playLab.textContent = "Year " + state.playYear + " · " + fmtUsd(toDisplay(playValue(towns[0]))) + " " + unitLabel() + (assumed ? " · assumed" : " · verified");
       } else {
         playLab.textContent = "Year " + state.playYear;
       }
@@ -1169,7 +1229,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     const r = state.growthR;
     const padL = 54;
     const padR = 14;
-    const padT = 26;
+    const padT = 32;
     const padB = 34;
     const plotW = Math.max(10, w - padL - padR);
     const plotH = Math.max(10, h - padT - padB);
@@ -1195,10 +1255,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       }
       verified.forEach(function (pt) {
         if (pt.year < xMin) xMin = pt.year;
-        if (pt.usd_m2 > yMax) yMax = pt.usd_m2;
+        const dy = toDisplay(pt.usd_m2);
+        if (dy != null && dy > yMax) yMax = dy;
       });
-      future.forEach(function (pt) { if (pt.usd_m2 > yMax) yMax = pt.usd_m2; });
-      if (measured) measured.forEach(function (pt) { if (pt.usd_m2 > yMax) yMax = pt.usd_m2; });
+      future.forEach(function (pt) { const dy = toDisplay(pt.usd_m2); if (dy != null && dy > yMax) yMax = dy; });
+      if (measured) measured.forEach(function (pt) { const dy = toDisplay(pt.usd_m2); if (dy != null && dy > yMax) yMax = dy; });
       return { t: t, verified: verified, future: future, measured: measured };
     });
 
@@ -1229,6 +1290,10 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       ctx.fillStyle = muted;
       ctx.fillText(fmtUsd(v), padL - 6, y);
     }
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillStyle = muted;
+    ctx.fillText(unitLabel(), padL - 6, padT - 6);
 
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
@@ -1252,9 +1317,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ctx.restore();
     ctx.fillStyle = foam;
     ctx.font = "600 10px " + bodyFont;
-    ctx.textAlign = "center";
+    ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
-    ctx.fillText("NOW", xNow, padT - 4);
+    ctx.fillText("NOW", xNow + 6, padT - 4);
 
     const xPlay = xOf(state.playYear);
     ctx.save();
@@ -1266,6 +1331,13 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ctx.lineTo(xPlay, padT + plotH);
     ctx.stroke();
     ctx.restore();
+    if (Math.abs(xPlay - xNow) > 0.5) {
+      ctx.fillStyle = warn;
+      ctx.font = "600 10px " + bodyFont;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(String(state.playYear), xPlay + 6, padT - 4);
+    }
 
     function drawPath(pts, color, dash) {
       if (!pts.length) return;
@@ -1278,7 +1350,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       ctx.beginPath();
       pts.forEach(function (pt, i) {
         const x = xOf(pt.year);
-        const y = yOf(pt.usd_m2);
+        const y = yOf(toDisplay(pt.usd_m2));
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       });
@@ -1294,7 +1366,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       ctx.fillStyle = color;
       row.verified.forEach(function (pt) {
         ctx.beginPath();
-        ctx.arc(xOf(pt.year), yOf(pt.usd_m2), 4, 0, Math.PI * 2);
+        ctx.arc(xOf(pt.year), yOf(toDisplay(pt.usd_m2)), 4, 0, Math.PI * 2);
         ctx.fill();
       });
     });
@@ -1821,7 +1893,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       '<div class="home-photo" aria-hidden="true">Photo</div>' +
       '<div class="home-body">' +
       '<div class="home-title">\u2014</div>' +
-      '<div class="home-meta"><span>\u2014</span><span>\u2014 USD/m\u00b2</span><span class="chip none">beachfront</span></div>' +
+      '<div class="home-meta"><span>\u2014</span><span>\u2014 ' + unitLabel() + '</span><span class="chip none">beachfront</span></div>' +
       '<p class="home-empty">Homes load overnight. Nothing scraped yet.</p>' +
       "</div></div></div>";
   }
@@ -1843,7 +1915,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       fetch("price-series-aug2026.json", { cache: "no-store" }).then(function (r) {
         if (!r.ok) return {};
         return r.json();
-      }).catch(function () { return {}; })
+      }).catch(function () { return {}; }),
+      fetch("punta-mita-gates-aug2026.json", { cache: "no-store" }).then(function (r) {
+        if (!r.ok) return null;
+        return r.json();
+      }).catch(function () { return null })
     ]);
   }
 
@@ -1860,7 +1936,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     ((data && data.towns) || []).forEach(function (row) { if (row && row.id) SERIES[row.id] = row; });
   }
 
-  function boot(data, hotelData, scoreData, seriesData) {
+  function boot(data, hotelData, scoreData, seriesData, gatesData) {
     DATASET = data;
     CATALOG = data.catalysts_catalog || {};
     HURR_REGION = data.hurricane_region || null;
@@ -1879,9 +1955,11 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     PIPELINE = buildPipeline(hotelData || {});
     ingestScores(scoreData || {});
     ingestSeries(seriesData || {});
+    GATES = gatesData && typeof gatesData === "object" ? gatesData : null;
 
     const brandH = document.querySelector(".brand h1");
     if (brandH) brandH.textContent = BRAND.short;
+    updateTopbarSubtitle();
     const tm = document.querySelector('meta[name="theme-color"]');
     if (tm) tm.setAttribute("content", brandColor("--bg"));
 
@@ -2046,7 +2124,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       '<p class="meta" style="margin:0 0 10px">' + esc(t ? t.name : "This pin") + " is locked on the free PVR map.</p>" +
       "<p>Free towns: Bucerías, Nuevo Vallarta, Sayulita, Punta Mita, Conchas Chinas. Other pins and Cabo Médano are Pro.</p>" +
       '<div class="price-pair"><span>$19 / mo</span><span>$99 / yr</span></div>' +
-      '<p class="caption">No invented asking USD/m². Unknown stays unknown.</p>' +
+      '<p class="caption">No invented asking ' + unitLabel() + ". Unknown stays unknown.</p>" +
       '<button type="button" class="btn-a" id="closePro" style="width:100%">Close</button></div>';
     document.getElementById("closePro").onclick = closePro;
     modal.onclick = function (e) { if (e.target === modal) closePro(); };
@@ -2055,6 +2133,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
   function openSettings() {
     const modal = document.getElementById("modal");
     const plan = getPlan();
+    const unit = getUnit();
     modal.hidden = false;
     modal.innerHTML =
       '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">' +
@@ -2066,6 +2145,12 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       '<div class="plan-row" id="planChips">' +
       '<button type="button" class="filter-chip' + (plan === "light" ? " on" : "") + '" data-plan="light">Light</button>' +
       '<button type="button" class="filter-chip' + (plan === "pro" ? " on" : "") + '" data-plan="pro">Pro</button>' +
+      "</div></div>" +
+      '<div class="settings-row">' +
+      '<span class="settings-lab">Unit</span>' +
+      '<div class="plan-row" id="unitChips">' +
+      '<button type="button" class="filter-chip' + (unit === "m2" ? " on" : "") + '" data-unit="m2">m\u00b2</button>' +
+      '<button type="button" class="filter-chip' + (unit === "ft2" ? " on" : "") + '" data-unit="ft2">ft\u00b2</button>' +
       "</div></div>" +
       '<p class="caption">Light is the free PVR map. Pro unlocks every town on file.</p>' +
       "</div>";
@@ -2207,12 +2292,12 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     const fil = function (id, label) {
       return '<button type="button" class="filter-chip' + (state.listFilter === id ? " on" : "") + '" data-fil="' + id + '">' + label + "</button>";
     };
-    let html = '<div class="sheet-head"><div><h2>Ranks</h2><div class="meta">Verified asking USD/m² only · Aug 2026 · partial score on 3 of 7 axes</div></div>';
+    let html = '<div class="sheet-head"><div><h2>Ranks</h2><div class="meta">Verified asking ' + unitLabel() + ' only · Aug 2026 · partial score on 3 of 7 axes</div></div>';
     if (!isDesktop()) html += '<button type="button" class="x" id="closeSheet" aria-label="Close">×</button>';
     html += "</div>";
     html += '<div class="filters">' + fil("all", "All") + fil("primary", "Primary") + fil("priced", "Priced") + fil("unknown", "Unknown") + fil("coming", "Coming") + "</div>";
     html += '<div class="sort-row">' +
-      '<button type="button" class="sort-chip' + (state.listSort === "price" ? " on" : "") + '" data-sort="price">By USD/m²</button>' +
+      '<button type="button" class="sort-chip' + (state.listSort === "price" ? " on" : "") + '" data-sort="price">By ' + unitLabel() + '</button>' +
       '<button type="button" class="sort-chip' + (state.listSort === "drive" ? " on" : "") + '" data-sort="drive">By drive</button>' +
       '<button type="button" class="sort-chip' + (state.listSort === "score" ? " on" : "") + '" data-sort="score">By score</button></div>';
     html += '<div class="legend"><span><i style="background:var(--sand)"></i>PRIMARY peer + headline</span><span><i style="background:var(--mint)"></i>PRICED headline</span><span><i style="background:var(--unk)"></i>UNKNOWN</span></div>';
@@ -2235,7 +2320,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
         (t.off_map ? '<span class="chip lock">off-map</span>' : "") +
         (inCmp ? '<span class="chip priced">in compare</span>' : "") +
         '<span class="chip ' + tierOf(t) + '">' + tierOf(t).toUpperCase() + "</span></div>" +
-        '<div class="rank-usd' + (h == null ? " unk" : "") + '">' + (h == null ? "unknown" : (locked ? "Pro" : fmtUsd(h))) + "</div>" +
+        '<div class="rank-usd' + (h == null ? " unk" : "") + '">' + (h == null ? "unknown" : (locked ? "Pro" : fmtUsd(toDisplay(h)))) + "</div>" +
         '<div class="rank-meta"><span class="vs ' + ((locked && h != null) ? "" : vscc.cls) + '">vs Conchas Chinas ' + esc((locked && h != null) ? "Pro" : vscc.text) + "</span>" +
         '<span class="vs ' + ((locked && h != null) ? "" : vscb.cls) + '">vs Cabo Médano ' + esc((locked && h != null) ? "Pro" : vscb.text) + "</span>" +
         '<span class="score-col">score ' + (sc == null ? "—" : esc(fmt10(sc))) + "</span>" +
@@ -2245,7 +2330,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     }
 
     if (priced.length) {
-      html += '<div class="group-h">' + (state.listSort === "drive" ? "By estimated drive to PVR" : state.listSort === "score" ? "By partial score" : "Ranked by asking USD/m²") + "</div>";
+      html += '<div class="group-h">' + (state.listSort === "drive" ? "By estimated drive to PVR" : state.listSort === "score" ? "By partial score" : "Ranked by asking " + unitLabel()) + "</div>";
       html += priced.map(row).join("");
     }
     if (unk.length) {
@@ -2253,12 +2338,44 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       html += unk.map(row).join("");
     }
     if (!priced.length && !unk.length) html += '<p class="caption">No towns in this filter.</p>';
-    html += '<p class="caption">Peer is Conchas Chinas ' + esc(fmtUsd(ccH)) + ' (Homia). Cabo Médano is MLS BCS, off-map, Pro-locked. AMPI municipal averages are not USD/m² and are not used to rank. Score is a PARTIAL grade (3 of 7 axes). Cabo and towns without a scored row stay —. Drive times are estimated.</p>';
+    html += '<p class="caption">Peer is Conchas Chinas ' + esc(fmtUsd(toDisplay(ccH))) + ' (Homia). Cabo Médano is MLS BCS, off-map, Pro-locked. AMPI municipal averages are not asking ' + unitLabel() + ' and are not used to rank. Score is a PARTIAL grade (3 of 7 axes). Cabo and towns without a scored row stay —. Drive times are estimated.</p>';
     if (HURR_REGION && HURR_REGION.noaa_since_1945) {
       html += '<p class="caption">Region: ' + esc(HURR_REGION.noaa_since_1945) + " Not stamped on each town.</p>";
     }
     html += regionComingHtml();
     return html;
+  }
+
+
+  function gatesBandsHtml(t) {
+    if (!t || t.id !== "punta-mita" || !GATES) return "";
+    const mixed = GATES.mixed || {};
+    const locked = (GATES.meta && GATES.meta.locked_mixed) || {};
+    const mixedUsd = mixed.headline_usd_m2 != null ? mixed.headline_usd_m2 : locked.headline;
+    const mixedN = mixed.n != null ? mixed.n : locked.n;
+    const outside = GATES.outside || {};
+    const devel = (GATES.inside && GATES.inside.developments_labeled_punta_mita_resort) || [];
+    const hacienda = devel[0] || {};
+    const terrazas = devel[1] || {};
+
+    function row(label, n, usd, chipCls, chipLab) {
+      if (usd == null) return "";
+      const nBit = n != null ? " n=" + n : "";
+      return "<div><span>" + esc(label) + nBit +
+        ' <span class="chip ' + chipCls + '">' + esc(chipLab) + "</span></span><b>" +
+        esc(fmtUsd(toDisplay(usd))) + " " + unitLabel() + "</b></div>";
+    }
+
+    const rows =
+      row("Mixed / Homia", mixedN, mixedUsd, "unknown", "MIXED") +
+      row("El Anclote / outside", outside.n, outside.headline_usd_m2, "priced", "OUTSIDE") +
+      row("Hacienda de Mita (inside)", hacienda.n, hacienda.headline_usd_m2, "primary", "INSIDE") +
+      row("Las Terrazas (inside)", terrazas.n, terrazas.headline_usd_m2, "primary", "INSIDE");
+    if (!rows) return "";
+
+    return '<div class="gates-bands"><div class="group-h">Gate bands</div><div class="rows">' +
+      rows +
+      '</div><p class="caption">5196 is mixed (El Anclote + gated developments). Not an inside-only comps score.</p></div>';
   }
 
   function detailHtml(t) {
@@ -2270,8 +2387,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     let html = '<div class="sheet-head"><div><h2>' + esc(t.name) + "</h2>" +
       '<div class="meta">' + esc(driveLabel(t)) + " · " + tierOf(t).toUpperCase() + (t.peer ? " · peer" : "") + (t.off_map ? " · off-map" : "") + "</div></div>" +
       '<button type="button" class="x" id="closeSheet" aria-label="Close">×</button></div>';
-    html += '<div class="price-card"><div class="k">Asking USD/m² · Aug 2026</div>';
-    html += '<div class="v' + (unknown ? " unk" : "") + '">' + (unknown ? "unknown" : fmtUsd(h)) + "</div>";
+    html += '<div class="price-card"><div class="k">Asking ' + unitLabel() + ' · Aug 2026</div>';
+    html += '<div class="v' + (unknown ? " unk" : "") + '">' + (unknown ? "unknown" : fmtUsd(toDisplay(h))) + "</div>";
     html += '<div class="rows">';
     if (!unknown) {
       html += "<div><span>Source</span><b>" + esc(t.usd_m2.source || "—") + "</b></div>";
@@ -2282,7 +2399,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     } else {
       html += "<div><span>Seed</span><b>unknown — not invented</b></div>";
       if (t.ampi_not_mls) {
-        html += "<div><span>AMPI (not MLS)</span><b>not used as USD/m²</b></div>";
+        html += "<div><span>AMPI (not MLS)</span><b>not used as asking " + unitLabel() + "</b></div>";
       }
     }
     const sc = scoreOf(t);
@@ -2296,6 +2413,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     html += "</b></div>";
     html += "</div></div>";
 
+    html += gatesBandsHtml(t);
     html += priceBlockHtml([t]);
     html += partialGradeHtml(t);
 
@@ -2336,9 +2454,9 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     });
     html += "</tr></thead><tbody>";
 
-    html += "<tr>" + metricTh("usd", "Asking USD/m²") + cells(function (t) {
+    html += "<tr>" + metricTh("usd", "Asking " + unitLabel()) + cells(function (t) {
       const h = headlineOf(t);
-      return h == null ? '<span class="rank-usd unk">unknown</span>' : esc(fmtUsd(h));
+      return h == null ? '<span class="rank-usd unk">unknown</span>' : esc(fmtUsd(toDisplay(h)));
     }) + "</tr>";
     html += "<tr>" + metricTh("source", "Source");
     towns.forEach(function (t) {
@@ -2401,7 +2519,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
       });
       html += "</div>";
     } else {
-      html += '<p class="caption">no spider — unknown USD/m²</p>';
+      html += '<p class="caption">no spider — unknown ' + unitLabel() + "</p>";
     }
     if (isDesktop()) html += '<div class="actions"><button type="button" class="btn-ghost" id="backList">All towns</button></div>';
     return html;
@@ -2486,7 +2604,7 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
     });
   }
 
-  loadData().then(function (pack) { boot(pack[0], pack[1], pack[2], pack[3]); }).catch(function (err) {
+  loadData().then(function (pack) { boot(pack[0], pack[1], pack[2], pack[3], pack[4]); }).catch(function (err) {
     const el = document.getElementById("sheetBody");
     if (el) el.innerHTML = "<p class=\"caption\">Could not load pvr-towns-aug2026.json / scores-aug2026.json. Serve this folder over http.</p>";
     document.getElementById("sheet").classList.add("open");
