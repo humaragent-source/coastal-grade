@@ -136,10 +136,10 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .qa-chip[hidden]{display:none!important}
 .list-btn{color:var(--foam);background:var(--sheet-78);border-color:var(--line);cursor:pointer;font:600 12px/1 var(--font-body);min-height:44px;min-width:44px}
 .drive{position:absolute;top:calc(58px + var(--st));left:calc(12px + var(--sl));right:calc(12px + var(--sr));z-index:800;display:flex;gap:6px;padding:4px;background:var(--sheet-78);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(10px)}
-.drive button{flex:1;border:0;background:transparent;color:var(--dim);font:600 12px/1 var(--font-body);padding:9px 0;border-radius:11px;cursor:pointer;min-height:44px}
+.drive button{flex:1;border:0;background:transparent;color:var(--dim);font:600 11px/1 var(--font-body);padding:9px 2px;border-radius:11px;cursor:pointer;min-height:44px}
 .drive button.on{background:var(--mint-d);color:var(--mint)}
-.drive-label{position:absolute;top:calc(102px + var(--st));left:calc(16px + var(--sl));z-index:800;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-.count-pill{position:absolute;top:calc(100px + var(--st));right:calc(14px + var(--sr));z-index:800;font-size:11px;color:var(--foam);background:var(--sheet-78);border:1px solid var(--line);border-radius:var(--radius-chip);padding:5px 9px}
+.drive-label{position:absolute;top:calc(118px + var(--st));left:calc(16px + var(--sl));z-index:800;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;line-height:1.2}
+.count-pill{position:absolute;top:calc(116px + var(--st));right:calc(14px + var(--sr));z-index:800;font-size:11px;color:var(--foam);background:var(--sheet-78);border:1px solid var(--line);border-radius:var(--radius-chip);padding:5px 9px}
 
 .dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--accent-35),0 0 12px var(--accent-35);background:var(--mint);transform:translate(-7px,-7px)}
 .dot.unknown{background:var(--purple);box-shadow:0 0 0 1px rgba(167,139,250,.4),0 0 8px rgba(167,139,250,.3)}
@@ -250,7 +250,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .filter-chip[data-fil="priced"].on{background:var(--teal-d);color:var(--teal);border-color:rgba(74,157,156,.5)}
 .filter-chip[data-fil="unknown"]{color:var(--purple);border-color:rgba(167,139,250,.35)}
 .filter-chip[data-fil="unknown"].on{background:var(--purple-d);color:var(--purple);border-color:rgba(167,139,250,.5)}
-.scen-row,.proj-row{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.scen-row,.proj-row{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.proj-row{margin:0 0 10px}
 .scen-chip,.proj-chip{border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:var(--radius-chip);padding:10px 12px;font:600 11px/1 var(--font-body);cursor:pointer;min-height:44px;white-space:nowrap}
 .scen-chip[data-scen="conservative"]{color:var(--teal);border-color:rgba(74,157,156,.4)}
 .scen-chip[data-scen="conservative"].on{background:var(--teal-d)}
@@ -321,7 +322,8 @@ html,body{height:100dvh;width:100%;margin:0;background:var(--bg-deep);color:var(
 .price-wrap{height:320px;position:relative;margin:4px 0 8px;width:100%}
 .price-wrap canvas{display:block;width:100%;height:100%}
 .price-unk{font-size:12px;color:var(--muted);margin:0 0 14px;font-style:italic}
-.price-readout{display:grid;gap:4px;margin:0 0 10px;font-size:13px;font-weight:600;color:var(--foam);font-variant-numeric:tabular-nums}
+.price-head{display:flex;flex-direction:column;gap:8px;margin:0 0 10px}
+.price-readout{display:grid;gap:4px;margin:0;font-size:13px;font-weight:600;color:var(--foam);font-variant-numeric:tabular-nums}
 .price-readout .assumed{color:var(--sand);font-weight:500;font-size:11px;letter-spacing:.02em}
 .price-readout .verified{color:var(--mint);font-weight:500;font-size:11px;letter-spacing:.02em}
 .price-ctrls{display:grid;gap:4px;margin:2px 0 8px}
@@ -448,6 +450,9 @@ a.home-card:hover{border-color:var(--accent-3)}
   #app.content-full #stage{display:none}
   #stage{grid-area:stage;position:relative;height:100dvh;min-width:0}
   .drive{right:12px;left:12px;max-width:420px}
+  .price-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:8px 12px}
+  .price-head .scen-row{flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;max-width:168px;min-width:140px}
+  .price-head .scen-chip{min-height:36px;padding:8px 10px;text-align:left}
   #openList{display:none}
   #rail{grid-area:rail;position:relative;inset:auto;height:100dvh;pointer-events:auto;justify-content:stretch;background:var(--bg);border-right:1px solid var(--line);border-left:0;z-index:2;min-width:0;overflow:hidden}
   .modal,.toast{grid-area:rail}
@@ -501,9 +506,9 @@ a.home-card:hover{border-color:var(--accent-3)}
     </div>
     <div class="drive" role="tablist" aria-label="Drive-time radius">
       <button type="button" data-min="30">30 min</button>
-      <button type="button" data-min="60">60</button>
-      <button type="button" data-min="90" class="on">90</button>
-      <button type="button" data-min="120">120</button>
+      <button type="button" data-min="60">60 min</button>
+      <button type="button" data-min="90" class="on">90 min</button>
+      <button type="button" data-min="120">120 min</button>
     </div>
     <div class="drive-label">Drive-time radius from PVR · estimated</div>
     <div class="count-pill" id="count">—</div>
@@ -1537,7 +1542,6 @@ a.home-card:hover{border-color:var(--accent-3)}
       const year = pt.year != null ? Number(pt.year) : (pt.y != null ? Number(pt.y) : NaN);
       const usd = pt.usd_m2 != null ? Number(pt.usd_m2) : (pt.usd != null ? Number(pt.usd) : (pt.price != null ? Number(pt.price) : NaN));
       if (!isFinite(year) || !isFinite(usd)) return;
-      if (year < NOW_YEAR) return;
       out.push({ year: year, usd_m2: usd });
     });
     out.sort(function (a, b) { return a.year - b.year; });
@@ -1592,14 +1596,15 @@ a.home-card:hover{border-color:var(--accent-3)}
       html += "</div>";
     }
     html += '<div class="price-wrap"><canvas id="priceChart" aria-label="' + esc(title) + '"></canvas></div>';
-    html += '<div class="price-readout" id="priceReadout"></div>';
     if (!cmp) {
+      html += '<div class="price-head">';
+      html += '<div class="price-readout" id="priceReadout"></div>';
       html += '<div class="scen-row" id="scenChips">';
       html += '<button type="button" class="scen-chip' + (state.scenOn.conservative ? " on" : "") + '" data-scen="conservative">Conservative ' + pctLabel(R_CONSERVATIVE) + "</button>";
       html += '<button type="button" class="scen-chip' + (state.scenOn.base ? " on" : "") + '" data-scen="base">Base ' + pctLabel(R_BASE) + "</button>";
       html += '<button type="button" class="scen-chip' + (state.scenOn.abundance ? " on" : "") + '" data-scen="abundance">Abundance ' + pctLabel(R_ABUNDANCE) + "</button>";
       html += '<button type="button" class="scen-chip' + (state.scenOn.custom ? " on" : "") + '" data-scen="custom" id="scenCustom">Custom ' + pctLabel(state.growthR) + "</button>";
-      html += "</div>";
+      html += "</div></div>";
       html += '<div class="price-ctrls">';
       html += '<div class="price-ctrl"><label id="priceHorizonLab" for="priceHorizon">Horizon ' + state.horizon + " yr</label>";
       html += '<input type="range" id="priceHorizon" min="1" max="10" step="1" value="' + state.horizon + '" aria-labelledby="priceHorizonLab"></div>';
@@ -1754,13 +1759,25 @@ a.home-card:hover{border-color:var(--accent-3)}
     const plotW = Math.max(10, w - padL - padR);
     const plotH = Math.max(10, h - padT - padB);
 
-    const xMin = NOW_YEAR;
     const xMax = NOW_YEAR + horizon;
     const yMin = 0;
     let yMax = 1;
     const pack = towns.map(function (t, i) {
       const h0 = headlineOf(t);
       const paths = [];
+      const histPts = [];
+      const byY = {};
+      seriesEntry(t.id).points.forEach(function (pt) {
+        if (pt.year < NOW_YEAR && pt.usd_m2 != null) byY[pt.year] = pt.usd_m2;
+      });
+      const histYears = Object.keys(byY).map(Number);
+      if (histYears.length) {
+        const minY = Math.min.apply(null, histYears);
+        for (let y = minY; y < NOW_YEAR; y++) {
+          histPts.push(byY[y] != null ? { year: y, usd_m2: byY[y] } : { year: y, usd_m2: null });
+        }
+        if (h0 != null) histPts.push({ year: NOW_YEAR, usd_m2: h0 });
+      }
       if (cmp) {
         const future = [];
         for (let y = NOW_YEAR; y <= NOW_YEAR + horizon; y++) {
@@ -1783,9 +1800,19 @@ a.home-card:hover{border-color:var(--accent-3)}
           if (dy != null && dy > yMax) yMax = dy;
         });
       });
+      histPts.forEach(function (pt) {
+        const dy = pt.usd_m2 != null ? toDisplay(pt.usd_m2) : null;
+        if (dy != null && dy > yMax) yMax = dy;
+      });
       const nowD = toDisplay(h0);
       if (nowD != null && nowD > yMax) yMax = nowD;
-      return { t: t, h0: h0, paths: paths, color: overlayColor(i).stroke };
+      return { t: t, h0: h0, paths: paths, hist: histPts, color: overlayColor(i).stroke };
+    });
+    let histMin = NOW_YEAR;
+    pack.forEach(function (row) {
+      (row.hist || []).forEach(function (pt) {
+        if (pt && pt.year < histMin && pt.usd_m2 != null) histMin = pt.year;
+      });
     });
 
     yMax = yMax * 1.14;
@@ -1793,9 +1820,13 @@ a.home-card:hover{border-color:var(--accent-3)}
 
     function xOf(year) {
       const nowX = padL + 0.4 * plotW;
-      if (year <= NOW_YEAR) return nowX;
-      const span = Math.max(1, xMax - NOW_YEAR);
-      return nowX + ((year - NOW_YEAR) / span) * (0.6 * plotW);
+      if (year >= NOW_YEAR) {
+        if (year === NOW_YEAR) return nowX;
+        const span = Math.max(1, xMax - NOW_YEAR);
+        return nowX + ((year - NOW_YEAR) / span) * (0.6 * plotW);
+      }
+      if (histMin >= NOW_YEAR) return nowX;
+      return padL + ((year - histMin) / (NOW_YEAR - histMin)) * (0.4 * plotW);
     }
     function yOf(usd) {
       return padT + (1 - (usd - yMin) / (yMax - yMin)) * plotH;
@@ -1826,10 +1857,19 @@ a.home-card:hover{border-color:var(--accent-3)}
     ctx.textBaseline = "top";
     const yearSpan = xMax - NOW_YEAR;
     const yearStep = yearSpan > 8 ? 2 : 1;
-    for (let year = NOW_YEAR; year <= xMax; year += yearStep) {
+    const tickYears = {};
+    if (histMin < NOW_YEAR) {
+      pack.forEach(function (row) {
+        (row.hist || []).forEach(function (pt) {
+          if (pt && pt.usd_m2 != null && pt.year < NOW_YEAR) tickYears[pt.year] = true;
+        });
+      });
+    }
+    for (let year = NOW_YEAR; year <= xMax; year += yearStep) tickYears[year] = true;
+    Object.keys(tickYears).map(Number).sort(function (a, b) { return a - b; }).forEach(function (year) {
       ctx.fillStyle = muted;
       ctx.fillText(String(year), xOf(year), h - padB + 8);
-    }
+    });
 
     const xNow = xOf(NOW_YEAR);
     ctx.save();
@@ -1870,18 +1910,37 @@ a.home-card:hover{border-color:var(--accent-3)}
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       if (dash) ctx.setLineDash(dash);
-      ctx.beginPath();
-      pts.forEach(function (pt, i) {
+      else ctx.setLineDash([]);
+      let started = false;
+      pts.forEach(function (pt) {
+        if (!pt || pt.usd_m2 == null || toDisplay(pt.usd_m2) == null) {
+          if (started) ctx.stroke();
+          started = false;
+          return;
+        }
         const x = xOf(pt.year);
         const y = yOf(toDisplay(pt.usd_m2));
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        if (!started) {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          started = true;
+        } else ctx.lineTo(x, y);
       });
-      ctx.stroke();
+      if (started) ctx.stroke();
       ctx.restore();
     }
 
     pack.forEach(function (row) {
+      if (row.hist && row.hist.length) {
+        drawPath(row.hist, foam, null, 2);
+        row.hist.forEach(function (pt) {
+          if (!pt || pt.usd_m2 == null || pt.year >= NOW_YEAR) return;
+          ctx.fillStyle = foam;
+          ctx.beginPath();
+          ctx.arc(xOf(pt.year), yOf(toDisplay(pt.usd_m2)), 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
       row.paths.forEach(function (path) {
         drawPath(path.pts, path.color, path.dash, path.width);
       });
@@ -2221,16 +2280,20 @@ a.home-card:hover{border-color:var(--accent-3)}
   }
 
   function yearWindow(item) {
-    if (item.guests_from) {
-      const m = String(item.guests_from).match(/^(20\d{2})/);
-      if (m) return "Guests " + m[1];
-    }
-    const w = item.window || item.date_or_window || item.meta || "";
-    const seasonal = String(w).match(/\b((?:early|mid|late|winter|spring|summer|fall|autumn)\s+20\d{2})\b/i);
+    const lab = comingDateLabel(item);
+    return lab === "Date unconfirmed" ? null : lab;
+  }
+
+  function comingDateLabel(item) {
+    const raw = [item.window, item.guests_from, item.date_or_window, item.meta].filter(function (x) { return x != null && String(x).trim() !== ""; }).join(" ");
+    if (!raw) return "Date unconfirmed";
+    const s = String(raw);
+    const anticipated = /anticipat/i.test(s);
+    const seasonal = s.match(/\b((?:early|mid|late|winter|spring|summer|fall|autumn)\s+20\d{2})\b/i);
     if (seasonal) return seasonal[1];
-    const y = String(w).match(/\b(20\d{2})\b/);
-    if (y) return "Guests " + y[1];
-    return null;
+    const y = s.match(/\b(20\d{2})\b/);
+    if (y) return anticipated ? (y[1] + " anticipated") : y[1];
+    return "Date unconfirmed";
   }
 
   function comingLetter(item) {
@@ -2376,7 +2439,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     const stageChip = here
       ? '<span class="chip here">already here</span>'
       : '<span class="chip ' + (STAGE_CHIP[item.stage] || "none") + '">' + esc(STAGE_LABEL[item.stage] || item.stage) + "</span>";
-    const win = here ? null : yearWindow(item);
+    const dateLab = comingDateLabel(item);
     let html = '<li class="coming-row' + (here ? " here" : "") + '">';
     html += '<div class="mono ' + pal + '" aria-hidden="true">' + esc(comingLetter(item)) + "</div>";
     html += '<div class="coming-body">';
@@ -2386,7 +2449,7 @@ a.home-card:hover{border-color:var(--accent-3)}
     if (item.dispute && item.dispute.status === "disputed") {
       html += '<span class="chip dispute">DISPUTED</span>';
     }
-    if (win) html += '<span class="coming-date">' + esc(win) + "</span>";
+    html += '<span class="coming-date">' + esc(dateLab) + "</span>";
     html += "</div>";
     if (!here) html += '<div class="coming-hint">buy before it prices in</div>';
     if (item.dispute && item.dispute.status === "disputed" && item.dispute.rule) {
@@ -2402,8 +2465,8 @@ a.home-card:hover{border-color:var(--accent-3)}
     const parts = partitionComing(items);
     const showHere = f === "all" || f === "here";
     const showFut = f === "all" || f === "coming";
-    const hereV = showHere ? parts.here : [];
-    const futV = showFut ? parts.future.filter(isComingItem) : [];
+    const hereV = [];
+    const futV = showFut ? parts.future.filter(function (it) { return !isAlreadyHere(it); }) : [];
     if (!hereV.length && !futV.length) return '<p class="coming-empty">Nothing new on file.</p>';
     let html = '<ol class="coming-list">';
     hereV.forEach(function (it, i) { html += comingRowHtml(it, i, showPlace); });
