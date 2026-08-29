@@ -178,7 +178,18 @@
     "not_ranked": [
       "punta-mita (mixed peer-set)",
       "punta-mita-inside (no headline, overall null)"
-    ]
+    ],
+    "el_anclote_rescore": {
+      "date": "2026-08-29",
+      "old_headline": 3401,
+      "new_headline": 3612,
+      "old_n": 3,
+      "new_n": 11,
+      "old_price_runway_0_10": 6.6,
+      "new_price_runway_0_10": 6.4,
+      "old_overall": 51,
+      "new_overall": 50
+    }
   },
   "sources": {
     "sesnsp_pv": {
@@ -734,13 +745,13 @@
         "fail_reason": null
       },
       "usd_m2": {
-        "headline": 3401,
-        "source": "Homia MLS asking, El Anclote development page, 29 Aug 2026",
-        "n": 3,
-        "band": "condo",
-        "url": "https://www.homia.mx/es/desarrollo/el-anclote",
+        "headline": 3612,
+        "source": "Homia El Anclote neighborhood page, 11 listings with asking USD + construction m², median 29 Aug 2026",
+        "n": 11,
+        "band": "condo / neighborhood mix",
+        "url": "https://www.homia.mx/en/real-estate-puerto-vallarta/el-anclote",
         "sample_n_unknown": false,
-        "note": "Development median n=3. Faro De Mita 3387 n=3 not blended. Guia 11-listing El Anclote neighborhood has no printed USD/m²."
+        "note": "Neighborhood median n=11. Old El Anclote development 3401 n=3 is a sample, not the score input. Faro 3387 n=3 not blended."
       },
       "punta_mita_role": "outside_gates",
       "axes": {
@@ -771,13 +782,13 @@
           "in_composite": true
         },
         "price_runway_vs_peers": {
-          "score_0_10": 6.6,
-          "score_0_100": 66,
+          "score_0_10": 6.4,
+          "score_0_100": 64,
           "status": "scored",
           "grain": "Homia asking USD/m² headline vs in-radius peer median 5022",
-          "headline_usd_m2": 3401,
+          "headline_usd_m2": 3612,
           "formula": "clip(50 + 50*(5022 − headline)/5022, 0, 100) / 10. Headline ≥ Cabo Médano 11500 → 0.",
-          "why": "El Anclote development Homia median US$3401/m² n=3 (not the 11-listing neighborhood, which has no printed $/m²). Faro De Mita 3387 n=3 not blended. Vs peer median 5022 → 6.6/10.",
+          "why": "El Anclote neighborhood Homia median US$3612/m² n=11 (not the development 3401 n=3). Vs peer median 5022 → 6.4/10 (raw 0–100 64.04 → 64).",
           "weight": 20,
           "in_composite": true
         },
@@ -831,7 +842,7 @@
         }
       },
       "composite": {
-        "overall": 51,
+        "overall": 50,
         "scale": "0-100",
         "spider_scale": "0-10",
         "weights_used": 90,
@@ -847,7 +858,7 @@
         "spider_0_10": {
           "hurricane_history_and_damage": 5.0,
           "future_catalysts": 0.0,
-          "price_runway_vs_peers": 6.6,
+          "price_runway_vs_peers": 6.4,
           "safety": 6.0,
           "potable_water": null,
           "beach_sargassum": 9.0,
