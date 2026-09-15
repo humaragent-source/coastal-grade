@@ -188,30 +188,37 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
   /* Genie maps onto cited wish ids only — Skip = null */
   const QUESTIONS = [
     {
+      q: "Where do you want to live?",
+      opts: [
+        { label: "El Anclote beachfront", id: "live-el-anclote-beachfront" },
+        { label: "Skip", id: null }
+      ]
+    },
+    {
       q: "Vacation home?",
       opts: [
-        { label: "Punta Mita beachfront", id: "vacation-hacienda-mita" },
+        { label: "Hacienda De Mita", id: "vacation-hacienda-mita" },
         { label: "Skip", id: null }
       ]
     },
     {
       q: "Daily driver?",
       opts: [
-        { label: "Tesla Model Y", id: "drive-model-y" },
+        { label: "Model Y Juniper", id: "drive-model-y-juniper" },
         { label: "Skip", id: null }
       ]
     },
     {
       q: "Watches?",
       opts: [
-        { label: "Rolex Submariner", id: "wear-submariner" },
+        { label: "Rolex Submariner", id: "wear-submariner-hero" },
         { label: "Skip", id: null }
       ]
     },
     {
       q: "Side asset / toy?",
       opts: [
-        { label: "Tesla Optimus (target)", id: "toys-optimus" },
+        { label: "Tesla Optimus (target)", id: "build-optimus" },
         { label: "Skip", id: null }
       ]
     }
@@ -270,8 +277,12 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 
   function driveCaption(w) {
     const s = w.specs || {};
-    if (!s.alt_new_L_usd) return "";
-    return "Fees ~$1,640 on top of MSRP (Tesla). Model Y L Premium Launch Series " + fmt(s.alt_new_L_usd) + " is the long new SUV trim.";
+    const bits = [];
+    if (s.destination_order_fees_usd) bits.push("Fees ~" + fmt(s.destination_order_fees_usd) + " on top of MSRP");
+    if (s.all_in_approx_usd) bits.push("all-in ~" + fmt(s.all_in_approx_usd));
+    if (s.generation) bits.push(s.generation + (s.not ? " · not " + s.not : ""));
+    if (s.entry_msrp_usd) bits.push("Entry " + (s.entry_trim || "") + " " + fmt(s.entry_msrp_usd));
+    return bits.join(". ") + (bits.length ? "." : "");
   }
 
   const bal = document.getElementById("bal");
@@ -306,17 +317,19 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     let tiers = "";
     if (w.tiers && w.tiers.length) {
       tiers = '<div class="tiers">' + w.tiers.map(function (t) {
-        return '<div class="tier"><span><b>' + t.label + "</b> · " + fmt(t.ask_usd) +
+        const name = t.title || t.label;
+        const tag = t.title && t.label ? ' <span class="note">(' + t.label + ")</span>" : "";
+        return '<div class="tier"><span><b>' + name + "</b>" + tag + " · " + fmt(t.ask_usd) +
           (t.note ? ' <span class="note">· ' + t.note + "</span>" : "") +
           "</span></div>";
       }).join("") + "</div>";
     }
     let extra = "";
-    if (w.id === "drive-model-y") {
+    if (w.id === "drive-model-y-juniper") {
       const cap = driveCaption(w);
       if (cap) extra = '<p class="wish-meta" style="margin-top:8px">' + cap + "</p>";
     }
-    if (w.id === "toys-optimus") {
+    if (w.id === "build-optimus") {
       const peers = (w.specs && w.specs.peers) || [];
       const peerLine = peers.length
         ? peers.map(function (p) {
