@@ -1,125 +1,181 @@
 {
   "meta": {
     "as_of": "2026-09-14",
-    "rule": "Cited asks only. Optimus is a manufacturer target, not retail (peers 1X NEO / Unitree H2 have public carts). Rolex tiers label retail vs secondary ask.",
+    "rule": "Cited asks only \u2014 never invent. Coastal from homes/2026-08-28 Homia beachfront pull. Rolex: retail = Official Jeweler suggested retail; secondary = Chrono24 listing ask. Drive: Model Y Juniper (not Model X). Optimus: Musk at-scale TARGET only, not retail.",
     "currency_display": "USD",
     "unlock_defaults": {
       "homes_cars": "cash >= 20% of ask",
       "watches_toys": "cash >= full ask",
       "franchise": "cash >= 30% of buy-in"
-    }
+    },
+    "sources_file": "/workspace/coastal-grade/homes/2026-08-28.json"
   },
   "wishes": [
     {
+      "id": "live-el-anclote-beachfront",
+      "section": "Live",
+      "title": "20 Av. El Anclote \u00b7 beachfront condo",
+      "ask_usd": 799000,
+      "ask_note": "Homia MLS asking USD (converted from MXN 15,621,600 @ FX in overnight pull). Beachfront yes. Outside Punta Mita gates (El Anclote).",
+      "unlock_rule": "homes_cars",
+      "photo_url": "https://cdn.photos.sparkplatform.com/pvr/20251208181441459095000000-o.jpg",
+      "source_url": "https://www.homia.mx/en/propiedad/mls/20-av-el-anclote-el-anclote-2-recamaras-00-41125",
+      "source_label": "Homia MLS 00-41125",
+      "date_seen": "2026-08-28",
+      "n": 1,
+      "specs": {
+        "beds": 2,
+        "baths": 2,
+        "m2": 144,
+        "usd_m2": 5549,
+        "place": "El Anclote (outside gates)",
+        "beachfront": true,
+        "mls": "00-41125"
+      }
+    },
+    {
       "id": "vacation-hacienda-mita",
       "section": "Vacation",
-      "title": "Hacienda De Mita · beachfront",
+      "title": "Hacienda De Mita \u00b7 beachfront house",
       "ask_usd": 4490000,
-      "ask_note": "Homia MLS asking USD, beachfront yes",
+      "ask_note": "Homia MLS asking USD. Beachfront yes. Strong vacation / gated-area hero.",
       "unlock_rule": "homes_cars",
       "photo_url": "https://cdn.photos.sparkplatform.com/pvr/20251017232142422330000000-o.jpg",
       "source_url": "https://www.homia.mx/en/propiedad/mls/hacienda-de-mita-punta-de-mita-4-recamaras-00-40357",
-      "source_label": "Homia MLS · 2026-08-28",
+      "source_label": "Homia MLS 00-40357",
       "date_seen": "2026-08-28",
+      "n": 1,
       "specs": {
         "beds": 4,
         "baths": 4,
         "m2": 341,
         "usd_m2": 13167,
-        "place": "Punta Mita"
+        "place": "Punta Mita / Hacienda De Mita",
+        "beachfront": true,
+        "mls": "00-40357"
       }
     },
     {
-      "id": "drive-model-y",
+      "id": "drive-model-y-juniper",
       "section": "Drive",
-      "title": "2026 Tesla Model Y Premium AWD",
-      "ask_usd": 48990,
-      "ask_note": "MSRP before destination/order fees; Tesla lists ~$1,640 fees on top. New Model Y SUV generation.",
+      "title": "2026 Tesla Model Y Premium AWD (Juniper)",
+      "ask_usd": 49990,
+      "ask_note": "MSRP before destination & order fees (~$1,640 \u2192 ~$51,630 all-in per Automotive Addicts Jul 2026 citing Tesla configurator). This is the refreshed Model Y SUV (codename Juniper), NOT Model X.",
       "unlock_rule": "homes_cars",
-      "photo_url": "https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-Y-Main-Hero-Desktop-LHD.jpg",
+      "photo_url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Tesla_Model_Y_Juniper_Long_Range_AWD_Ultra_Red_01.jpg",
       "source_url": "https://www.tesla.com/modely",
-      "source_label": "Tesla.com Model Y · 2026 MSRP tables",
+      "source_label": "Tesla.com Model Y + Automotive Addicts 2026-07-14 MSRP table",
       "date_seen": "2026-09-14",
+      "n": 1,
       "specs": {
+        "vehicle": "Model Y",
+        "generation": "Juniper refresh",
+        "not": "Model X",
         "trim": "Premium AWD",
-        "msrp_usd": 48990,
-        "alt_new_L_usd": 61990,
-        "alt_note": "Model Y L Premium Launch Series is the long-wheelbase new SUV trim"
+        "msrp_usd": 49990,
+        "all_in_approx_usd": 51630,
+        "destination_order_fees_usd": 1640,
+        "epa_range_mi": 327,
+        "cite_secondary": "https://www.automotiveaddicts.com/118339/2026-tesla-model-y-pricing-every-trim-costs-how-to-get-best-deal-no-dealers",
+        "entry_msrp_usd": 39990,
+        "entry_trim": "Standard RWD"
       }
     },
     {
-      "id": "wear-submariner",
+      "id": "wear-submariner-hero",
       "section": "Wear",
       "title": "Rolex Submariner Date 126610LN",
       "ask_usd": 11350,
-      "ask_note": "2026 US retail (MSRP). Secondary Chrono24 asks for new/unworn often ~$15,200–$16,500.",
+      "ask_note": "US suggested retail (Official Rolex Jeweler). Allocation/waitlist typical. Secondary market asks higher \u2014 see tiers.",
       "unlock_rule": "watches_toys",
       "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/submariner/m126610ln-0001/m126610ln-0001_v01.jpg",
-      "source_url": "https://www.loupe.watch/watch-guides/rolex-price-increase-2026",
-      "source_label": "Loupe Rolex 2026 retail list · Submariner Date $11,350",
+      "source_url": "https://precisionwatches.com/rolex/watches/submariner-m126610ln-0001/",
+      "source_label": "Precision Watches (Official Rolex Jeweler) \u00b7 retail $11,350",
       "date_seen": "2026-09-14",
+      "n": 1,
       "specs": {
         "ref": "126610LN",
-        "retail_usd": 11350
+        "case_mm": 41,
+        "material": "Oystersteel",
+        "price_type": "retail"
       },
       "tiers": [
         {
-          "label": "Retail",
-          "ask_usd": 11350,
-          "note": "AD list · allocation/waitlist"
+          "label": "entry",
+          "title": "Rolex Explorer 36 124270",
+          "ask_usd": 7900,
+          "price_type": "retail",
+          "note": "US suggested retail before tax",
+          "source_url": "https://www.rolex.com/en-us/watches/explorer/m124270-0001",
+          "source_label": "Rolex.com US \u00b7 Explorer 36 $7,900",
+          "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/explorer/m124270-0001/m124270-0001_v01.jpg",
+          "date_seen": "2026-09-14"
         },
         {
-          "label": "Secondary ask",
-          "ask_usd": 15990,
-          "note": "Chrono24 example new/unworn 2026 full set",
-          "source_url": "https://www.chrono24.com/rolex/submariner-date-2025-41mm-newunworn-126610ln--id27372318.htm"
+          "label": "mid",
+          "title": "Submariner Date 126610LN \u00b7 secondary",
+          "ask_usd": 14895,
+          "price_type": "secondary",
+          "note": "Chrono24 new 2024 full set listing ask (example; market moves)",
+          "source_url": "https://www.chrono24.com/rolex/rolex-submariner-date-41mm-black-dial-126610ln-new-2024--id19779712.htm",
+          "source_label": "Chrono24 listing \u00b7 $14,895",
+          "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/submariner/m126610ln-0001/m126610ln-0001_v01.jpg",
+          "date_seen": "2026-09-14"
         },
         {
-          "label": "Grail tier",
+          "label": "grail",
+          "title": "Rolex Cosmograph Daytona steel 126500LN",
           "ask_usd": 16900,
-          "note": "Daytona steel Cosmograph 2026 US retail (separate model)",
-          "source_url": "https://www.loupe.watch/watch-guides/rolex-price-increase-2026"
+          "price_type": "retail",
+          "note": "US suggested retail (Tourneau / Bucherer AD). Secondary typically much higher.",
+          "source_url": "https://www.tourneau.com/watches/rolex/cosmograph-daytona-m126500lnz0001.html",
+          "source_label": "Tourneau | Bucherer \u00b7 Daytona steel $16,900 retail",
+          "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/cosmograph-daytona/m126500ln-0001/m126500ln-0001_v01.jpg",
+          "date_seen": "2026-09-14"
         }
       ]
     },
     {
-      "id": "toys-optimus",
+      "id": "build-optimus",
       "section": "Build",
       "title": "Tesla Optimus (humanoid)",
-      "ask_usd": 30000,
-      "ask_note": "NOT for sale. Musk long-term at-scale target $20k–$30k (CNBC Oct 2024). No Tesla consumer cart. Verified peers in band: 1X NEO $20,000 / $499/mo (1x.tech/order); Unitree H2 $29,900 list (shop.unitree.com). Just under: Unitree G1 $13,500. Figure/Atlas: no public retail.",
+      "ask_usd": 25000,
+      "ask_note": "ESTIMATE only \u2014 NOT for sale / no Tesla consumer cart. Musk long-term at-scale target roughly $20k\u2013$30k (half a car / less over time). ask_usd midpoints the band. Peers with public buy buttons for comparison only.",
       "unlock_rule": "watches_toys",
       "photo_url": "https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Optimus-Main-Hero-Desktop.jpg",
-      "source_url": "https://www.1x.tech/order",
-      "source_label": "Lot verify 2026-09-02 · Optimus target + 1X/Unitree peers",
+      "source_url": "https://www.teslarati.com/tesla-optimus-price-less-than-25k-30k-elon-musk/",
+      "source_label": "Teslarati \u00b7 Musk Optimus price target (not retail)",
       "date_seen": "2026-09-14",
+      "n": 1,
       "specs": {
         "status": "not_for_sale",
+        "price_type": "estimate_target",
         "target_low_usd": 20000,
         "target_high_usd": 30000,
+        "cite_also": "https://electrek.co/2024/06/13/elon-musk-bets-tesla-optimus-over-1000-robots-working-factories-next-year/",
         "peers": [
           {
             "name": "1X NEO",
             "ask_usd": 20000,
             "alt": "$499/mo",
             "url": "https://www.1x.tech/order",
-            "note": "US deliveries from 2026; public buy button"
+            "note": "Public buy / order page (peer, not Optimus)"
           },
           {
             "name": "Unitree H2",
             "ask_usd": 29900,
             "url": "https://shop.unitree.com/products/unitree-h2",
-            "note": "List; tax/shipping extra; base no SDK"
+            "note": "List; tax/shipping extra"
           },
           {
             "name": "Unitree G1",
             "ask_usd": 13500,
             "url": "https://shop.unitree.com/products/unitree-g1",
-            "note": "Just under band; backordered; no SDK on that SKU"
+            "note": "Just under band; backordered"
           }
         ]
       },
-      "badge": "TARGET · NOT RETAIL"
+      "badge": "TARGET \u00b7 NOT RETAIL"
     }
   ]
 }
