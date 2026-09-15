@@ -9,15 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#F2F2F2;
-  --card:#FFFFFF;
-  --ink:#0A0A0A;
-  --mute:#8A8A8A;
-  --line:#E8E8E8;
-  --pill:#EFEFEF;
-  --teal:#2F9E8F;
-  --gold:#C9972A;
-  --locked:#9A9A9A;
+  --bg:#F2F2F2;--card:#FFFFFF;--ink:#0A0A0A;--mute:#8A8A8A;--line:#E8E8E8;
+  --pill:#EFEFEF;--teal:#2F9E8F;--gold:#C9972A;--locked:#9A9A9A;
   --font:Inter,system-ui,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -49,30 +42,28 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .ctrl input[type=range]::-moz-range-track{height:6px;background:#E5E5E5;border-radius:99px}
 .ctrl input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#0A0A0A;border:3px solid #fff}
 
-/* Genie */
-#genie{display:none}
-#genie.on{display:block}
+#genie{display:none}#genie.on{display:block}
 .genie-card{background:var(--card);border-radius:28px;padding:28px 20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:14px;min-height:280px;display:flex;flex-direction:column}
 .genie-step{font:600 12px/1 var(--font);color:var(--mute);letter-spacing:.04em;text-transform:uppercase;margin-bottom:18px}
-.genie-q{font:700 22px/1.25 var(--font);letter-spacing:-.02em;margin:0 0 22px;flex:0}
+.genie-q{font:700 22px/1.25 var(--font);letter-spacing:-.02em;margin:0 0 22px}
 .genie-opts{display:flex;flex-direction:column;gap:10px;margin-top:auto}
 .genie-opts button{min-height:52px;border:0;border-radius:999px;background:var(--pill);color:var(--ink);font:600 15px var(--font);cursor:pointer;padding:0 18px;text-align:left}
-.genie-opts button:active{background:#E0E0E0}
 .genie-skip{margin-top:14px;border:0;background:transparent;color:var(--mute);font:600 13px var(--font);cursor:pointer;align-self:center}
 
-/* Wish list */
-#wishlist{display:none}
-#wishlist.on{display:block}
+#wishlist{display:none}#wishlist.on{display:block}
 .section{margin:8px 0 22px}
 .section-h{font:700 13px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 12px 4px}
-.wish{background:var(--card);border-radius:24px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;transition:transform .35s ease, box-shadow .35s ease}
+.wish{background:var(--card);border-radius:24px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:12px;transition:transform .35s ease, box-shadow .35s ease}
 .wish.youcan{box-shadow:0 0 0 2px rgba(47,158,143,.35), 0 1px 3px rgba(0,0,0,.05)}
 .wish.flip{animation:unlockPop .55s ease}
+.wish-photo{height:140px;background:#ddd center/cover no-repeat;position:relative}
+.wish-photo .stamp{position:absolute;top:10px;left:10px;font:700 9px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;color:#9A6B00;background:rgba(255,244,224,.95)}
+.wish-photo .target{position:absolute;top:10px;right:10px;font:700 9px/1 var(--font);letter-spacing:.05em;text-transform:uppercase;padding:5px 8px;border-radius:999px;color:#fff;background:#0A0A0A}
+.wish-body{padding:14px 16px 16px}
 .wish-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .wish-title{font:700 16px/1.25 var(--font);margin:0}
-.wish-meta{font:500 13px/1.35 var(--font);color:var(--mute);margin:6px 0 0}
+.wish-meta{font:500 13px/1.4 var(--font);color:var(--mute);margin:6px 0 0}
 .wish-chip{font:700 9px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;white-space:nowrap}
-.wish-chip.test{color:#9A6B00;background:#FFF4E0}
 .wish-chip.go{color:#0B6B5C;background:#D8F3EE}
 .wish-status{font:600 13px/1.2 var(--font);margin-top:12px}
 .wish-status.youcan{color:var(--teal)}
@@ -81,10 +72,17 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .bar{height:5px;background:#EFEFEF;border-radius:99px;overflow:hidden;margin-top:10px}
 .bar > span{display:block;height:100%;background:linear-gradient(90deg,#E8C56A,var(--gold));border-radius:99px;width:0;transition:width .4s ease}
 .wish.youcan .bar > span{background:var(--teal)}
+.tiers{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.tier{display:flex;justify-content:space-between;gap:8px;font:500 12px/1.3 var(--font);color:#444}
+.tier b{font-weight:700}
+.tier .note{color:var(--mute);font-weight:500}
+.source{margin-top:12px;font:500 11px/1.35 var(--font);color:var(--mute)}
+.source a{color:var(--mute)}
 .empty{font:500 14px/1.4 var(--font);color:var(--mute);padding:8px 4px}
 .tools{display:flex;gap:8px;justify-content:center;margin:8px 0 18px;flex-wrap:wrap}
 .tools button{border:0;background:transparent;color:var(--mute);font:600 13px var(--font);cursor:pointer;padding:8px 10px;text-decoration:underline;text-underline-offset:3px}
 .caption{font:500 12px/1.5 var(--font);color:var(--mute);margin:8px 4px 0;text-align:center}
+.err{color:#B42318;text-align:center;padding:24px;font:600 14px var(--font)}
 
 .funds-sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:30;align-items:flex-end;justify-content:center}
 .funds-sheet.open{display:flex}
@@ -100,15 +98,12 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .fund-row .plus{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--pill);display:grid;place-items:center;font:700 18px var(--font);border:0}
 
 @keyframes unlockPop{0%{transform:scale(.97)}40%{transform:scale(1.02)}100%{transform:none}}
-@media (min-width:640px){
-  #app{max-width:560px}
-  .funds-card{max-width:560px}
-}
+@media (min-width:640px){#app{max-width:560px}.funds-card{max-width:560px}.wish-photo{height:180px}}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="banner">TEST DATA · mock only · not advice</div>
+  <div class="banner">TEST DATA · cited sources · not advice</div>
 
   <div class="topbar">
     <div class="avatar" aria-hidden="true">T</div>
@@ -120,7 +115,7 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     <div class="num" id="balLabel">$186,400</div>
     <button type="button" class="subpill" id="subpill" aria-label="Total savings">
       <span class="dot" aria-hidden="true"></span>
-      <span id="subLabel">$186,400 CAD savings</span>
+      <span id="subLabel">$186,400 USD savings</span>
       <span class="chev">▾</span>
     </button>
   </section>
@@ -135,30 +130,28 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     <h2>Bump savings · TEST DATA</h2>
     <div class="ctrl">
       <button type="button" id="minus" aria-label="Lower">−</button>
-      <input type="range" id="bal" min="40000" max="800000" step="2000" value="186400"/>
+      <input type="range" id="bal" min="40000" max="1200000" step="2000" value="186400"/>
       <button type="button" id="plus" aria-label="Raise">+</button>
     </div>
   </section>
 
-  <!-- Genie -->
   <div id="genie">
     <div class="genie-card">
-      <div class="genie-step" id="gStep">1 of 5</div>
-      <p class="genie-q" id="gQ">Where do you want to live?</p>
+      <div class="genie-step" id="gStep">1 of 4</div>
+      <p class="genie-q" id="gQ"></p>
       <div class="genie-opts" id="gOpts"></div>
-      <button type="button" class="genie-skip" id="gSkipDemo">Skip · show demo wish list</button>
+      <button type="button" class="genie-skip" id="gSkipDemo">Skip · show cited wish list</button>
     </div>
-    <p class="caption">Answers seed a fake wish list. Round numbers only. TEST DATA.</p>
+    <p class="caption">Genie only picks from the cited wishes file. No invented asks.</p>
   </div>
 
-  <!-- Wish list -->
   <div id="wishlist">
     <div class="tools">
       <button type="button" id="askAgain">Ask again</button>
-      <button type="button" id="useDemo">Reset to demo</button>
+      <button type="button" id="useDemo">Reset to cited list</button>
     </div>
     <div id="sections"></div>
-    <p class="caption" id="ruleCaption">Mock unlock: homes &amp; cars = cash ≥ 20% of ask · watches &amp; toys = full ask · franchise = cash ≥ 30% of buy-in. Approximate TEST DATA — not advice.</p>
+    <p class="caption" id="ruleCaption"></p>
   </div>
 </div>
 
@@ -169,18 +162,18 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     <div class="fund-list">
       <div class="fund-row" data-bump="10000">
         <div class="fund-ico" style="background:#2F9E8F">+$10k</div>
-        <div><div class="t">Quick bump</div><div class="s">TEST DATA · +$10,000 CAD</div></div>
-        <button type="button" class="plus" aria-label="Add">+</button>
+        <div><div class="t">Quick bump</div><div class="s">TEST DATA · +$10,000 USD</div></div>
+        <button type="button" class="plus">+</button>
       </div>
       <div class="fund-row" data-bump="25000">
         <div class="fund-ico" style="background:#0A0A0A">+$25k</div>
-        <div><div class="t">Bigger bump</div><div class="s">TEST DATA · +$25,000 CAD</div></div>
-        <button type="button" class="plus" aria-label="Add">+</button>
+        <div><div class="t">Bigger bump</div><div class="s">TEST DATA · +$25,000 USD</div></div>
+        <button type="button" class="plus">+</button>
       </div>
-      <div class="fund-row" data-bump="50000">
-        <div class="fund-ico" style="background:#C9972A">+$50k</div>
-        <div><div class="t">Leap</div><div class="s">TEST DATA · +$50,000 CAD</div></div>
-        <button type="button" class="plus" aria-label="Add">+</button>
+      <div class="fund-row" data-bump="100000">
+        <div class="fund-ico" style="background:#C9972A">+$100k</div>
+        <div><div class="t">Leap</div><div class="s">TEST DATA · +$100,000 USD</div></div>
+        <button type="button" class="plus">+</button>
       </div>
     </div>
     <p class="caption" style="margin-top:14px">Fake bumps only. No bank. TEST DATA.</p>
@@ -189,78 +182,47 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 
 <script>
 (function () {
-  const SECTIONS = [
-    { id: "live", label: "Live" },
-    { id: "vacation", label: "Vacation" },
-    { id: "drive", label: "Drive" },
-    { id: "wear", label: "Wear" },
-    { id: "build", label: "Build" }
-  ];
+  const RULE_PCT = { homes_cars: 0.2, watches_toys: 1.0, franchise: 0.3 };
+  const SECTION_ORDER = ["Live", "Vacation", "Drive", "Wear", "Build"];
 
-  /* unlock: homes/cars 20%, watches/toys 100%, franchise 30% */
-  const CATALOG = {
-    van_apt:   { section: "live",     title: "Vancouver condo",       place: "Vancouver", ask: 890000,  rule: 0.2,  kind: "home",   line: "~CAD 890k · mock condo" },
-    van_house: { section: "live",     title: "Vancouver house",       place: "Vancouver", ask: 2100000, rule: 0.2,  kind: "home",   line: "~CAD 2.1M · mock house" },
-    other_live:{ section: "live",     title: "Elsewhere loft",        place: "Other",     ask: 620000,  rule: 0.2,  kind: "home",   line: "~CAD 620k · mock loft" },
-    spain:     { section: "vacation", title: "Spain vacation home",   place: "Spain",     ask: 1100000, rule: 0.2,  kind: "home",   line: "~CAD 1.1M · mock villa" },
-    pvr:       { section: "vacation", title: "PVR beach condo",       place: "PVR",       ask: 1250000, rule: 0.2,  kind: "home",   line: "~CAD 1.25M · mock condo" },
-    ev:        { section: "drive",    title: "Nice EV",               place: null,        ask: 78000,   rule: 0.2,  kind: "car",    line: "~CAD 78k · mock EV" },
-    sports:    { section: "drive",    title: "Sports car",            place: null,        ask: 220000,  rule: 0.2,  kind: "car",    line: "~CAD 220k · mock sports" },
-    watch1:    { section: "wear",     title: "One watch",             place: null,        ask: 18000,   rule: 1.0,  kind: "watch",  line: "~CAD 18k · mock watch" },
-    watch2:    { section: "wear",     title: "Watch pair",            place: null,        ask: 220000,  rule: 1.0,  kind: "watch",  line: "~CAD 220k · mock 2–3 watches" },
-    watch3:    { section: "wear",     title: "Small watch stack",     place: null,        ask: 95000,   rule: 1.0,  kind: "watch",  line: "~CAD 95k · mock stack" },
-    franchise: { section: "build",    title: "Franchise buy-in",      place: null,        ask: 1200000, rule: 0.3,  kind: "franchise", line: "~CAD 1.2M buy-in · mock" },
-    toy:       { section: "build",    title: "Toy / side toy",        place: null,        ask: 85000,   rule: 1.0,  kind: "toy",    line: "~CAD 85k · mock toy" }
-  };
-
-  const DEMO = ["van_apt", "spain", "ev", "watch2", "franchise"];
-
+  /* Genie maps onto cited wish ids only — Skip = null */
   const QUESTIONS = [
-    {
-      q: "Where do you want to live?",
-      opts: [
-        { label: "Vancouver apt", key: "van_apt" },
-        { label: "Vancouver house", key: "van_house" },
-        { label: "Other", key: "other_live" }
-      ]
-    },
     {
       q: "Vacation home?",
       opts: [
-        { label: "Spain", key: "spain" },
-        { label: "PVR", key: "pvr" },
-        { label: "Skip", key: null }
+        { label: "Punta Mita beachfront", id: "vacation-hacienda-mita" },
+        { label: "Skip", id: null }
       ]
     },
     {
       q: "Daily driver?",
       opts: [
-        { label: "Nice EV", key: "ev" },
-        { label: "Sports", key: "sports" },
-        { label: "Skip", key: null }
+        { label: "Tesla Model Y", id: "drive-model-y" },
+        { label: "Skip", id: null }
       ]
     },
     {
       q: "Watches?",
       opts: [
-        { label: "1", key: "watch1" },
-        { label: "2–3", key: "watch2" },
-        { label: "Skip", key: null }
+        { label: "Rolex Submariner", id: "wear-submariner" },
+        { label: "Skip", id: null }
       ]
     },
     {
-      q: "Side asset?",
+      q: "Side asset / toy?",
       opts: [
-        { label: "Franchise", key: "franchise" },
-        { label: "Toy", key: "toy" },
-        { label: "Skip", key: null }
+        { label: "Tesla Optimus (target)", id: "toys-optimus" },
+        { label: "Skip", id: null }
       ]
     }
   ];
 
+  let meta = null;
+  let catalog = {}; /* id -> wish */
+  let demoIds = [];
   let savings = 186400;
-  let wishes = DEMO.slice();
-  let mode = "list"; /* genie | list */
+  let wishes = [];
+  let mode = "genie";
   let gIndex = 0;
   let gPicks = [];
   const prev = {};
@@ -268,23 +230,48 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
   function fmt(n) {
     return "$" + Math.round(n).toLocaleString("en-US");
   }
-  function fmtApprox(n) {
-    if (n >= 1000000) return "~CAD " + (n / 1000000).toFixed(2).replace(/\.?0+$/, "") + "M · mock";
-    if (n >= 1000) return "~CAD " + Math.round(n / 1000) + "k · mock";
-    return "~CAD " + Math.round(n) + " · mock";
+  function rulePct(w) {
+    return RULE_PCT[w.unlock_rule] != null ? RULE_PCT[w.unlock_rule] : 0.2;
   }
-
-  function threshold(item) {
-    return item.ask * item.rule;
+  function threshold(w) {
+    return w.ask_usd * rulePct(w);
   }
-
-  function stateOf(item) {
-    const need = threshold(item);
+  function stateOf(w) {
+    const need = threshold(w);
     const pct = Math.max(0, Math.min(1, savings / need));
     if (savings >= need) return { kind: "youcan", label: "YOU CAN", pct: 1, more: 0 };
     const more = Math.ceil(need - savings);
     if (pct >= 0.65) return { kind: "more", label: fmt(more) + " MORE", pct: pct, more: more };
     return { kind: "locked", label: "LOCKED · " + fmt(more) + " more", pct: pct, more: more };
+  }
+
+  function specsLine(w) {
+    const s = w.specs || {};
+    if (w.section === "Vacation" || w.section === "Live") {
+      const bits = [];
+      if (s.beds != null) bits.push(s.beds + "bd");
+      if (s.baths != null) bits.push(s.baths + "ba");
+      if (s.m2 != null) bits.push(s.m2 + " m²");
+      if (s.place) bits.push(s.place);
+      return bits.join(" · ");
+    }
+    if (w.section === "Drive") {
+      const bits = [];
+      if (s.trim) bits.push(s.trim);
+      if (s.msrp_usd) bits.push("MSRP " + fmt(s.msrp_usd));
+      return bits.join(" · ");
+    }
+    if (w.section === "Wear" && s.ref) return "Ref " + s.ref + " · US retail";
+    if (w.section === "Build" && s.status === "not_for_sale") {
+      return "Target " + fmt(s.target_low_usd) + "–" + fmt(s.target_high_usd) + " · not for sale";
+    }
+    return w.ask_note || "";
+  }
+
+  function driveCaption(w) {
+    const s = w.specs || {};
+    if (!s.alt_new_L_usd) return "";
+    return "Fees ~$1,640 on top of MSRP (Tesla). Model Y L Premium Launch Series " + fmt(s.alt_new_L_usd) + " is the long new SUV trim.";
   }
 
   const bal = document.getElementById("bal");
@@ -301,45 +288,87 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
   }
 
   function paintHero() {
-    bal.value = String(savings);
+    bal.value = String(Math.min(1200000, Math.max(40000, savings)));
     balLabel.textContent = fmt(savings);
-    subLabel.textContent = fmt(savings) + " CAD savings";
+    subLabel.textContent = fmt(savings) + " USD savings";
+  }
+
+  function cardHtml(w) {
+    const st = stateOf(w);
+    const was = prev[w.id];
+    const flip = was && was !== "youcan" && st.kind === "youcan";
+    prev[w.id] = st.kind;
+    const go = st.kind === "youcan" ? '<span class="wish-chip go">You can</span>' : "";
+    const target = w.badge ? '<span class="target">' + w.badge + "</span>" : "";
+    const photo = w.photo_url
+      ? 'style="background-image:url(\'' + w.photo_url + '\')"'
+      : 'style="background:#d8d8d8"';
+    let tiers = "";
+    if (w.tiers && w.tiers.length) {
+      tiers = '<div class="tiers">' + w.tiers.map(function (t) {
+        return '<div class="tier"><span><b>' + t.label + "</b> · " + fmt(t.ask_usd) +
+          (t.note ? ' <span class="note">· ' + t.note + "</span>" : "") +
+          "</span></div>";
+      }).join("") + "</div>";
+    }
+    let extra = "";
+    if (w.id === "drive-model-y") {
+      const cap = driveCaption(w);
+      if (cap) extra = '<p class="wish-meta" style="margin-top:8px">' + cap + "</p>";
+    }
+    if (w.id === "toys-optimus") {
+      const peers = (w.specs && w.specs.peers) || [];
+      const peerLine = peers.length
+        ? peers.map(function (p) {
+            const alt = p.alt ? " / " + p.alt : "";
+            return p.name + " " + fmt(p.ask_usd) + alt;
+          }).join(" · ")
+        : "";
+      extra = '<p class="wish-meta" style="margin-top:8px">' +
+        (w.ask_note || "NOT for sale. Manufacturer target only.") +
+        (peerLine ? "</p><p class=\"wish-meta\"><b>Peers (public carts):</b> " + peerLine : "") +
+        "</p>";
+    }
+    const src = w.source_url
+      ? '<div class="source"><a href="' + w.source_url + '" target="_blank" rel="noopener">Source: ' + (w.source_label || w.source_url) + "</a></div>"
+      : '<div class="source">Source: ' + (w.source_label || "cited") + "</div>";
+
+    return '<article class="wish ' + st.kind + (flip ? " flip" : "") + '" data-id="' + w.id + '">' +
+      '<div class="wish-photo" ' + photo + '><span class="stamp">Cited · TEST DATA</span>' + target + "</div>" +
+      '<div class="wish-body">' +
+      '<div class="wish-top"><div><h4 class="wish-title">' + w.title + "</h4>" +
+      '<p class="wish-meta">' + fmt(w.ask_usd) + " USD · " + specsLine(w) + "</p></div>" + go + "</div>" +
+      extra +
+      '<div class="wish-status ' + st.kind + '">' + st.label + "</div>" +
+      '<div class="bar" aria-hidden="true"><span style="width:' + Math.round(st.pct * 100) + '%"></span></div>' +
+      tiers + src +
+      "</div></article>";
   }
 
   function paintList() {
     paintHero();
     const by = {};
-    SECTIONS.forEach(function (s) { by[s.id] = []; });
+    SECTION_ORDER.forEach(function (s) { by[s] = []; });
     wishes.forEach(function (id) {
-      const item = CATALOG[id];
-      if (item) by[item.section].push({ id: id, item: item });
+      const w = catalog[id];
+      if (!w) return;
+      if (!by[w.section]) by[w.section] = [];
+      by[w.section].push(w);
     });
-
     let html = "";
-    SECTIONS.forEach(function (s) {
-      const rows = by[s.id];
-      html += '<section class="section"><h3 class="section-h">' + s.label + "</h3>";
-      if (!rows.length) {
-        html += '<p class="empty">Nothing here yet.</p>';
-      } else {
-        rows.forEach(function (row) {
-          const st = stateOf(row.item);
-          const was = prev[row.id];
-          const flip = was && was !== "youcan" && st.kind === "youcan";
-          prev[row.id] = st.kind;
-          const place = row.item.place ? " · " + row.item.place : "";
-          const go = st.kind === "youcan" ? '<span class="wish-chip go">You can</span>' : '<span class="wish-chip test">Test data</span>';
-          html += '<article class="wish ' + st.kind + (flip ? " flip" : "") + '">' +
-            '<div class="wish-top"><div><h4 class="wish-title">' + row.item.title + "</h4>" +
-            '<p class="wish-meta">' + row.item.line + place + "</p></div>" + go + "</div>" +
-            '<div class="wish-status ' + st.kind + '">' + st.label + "</div>" +
-            '<div class="bar" aria-hidden="true"><span style="width:' + Math.round(st.pct * 100) + '%"></span></div>' +
-            "</article>";
-        });
-      }
+    SECTION_ORDER.forEach(function (s) {
+      const rows = by[s] || [];
+      if (!rows.length) return;
+      html += '<section class="section"><h3 class="section-h">' + s + "</h3>";
+      rows.forEach(function (w) { html += cardHtml(w); });
       html += "</section>";
     });
-    sectionsEl.innerHTML = html || '<p class="empty">Wish list empty — run the genie.</p>';
+    sectionsEl.innerHTML = html || '<p class="empty">Wish list empty — run the genie or reset to cited list.</p>';
+    const ud = (meta && meta.unlock_defaults) || {};
+    document.getElementById("ruleCaption").innerHTML =
+      "Mock unlock: homes &amp; cars = cash ≥ 20% of ask · watches &amp; toys = full ask · franchise = cash ≥ 30% of buy-in. " +
+      "Optimus badge = manufacturer target, not retail. Approximate — not advice. " +
+      (meta && meta.as_of ? "As of " + meta.as_of + "." : "");
   }
 
   function paintGenie() {
@@ -359,7 +388,7 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
   }
 
   function setSavings(n) {
-    savings = Math.max(40000, Math.min(800000, Math.round(n / 2000) * 2000));
+    savings = Math.max(40000, Math.min(1200000, Math.round(n / 2000) * 2000));
     paint();
   }
 
@@ -372,17 +401,17 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 
   function finishGenie() {
     wishes = gPicks.filter(Boolean);
-    if (!wishes.length) wishes = DEMO.slice();
+    if (!wishes.length) wishes = demoIds.slice();
     Object.keys(prev).forEach(function (k) { delete prev[k]; });
-    wishes.forEach(function (id) { prev[id] = stateOf(CATALOG[id]).kind; });
+    wishes.forEach(function (id) { if (catalog[id]) prev[id] = stateOf(catalog[id]).kind; });
     mode = "list";
     paint();
   }
 
   function useDemo() {
-    wishes = DEMO.slice();
+    wishes = demoIds.slice();
     Object.keys(prev).forEach(function (k) { delete prev[k]; });
-    wishes.forEach(function (id) { prev[id] = stateOf(CATALOG[id]).kind; });
+    wishes.forEach(function (id) { if (catalog[id]) prev[id] = stateOf(catalog[id]).kind; });
     mode = "list";
     paint();
   }
@@ -391,7 +420,7 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     const b = e.target.closest("[data-i]");
     if (!b) return;
     const opt = QUESTIONS[gIndex].opts[Number(b.getAttribute("data-i"))];
-    if (opt.key) gPicks.push(opt.key);
+    if (opt.id) gPicks.push(opt.id);
     gIndex += 1;
     if (gIndex >= QUESTIONS.length) finishGenie();
     else paintGenie();
@@ -419,9 +448,7 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
   }
   document.getElementById("addFunds").onclick = openFunds;
   document.getElementById("closeFunds").onclick = closeFunds;
-  fundsSheet.addEventListener("click", function (e) {
-    if (e.target === fundsSheet) closeFunds();
-  });
+  fundsSheet.addEventListener("click", function (e) { if (e.target === fundsSheet) closeFunds(); });
   fundsSheet.querySelectorAll("[data-bump]").forEach(function (row) {
     row.addEventListener("click", function () {
       setSavings(savings + Number(row.getAttribute("data-bump")));
@@ -429,10 +456,26 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     });
   });
 
-  /* first run = genie; demo available via skip */
-  const seen = false; /* always show genie on load for mock energy; skip → demo */
-  if (seen) useDemo();
-  else startGenie();
+  fetch("./buying-power-wishes-sep2026.json")
+    .then(function (r) {
+      if (!r.ok) throw new Error("wishes " + r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      meta = data.meta || {};
+      (data.wishes || []).forEach(function (w) {
+        catalog[w.id] = w;
+        demoIds.push(w.id);
+      });
+      startGenie();
+    })
+    .catch(function (err) {
+      document.getElementById("sections").innerHTML =
+        '<p class="err">Could not load buying-power-wishes-sep2026.json</p>';
+      mode = "list";
+      showMode();
+      console.error(err);
+    });
 })();
 </script>
 </body>
