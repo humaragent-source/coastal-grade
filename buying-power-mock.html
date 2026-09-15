@@ -18,13 +18,12 @@
   --teal:#2F9E8F;
   --gold:#C9972A;
   --locked:#9A9A9A;
-  --soft:#F7F7F7;
   --font:Inter,system-ui,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font)}
-#app{min-height:100dvh;max-width:430px;margin:0 auto;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top)) 16px calc(88px + env(safe-area-inset-bottom))}
-.banner{align-self:center;background:#FFF4E0;border:1px solid #F5D98A;color:#9A6B00;font:700 11px/1.2 var(--font);letter-spacing:.04em;text-align:center;padding:8px 14px;border-radius:999px;margin-bottom:18px}
+#app{min-height:100dvh;max-width:430px;margin:0 auto;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom))}
+.banner{align-self:center;background:#FFF4E0;border:1px solid #F5D98A;color:#9A6B00;font:700 11px/1.2 var(--font);letter-spacing:.04em;text-align:center;padding:8px 14px;border-radius:999px;margin-bottom:22px}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
 .avatar{width:36px;height:36px;border-radius:50%;background:#E5E5E5;display:grid;place-items:center;font:700 13px var(--font);color:#555}
 .badge{font:600 11px/1 var(--font);color:#9A6B00;background:#FFF4E0;border-radius:999px;padding:8px 12px}
@@ -34,14 +33,14 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .hero .subpill{display:inline-flex;align-items:center;gap:8px;margin-top:12px;background:var(--card);border-radius:999px;padding:8px 14px;box-shadow:0 1px 2px rgba(0,0,0,.04);font:600 13px var(--font);color:#444;cursor:pointer;border:0}
 .hero .subpill .dot{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--teal) 0 70%, #E5E5E5 0);position:relative}
 .hero .subpill .dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:#fff}
-.hero .subpill .chev{color:var(--mute);font-size:11px;letter-spacing:-1px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.hero .subpill .chev{color:var(--mute);font-size:11px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .actions button{min-height:52px;border:0;border-radius:999px;font:700 15px var(--font);cursor:pointer}
 .actions .primary{background:#0A0A0A;color:#fff}
 .actions .ghost{background:#E8E8E8;color:#0A0A0A}
-.hook{text-align:center;font:500 13px/1.4 var(--font);color:var(--mute);margin:0 0 18px}
-.panel{background:var(--card);border-radius:28px;padding:18px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:12px}
-.panel h2{margin:0 0 12px;font:600 13px/1 var(--font);color:var(--mute);letter-spacing:.01em}
+.hook{text-align:center;font:500 13px/1.4 var(--font);color:var(--mute);margin:0 0 22px}
+.panel{background:var(--card);border-radius:28px;padding:20px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:14px}
+.panel h2{margin:0 0 14px;font:600 13px/1 var(--font);color:var(--mute)}
 .ctrl{display:flex;align-items:center;gap:10px}
 .ctrl button{width:44px;height:44px;border:0;border-radius:50%;background:var(--pill);color:var(--ink);font:700 20px var(--font);cursor:pointer}
 .ctrl input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:28px;background:transparent;margin:0}
@@ -49,62 +48,67 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .ctrl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#0A0A0A;margin-top:-8px;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 .ctrl input[type=range]::-moz-range-track{height:6px;background:#E5E5E5;border-radius:99px}
 .ctrl input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#0A0A0A;border:3px solid #fff}
-.regions{display:flex;flex-wrap:wrap;gap:8px}
-.regions button{min-height:40px;padding:8px 14px;border:0;background:var(--pill);color:#444;border-radius:999px;font:600 13px var(--font);cursor:pointer}
-.regions button.on{background:#0A0A0A;color:#fff}
-.shelf-wrap{position:relative;margin-top:4px}
-.watermark{position:absolute;inset:18% 0;display:flex;align-items:center;justify-content:center;pointer-events:none;font:800 42px/1 var(--font);letter-spacing:.08em;color:rgba(0,0,0,.04);transform:rotate(-14deg);user-select:none;z-index:0}
-#shelf{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px}
-.card{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;background:var(--card);border-radius:24px;overflow:hidden;min-height:108px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:transform .35s ease, box-shadow .35s ease, opacity .35s ease}
-.card.unlocked{box-shadow:0 0 0 2px rgba(47,158,143,.35), 0 1px 3px rgba(0,0,0,.05)}
-.card.locked{opacity:.78}
-.card.flip{animation:unlockPop .55s ease}
-.swatch{min-height:108px;height:100%}
-.body{padding:14px 14px 14px 0;min-width:0;display:flex;flex-direction:column;gap:3px}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
-.city{font:600 11px/1.2 var(--font);color:var(--mute);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.name{font:700 15px/1.25 var(--font)}
-.specs{font:500 12px/1.3 var(--font);color:var(--mute)}
-.price{font:800 16px/1.2 var(--font);font-variant-numeric:tabular-nums;margin-top:2px}
-.status{font:600 12px/1.2 var(--font);margin-top:4px}
-.status.unlocked{color:var(--teal)}
-.status.next{color:var(--gold)}
-.status.locked{color:var(--locked)}
-.bar{height:4px;background:#EFEFEF;border-radius:99px;overflow:hidden;margin-top:8px}
-.bar > span{display:block;height:100%;background:var(--gold);border-radius:99px;width:0;transition:width .35s ease}
-.chip{font:700 9px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;padding:5px 7px;border-radius:999px}
-.chip.test{color:#9A6B00;background:#FFF4E0}
-.chip.go{color:#0B6B5C;background:#D8F3EE}
-.caption{font:500 12px/1.45 var(--font);color:var(--mute);margin:16px 4px 0;text-align:center}
-.nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(430px,100%);background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:20}
-.nav button{border:0;background:transparent;color:var(--mute);font:600 11px/1 var(--font);padding:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
-.nav button.on{color:var(--ink)}
-.nav .ico{width:40px;height:28px;border-radius:999px;display:grid;place-items:center;font-size:16px}
-.nav button.on .ico{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* Genie */
+#genie{display:none}
+#genie.on{display:block}
+.genie-card{background:var(--card);border-radius:28px;padding:28px 20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:14px;min-height:280px;display:flex;flex-direction:column}
+.genie-step{font:600 12px/1 var(--font);color:var(--mute);letter-spacing:.04em;text-transform:uppercase;margin-bottom:18px}
+.genie-q{font:700 22px/1.25 var(--font);letter-spacing:-.02em;margin:0 0 22px;flex:0}
+.genie-opts{display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.genie-opts button{min-height:52px;border:0;border-radius:999px;background:var(--pill);color:var(--ink);font:600 15px var(--font);cursor:pointer;padding:0 18px;text-align:left}
+.genie-opts button:active{background:#E0E0E0}
+.genie-skip{margin-top:14px;border:0;background:transparent;color:var(--mute);font:600 13px var(--font);cursor:pointer;align-self:center}
+
+/* Wish list */
+#wishlist{display:none}
+#wishlist.on{display:block}
+.section{margin:8px 0 22px}
+.section-h{font:700 13px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 12px 4px}
+.wish{background:var(--card);border-radius:24px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;transition:transform .35s ease, box-shadow .35s ease}
+.wish.youcan{box-shadow:0 0 0 2px rgba(47,158,143,.35), 0 1px 3px rgba(0,0,0,.05)}
+.wish.flip{animation:unlockPop .55s ease}
+.wish-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.wish-title{font:700 16px/1.25 var(--font);margin:0}
+.wish-meta{font:500 13px/1.35 var(--font);color:var(--mute);margin:6px 0 0}
+.wish-chip{font:700 9px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;white-space:nowrap}
+.wish-chip.test{color:#9A6B00;background:#FFF4E0}
+.wish-chip.go{color:#0B6B5C;background:#D8F3EE}
+.wish-status{font:600 13px/1.2 var(--font);margin-top:12px}
+.wish-status.youcan{color:var(--teal)}
+.wish-status.more{color:var(--gold)}
+.wish-status.locked{color:var(--locked)}
+.bar{height:5px;background:#EFEFEF;border-radius:99px;overflow:hidden;margin-top:10px}
+.bar > span{display:block;height:100%;background:linear-gradient(90deg,#E8C56A,var(--gold));border-radius:99px;width:0;transition:width .4s ease}
+.wish.youcan .bar > span{background:var(--teal)}
+.empty{font:500 14px/1.4 var(--font);color:var(--mute);padding:8px 4px}
+.tools{display:flex;gap:8px;justify-content:center;margin:8px 0 18px;flex-wrap:wrap}
+.tools button{border:0;background:transparent;color:var(--mute);font:600 13px var(--font);cursor:pointer;padding:8px 10px;text-decoration:underline;text-underline-offset:3px}
+.caption{font:500 12px/1.5 var(--font);color:var(--mute);margin:8px 4px 0;text-align:center}
+
 .funds-sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:30;align-items:flex-end;justify-content:center}
 .funds-sheet.open{display:flex}
-.funds-card{width:min(430px,100%);background:var(--bg);border-radius:28px 28px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom));max-height:80dvh;overflow:auto}
+.funds-card{width:min(430px,100%);background:var(--bg);border-radius:28px 28px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom));max-height:80dvh;overflow:auto;position:relative}
 .funds-card h3{margin:0;text-align:center;font:700 17px var(--font)}
 .funds-card .close{position:absolute;left:16px;top:14px;width:36px;height:36px;border:0;border-radius:50%;background:#fff;font-size:16px;cursor:pointer}
-.funds-wrap{position:relative;padding-top:8px}
-.fund-list{background:#fff;border-radius:24px;margin-top:18px;overflow:hidden}
+.fund-list{background:#fff;border-radius:24px;margin-top:28px;overflow:hidden}
 .fund-row{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--line);cursor:pointer}
 .fund-row:last-child{border-bottom:0}
-.fund-ico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--font);color:#fff}
+.fund-ico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:800 12px var(--font);color:#fff}
 .fund-row .t{font:700 15px var(--font)}
 .fund-row .s{font:500 12px var(--font);color:var(--mute);margin-top:2px}
-.fund-row .plus{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--pill);display:grid;place-items:center;font:700 18px var(--font);color:#111;border:0}
-@keyframes unlockPop{0%{transform:scale(.97)}40%{transform:scale(1.02);box-shadow:0 0 0 4px rgba(47,158,143,.28)}100%{transform:none}}
+.fund-row .plus{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--pill);display:grid;place-items:center;font:700 18px var(--font);border:0}
+
+@keyframes unlockPop{0%{transform:scale(.97)}40%{transform:scale(1.02)}100%{transform:none}}
 @media (min-width:640px){
-  #app{max-width:720px}
-  #shelf{display:grid;grid-template-columns:1fr 1fr}
-  .nav,.funds-card{max-width:720px}
+  #app{max-width:560px}
+  .funds-card{max-width:560px}
 }
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="banner">TEST DATA · mock only · not live listings</div>
+  <div class="banner">TEST DATA · mock only · not advice</div>
 
   <div class="topbar">
     <div class="avatar" aria-hidden="true">T</div>
@@ -123,7 +127,7 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 
   <div class="actions">
     <button type="button" class="primary" id="addFunds">Add funds</button>
-    <button type="button" class="ghost" id="seeHomes">Browse</button>
+    <button type="button" class="ghost" id="editWishes">Edit wishes</button>
   </div>
   <p class="hook">Cash is boring. This shows what you can own.</p>
 
@@ -131,154 +135,279 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     <h2>Bump savings · TEST DATA</h2>
     <div class="ctrl">
       <button type="button" id="minus" aria-label="Lower">−</button>
-      <input type="range" id="bal" min="40000" max="420000" step="2000" value="186400"/>
+      <input type="range" id="bal" min="40000" max="800000" step="2000" value="186400"/>
       <button type="button" id="plus" aria-label="Raise">+</button>
     </div>
   </section>
 
-  <section class="panel" id="regionsPanel">
-    <h2>Regions</h2>
-    <div class="regions" id="regions" role="tablist">
-      <button type="button" class="on" data-region="all">All</button>
-      <button type="button" data-region="Vancouver">Vancouver</button>
-      <button type="button" data-region="Spain">Spain</button>
-      <button type="button" data-region="PVR">PVR</button>
+  <!-- Genie -->
+  <div id="genie">
+    <div class="genie-card">
+      <div class="genie-step" id="gStep">1 of 5</div>
+      <p class="genie-q" id="gQ">Where do you want to live?</p>
+      <div class="genie-opts" id="gOpts"></div>
+      <button type="button" class="genie-skip" id="gSkipDemo">Skip · show demo wish list</button>
     </div>
-  </section>
-
-  <div class="shelf-wrap" id="homesPanel">
-    <div class="watermark">TEST DATA</div>
-    <div id="shelf" aria-label="Test home shelf"></div>
+    <p class="caption">Answers seed a fake wish list. Round numbers only. TEST DATA.</p>
   </div>
 
-  <p class="caption">Mock unlock = 20% down. Not a mortgage quote. Invented homes — not real MLS.</p>
+  <!-- Wish list -->
+  <div id="wishlist">
+    <div class="tools">
+      <button type="button" id="askAgain">Ask again</button>
+      <button type="button" id="useDemo">Reset to demo</button>
+    </div>
+    <div id="sections"></div>
+    <p class="caption" id="ruleCaption">Mock unlock: homes &amp; cars = cash ≥ 20% of ask · watches &amp; toys = full ask · franchise = cash ≥ 30% of buy-in. Approximate TEST DATA — not advice.</p>
+  </div>
 </div>
-
-<nav class="nav" aria-label="Mock navigation">
-  <button type="button" class="on" data-tab="power"><span class="ico">◎</span>Power</button>
-  <button type="button" data-tab="homes"><span class="ico">⌂</span>Homes</button>
-  <button type="button" data-tab="regions"><span class="ico">◌</span>Regions</button>
-</nav>
 
 <div class="funds-sheet" id="fundsSheet" aria-hidden="true">
   <div class="funds-card">
-    <div class="funds-wrap">
-      <button type="button" class="close" id="closeFunds" aria-label="Close">‹</button>
-      <h3>Add funds</h3>
-      <div class="fund-list">
-        <div class="fund-row" data-bump="10000">
-          <div class="fund-ico" style="background:#2F9E8F">+$10k</div>
-          <div><div class="t">Quick bump</div><div class="s">TEST DATA · +$10,000 CAD</div></div>
-          <button type="button" class="plus" aria-label="Add">+</button>
-        </div>
-        <div class="fund-row" data-bump="25000">
-          <div class="fund-ico" style="background:#0A0A0A">+$25k</div>
-          <div><div class="t">Bigger bump</div><div class="s">TEST DATA · +$25,000 CAD</div></div>
-          <button type="button" class="plus" aria-label="Add">+</button>
-        </div>
-        <div class="fund-row" data-bump="50000">
-          <div class="fund-ico" style="background:#C9972A">+$50k</div>
-          <div><div class="t">Leap</div><div class="s">TEST DATA · +$50,000 CAD</div></div>
-          <button type="button" class="plus" aria-label="Add">+</button>
-        </div>
+    <button type="button" class="close" id="closeFunds" aria-label="Close">‹</button>
+    <h3>Add funds</h3>
+    <div class="fund-list">
+      <div class="fund-row" data-bump="10000">
+        <div class="fund-ico" style="background:#2F9E8F">+$10k</div>
+        <div><div class="t">Quick bump</div><div class="s">TEST DATA · +$10,000 CAD</div></div>
+        <button type="button" class="plus" aria-label="Add">+</button>
       </div>
-      <p class="caption" style="margin-top:14px">Fake bumps only. No bank. No crypto rails. TEST DATA.</p>
+      <div class="fund-row" data-bump="25000">
+        <div class="fund-ico" style="background:#0A0A0A">+$25k</div>
+        <div><div class="t">Bigger bump</div><div class="s">TEST DATA · +$25,000 CAD</div></div>
+        <button type="button" class="plus" aria-label="Add">+</button>
+      </div>
+      <div class="fund-row" data-bump="50000">
+        <div class="fund-ico" style="background:#C9972A">+$50k</div>
+        <div><div class="t">Leap</div><div class="s">TEST DATA · +$50,000 CAD</div></div>
+        <button type="button" class="plus" aria-label="Add">+</button>
+      </div>
     </div>
+    <p class="caption" style="margin-top:14px">Fake bumps only. No bank. TEST DATA.</p>
   </div>
 </div>
 
 <script>
 (function () {
-  const HOMES = [
-    { id: "h1",  name: "Kits Studio 4",      region: "Vancouver", city: "Kitsilano",      beds: 1, baths: 1, m2: 48,  ask: 890000,  swatch: "#C8D6D0" },
-    { id: "h2",  name: "Main St Walk-up",    region: "Vancouver", city: "Mount Pleasant", beds: 2, baths: 1, m2: 72,  ask: 1180000, swatch: "#D6CFC0" },
-    { id: "h3",  name: "East Van Loft",      region: "Vancouver", city: "Hastings",       beds: 2, baths: 2, m2: 86,  ask: 1650000, swatch: "#C9C4D6" },
-    { id: "h4",  name: "Commercial Nest",   region: "Vancouver", city: "Commercial Dr",  beds: 1, baths: 1, m2: 55,  ask: 2100000, swatch: "#B8C8D4" },
-    { id: "h5",  name: "Valencia Patio",    region: "Spain",     city: "Valencia",       beds: 2, baths: 1, m2: 78,  ask: 720000,  swatch: "#E0C8B8" },
-    { id: "h6",  name: "Málaga Light",      region: "Spain",     city: "Málaga",         beds: 3, baths: 2, m2: 110, ask: 1100000, swatch: "#D8B8C4" },
-    { id: "h7",  name: "Alicante Tile",     region: "Spain",     city: "Alicante",       beds: 2, baths: 1, m2: 68,  ask: 1480000, swatch: "#C8D4B8" },
-    { id: "h8",  name: "Sevilla Courtyard", region: "Spain",     city: "Seville",        beds: 3, baths: 2, m2: 95,  ask: 2400000, swatch: "#E0B8B8" },
-    { id: "h9",  name: "Bucerías Deck",     region: "PVR",       city: "Bucerías",       beds: 2, baths: 2, m2: 92,  ask: 840000,  swatch: "#B8D4CC" },
-    { id: "h10", name: "Sayulita Nest",     region: "PVR",       city: "Sayulita",       beds: 1, baths: 1, m2: 58,  ask: 1220000, swatch: "#C0D8C0" },
-    { id: "h11", name: "La Cruz View",      region: "PVR",       city: "La Cruz",        beds: 3, baths: 2, m2: 120, ask: 1750000, swatch: "#B8C8D8" },
-    { id: "h12", name: "Flamingos Condo",   region: "PVR",       city: "Flamingos",      beds: 2, baths: 2, m2: 85,  ask: 2600000, swatch: "#E0C4B0" }
+  const SECTIONS = [
+    { id: "live", label: "Live" },
+    { id: "vacation", label: "Vacation" },
+    { id: "drive", label: "Drive" },
+    { id: "wear", label: "Wear" },
+    { id: "build", label: "Build" }
   ];
 
-  const DOWN = 0.2;
+  /* unlock: homes/cars 20%, watches/toys 100%, franchise 30% */
+  const CATALOG = {
+    van_apt:   { section: "live",     title: "Vancouver condo",       place: "Vancouver", ask: 890000,  rule: 0.2,  kind: "home",   line: "~CAD 890k · mock condo" },
+    van_house: { section: "live",     title: "Vancouver house",       place: "Vancouver", ask: 2100000, rule: 0.2,  kind: "home",   line: "~CAD 2.1M · mock house" },
+    other_live:{ section: "live",     title: "Elsewhere loft",        place: "Other",     ask: 620000,  rule: 0.2,  kind: "home",   line: "~CAD 620k · mock loft" },
+    spain:     { section: "vacation", title: "Spain vacation home",   place: "Spain",     ask: 1100000, rule: 0.2,  kind: "home",   line: "~CAD 1.1M · mock villa" },
+    pvr:       { section: "vacation", title: "PVR beach condo",       place: "PVR",       ask: 1250000, rule: 0.2,  kind: "home",   line: "~CAD 1.25M · mock condo" },
+    ev:        { section: "drive",    title: "Nice EV",               place: null,        ask: 78000,   rule: 0.2,  kind: "car",    line: "~CAD 78k · mock EV" },
+    sports:    { section: "drive",    title: "Sports car",            place: null,        ask: 220000,  rule: 0.2,  kind: "car",    line: "~CAD 220k · mock sports" },
+    watch1:    { section: "wear",     title: "One watch",             place: null,        ask: 18000,   rule: 1.0,  kind: "watch",  line: "~CAD 18k · mock watch" },
+    watch2:    { section: "wear",     title: "Watch pair",            place: null,        ask: 220000,  rule: 1.0,  kind: "watch",  line: "~CAD 220k · mock 2–3 watches" },
+    watch3:    { section: "wear",     title: "Small watch stack",     place: null,        ask: 95000,   rule: 1.0,  kind: "watch",  line: "~CAD 95k · mock stack" },
+    franchise: { section: "build",    title: "Franchise buy-in",      place: null,        ask: 1200000, rule: 0.3,  kind: "franchise", line: "~CAD 1.2M buy-in · mock" },
+    toy:       { section: "build",    title: "Toy / side toy",        place: null,        ask: 85000,   rule: 1.0,  kind: "toy",    line: "~CAD 85k · mock toy" }
+  };
+
+  const DEMO = ["van_apt", "spain", "ev", "watch2", "franchise"];
+
+  const QUESTIONS = [
+    {
+      q: "Where do you want to live?",
+      opts: [
+        { label: "Vancouver apt", key: "van_apt" },
+        { label: "Vancouver house", key: "van_house" },
+        { label: "Other", key: "other_live" }
+      ]
+    },
+    {
+      q: "Vacation home?",
+      opts: [
+        { label: "Spain", key: "spain" },
+        { label: "PVR", key: "pvr" },
+        { label: "Skip", key: null }
+      ]
+    },
+    {
+      q: "Daily driver?",
+      opts: [
+        { label: "Nice EV", key: "ev" },
+        { label: "Sports", key: "sports" },
+        { label: "Skip", key: null }
+      ]
+    },
+    {
+      q: "Watches?",
+      opts: [
+        { label: "1", key: "watch1" },
+        { label: "2–3", key: "watch2" },
+        { label: "Skip", key: null }
+      ]
+    },
+    {
+      q: "Side asset?",
+      opts: [
+        { label: "Franchise", key: "franchise" },
+        { label: "Toy", key: "toy" },
+        { label: "Skip", key: null }
+      ]
+    }
+  ];
+
   let savings = 186400;
-  let region = "all";
+  let wishes = DEMO.slice();
+  let mode = "list"; /* genie | list */
+  let gIndex = 0;
+  let gPicks = [];
   const prev = {};
 
   function fmt(n) {
     return "$" + Math.round(n).toLocaleString("en-US");
   }
-  function need(ask) { return ask * DOWN; }
-  function stateOf(h) {
-    const req = need(h.ask);
-    if (savings >= req) return { kind: "unlocked", label: "You can buy this today", pct: 1, more: 0 };
-    const pct = Math.max(0, Math.min(0.999, savings / req));
-    const more = Math.ceil(req - savings);
-    if (pct >= 0.72) return { kind: "next", label: fmt(more) + " more", pct: pct, more: more };
-    return { kind: "locked", label: "Locked · " + fmt(more) + " more", pct: pct, more: more };
+  function fmtApprox(n) {
+    if (n >= 1000000) return "~CAD " + (n / 1000000).toFixed(2).replace(/\.?0+$/, "") + "M · mock";
+    if (n >= 1000) return "~CAD " + Math.round(n / 1000) + "k · mock";
+    return "~CAD " + Math.round(n) + " · mock";
   }
 
-  const shelf = document.getElementById("shelf");
+  function threshold(item) {
+    return item.ask * item.rule;
+  }
+
+  function stateOf(item) {
+    const need = threshold(item);
+    const pct = Math.max(0, Math.min(1, savings / need));
+    if (savings >= need) return { kind: "youcan", label: "YOU CAN", pct: 1, more: 0 };
+    const more = Math.ceil(need - savings);
+    if (pct >= 0.65) return { kind: "more", label: fmt(more) + " MORE", pct: pct, more: more };
+    return { kind: "locked", label: "LOCKED · " + fmt(more) + " more", pct: pct, more: more };
+  }
+
   const bal = document.getElementById("bal");
   const balLabel = document.getElementById("balLabel");
   const subLabel = document.getElementById("subLabel");
+  const genieEl = document.getElementById("genie");
+  const listEl = document.getElementById("wishlist");
+  const sectionsEl = document.getElementById("sections");
   const fundsSheet = document.getElementById("fundsSheet");
 
-  function paint() {
+  function showMode() {
+    genieEl.classList.toggle("on", mode === "genie");
+    listEl.classList.toggle("on", mode === "list");
+  }
+
+  function paintHero() {
     bal.value = String(savings);
     balLabel.textContent = fmt(savings);
     subLabel.textContent = fmt(savings) + " CAD savings";
-    const list = HOMES.filter(function (h) { return region === "all" || h.region === region; });
-    list.sort(function (a, b) {
-      const sa = stateOf(a), sb = stateOf(b);
-      const rank = { unlocked: 0, next: 1, locked: 2 };
-      if (rank[sa.kind] !== rank[sb.kind]) return rank[sa.kind] - rank[sb.kind];
-      return a.ask - b.ask;
+  }
+
+  function paintList() {
+    paintHero();
+    const by = {};
+    SECTIONS.forEach(function (s) { by[s.id] = []; });
+    wishes.forEach(function (id) {
+      const item = CATALOG[id];
+      if (item) by[item.section].push({ id: id, item: item });
     });
-    shelf.innerHTML = list.map(function (h) {
-      const st = stateOf(h);
-      const was = prev[h.id];
-      const flip = was && was !== "unlocked" && st.kind === "unlocked";
-      prev[h.id] = st.kind;
-      const chip = st.kind === "unlocked" ? '<span class="chip go">Unlocked</span>' : "";
-      const bar = st.kind === "next"
-        ? '<div class="bar" aria-hidden="true"><span style="width:' + Math.round(st.pct * 100) + '%"></span></div>'
-        : "";
-      return '<article class="card ' + st.kind + (flip ? " flip" : "") + '" data-id="' + h.id + '">' +
-        '<div class="swatch" style="background:' + h.swatch + '" aria-hidden="true"></div>' +
-        '<div class="body">' +
-        '<div class="top"><div class="city"><span class="chip test">Test data</span> ' + h.city + " · " + h.region + "</div>" + chip + "</div>" +
-        '<div class="name">' + h.name + "</div>" +
-        '<div class="specs">' + h.beds + " bed · " + h.baths + " bath · " + h.m2 + " m²</div>" +
-        '<div class="price">' + fmt(h.ask) + "</div>" +
-        '<div class="status ' + st.kind + '">' + st.label + "</div>" +
-        bar +
-        "</div></article>";
+
+    let html = "";
+    SECTIONS.forEach(function (s) {
+      const rows = by[s.id];
+      html += '<section class="section"><h3 class="section-h">' + s.label + "</h3>";
+      if (!rows.length) {
+        html += '<p class="empty">Nothing here yet.</p>';
+      } else {
+        rows.forEach(function (row) {
+          const st = stateOf(row.item);
+          const was = prev[row.id];
+          const flip = was && was !== "youcan" && st.kind === "youcan";
+          prev[row.id] = st.kind;
+          const place = row.item.place ? " · " + row.item.place : "";
+          const go = st.kind === "youcan" ? '<span class="wish-chip go">You can</span>' : '<span class="wish-chip test">Test data</span>';
+          html += '<article class="wish ' + st.kind + (flip ? " flip" : "") + '">' +
+            '<div class="wish-top"><div><h4 class="wish-title">' + row.item.title + "</h4>" +
+            '<p class="wish-meta">' + row.item.line + place + "</p></div>" + go + "</div>" +
+            '<div class="wish-status ' + st.kind + '">' + st.label + "</div>" +
+            '<div class="bar" aria-hidden="true"><span style="width:' + Math.round(st.pct * 100) + '%"></span></div>' +
+            "</article>";
+        });
+      }
+      html += "</section>";
+    });
+    sectionsEl.innerHTML = html || '<p class="empty">Wish list empty — run the genie.</p>';
+  }
+
+  function paintGenie() {
+    paintHero();
+    const step = QUESTIONS[gIndex];
+    document.getElementById("gStep").textContent = (gIndex + 1) + " of " + QUESTIONS.length;
+    document.getElementById("gQ").textContent = step.q;
+    document.getElementById("gOpts").innerHTML = step.opts.map(function (o, i) {
+      return '<button type="button" data-i="' + i + '">' + o.label + "</button>";
     }).join("");
   }
 
+  function paint() {
+    showMode();
+    if (mode === "genie") paintGenie();
+    else paintList();
+  }
+
   function setSavings(n) {
-    savings = Math.max(40000, Math.min(420000, Math.round(n / 2000) * 2000));
+    savings = Math.max(40000, Math.min(800000, Math.round(n / 2000) * 2000));
     paint();
   }
+
+  function startGenie() {
+    mode = "genie";
+    gIndex = 0;
+    gPicks = [];
+    paint();
+  }
+
+  function finishGenie() {
+    wishes = gPicks.filter(Boolean);
+    if (!wishes.length) wishes = DEMO.slice();
+    Object.keys(prev).forEach(function (k) { delete prev[k]; });
+    wishes.forEach(function (id) { prev[id] = stateOf(CATALOG[id]).kind; });
+    mode = "list";
+    paint();
+  }
+
+  function useDemo() {
+    wishes = DEMO.slice();
+    Object.keys(prev).forEach(function (k) { delete prev[k]; });
+    wishes.forEach(function (id) { prev[id] = stateOf(CATALOG[id]).kind; });
+    mode = "list";
+    paint();
+  }
+
+  document.getElementById("gOpts").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-i]");
+    if (!b) return;
+    const opt = QUESTIONS[gIndex].opts[Number(b.getAttribute("data-i"))];
+    if (opt.key) gPicks.push(opt.key);
+    gIndex += 1;
+    if (gIndex >= QUESTIONS.length) finishGenie();
+    else paintGenie();
+  });
+
+  document.getElementById("gSkipDemo").onclick = useDemo;
+  document.getElementById("askAgain").onclick = startGenie;
+  document.getElementById("useDemo").onclick = useDemo;
+  document.getElementById("editWishes").onclick = startGenie;
 
   bal.addEventListener("input", function () { setSavings(Number(bal.value)); });
   document.getElementById("minus").onclick = function () { setSavings(savings - 10000); };
   document.getElementById("plus").onclick = function () { setSavings(savings + 10000); };
-
-  document.getElementById("regions").addEventListener("click", function (e) {
-    const b = e.target.closest("[data-region]");
-    if (!b) return;
-    region = b.getAttribute("data-region");
-    Array.prototype.forEach.call(document.querySelectorAll("#regions button"), function (x) {
-      x.classList.toggle("on", x === b);
-    });
-    paint();
-  });
+  document.getElementById("subpill").onclick = function () {
+    document.getElementById("fundsPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   function openFunds() {
     fundsSheet.classList.add("open");
@@ -297,31 +426,13 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     row.addEventListener("click", function () {
       setSavings(savings + Number(row.getAttribute("data-bump")));
       closeFunds();
-      document.getElementById("homesPanel").scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 
-  document.getElementById("seeHomes").onclick = function () {
-    document.getElementById("homesPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-  document.getElementById("subpill").onclick = function () {
-    document.getElementById("fundsPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  document.querySelector(".nav").addEventListener("click", function (e) {
-    const b = e.target.closest("[data-tab]");
-    if (!b) return;
-    Array.prototype.forEach.call(document.querySelectorAll(".nav button"), function (x) {
-      x.classList.toggle("on", x === b);
-    });
-    const tab = b.getAttribute("data-tab");
-    const map = { power: "fundsPanel", homes: "homesPanel", regions: "regionsPanel" };
-    const el = document.getElementById(map[tab]);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-
-  HOMES.forEach(function (h) { prev[h.id] = stateOf(h).kind; });
-  paint();
+  /* first run = genie; demo available via skip */
+  const seen = false; /* always show genie on load for mock energy; skip → demo */
+  if (seen) useDemo();
+  else startGenie();
 })();
 </script>
 </body>
