@@ -1,7 +1,7 @@
 {
   "meta": {
     "as_of": "2026-09-14",
-    "rule": "Cited asks only \u2014 never invent. Coastal from homes/2026-08-28 Homia beachfront pull. Rolex: retail = Official Jeweler suggested retail; secondary = Chrono24 listing ask. Drive: Model Y Juniper (not Model X). Optimus: Musk at-scale TARGET only, not retail.",
+    "rule": "Cited asks only — never invent. Coastal from homes/2026-08-28 Homia beachfront pull. Rolex: retail = Official Jeweler suggested retail; secondary = Chrono24 listing ask. Drive: Model Y Juniper (not Model X). Optimus: Musk at-scale TARGET only, not retail.",
     "currency_display": "USD",
     "unlock_defaults": {
       "homes_cars": "cash >= 20% of ask",
@@ -14,7 +14,7 @@
     {
       "id": "live-el-anclote-beachfront",
       "section": "Live",
-      "title": "20 Av. El Anclote \u00b7 beachfront condo",
+      "title": "20 Av. El Anclote · beachfront condo",
       "ask_usd": 799000,
       "ask_note": "Homia MLS asking USD (converted from MXN 15,621,600 @ FX in overnight pull). Beachfront yes. Outside Punta Mita gates (El Anclote).",
       "unlock_rule": "homes_cars",
@@ -36,7 +36,7 @@
     {
       "id": "vacation-hacienda-mita",
       "section": "Vacation",
-      "title": "Hacienda De Mita \u00b7 beachfront house",
+      "title": "Hacienda De Mita · beachfront house",
       "ask_usd": 4490000,
       "ask_note": "Homia MLS asking USD. Beachfront yes. Strong vacation / gated-area hero.",
       "unlock_rule": "homes_cars",
@@ -60,9 +60,9 @@
       "section": "Drive",
       "title": "2026 Tesla Model Y Premium AWD (Juniper)",
       "ask_usd": 49990,
-      "ask_note": "MSRP before destination & order fees (~$1,640 \u2192 ~$51,630 all-in per Automotive Addicts Jul 2026 citing Tesla configurator). This is the refreshed Model Y SUV (codename Juniper), NOT Model X.",
+      "ask_note": "MSRP before destination & order fees (~$1,640 → ~$51,630 all-in per Automotive Addicts Jul 2026 citing Tesla configurator). This is the refreshed Model Y SUV (codename Juniper), NOT Model X.",
       "unlock_rule": "homes_cars",
-      "photo_url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Tesla_Model_Y_Juniper_Long_Range_AWD_Ultra_Red_01.jpg",
+      "photo_url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Tesla_Model_Y_Juniper_Long_Range_AWD_Ultra_Red_02.jpg",
       "source_url": "https://www.tesla.com/modely",
       "source_label": "Tesla.com Model Y + Automotive Addicts 2026-07-14 MSRP table",
       "date_seen": "2026-09-14",
@@ -86,11 +86,11 @@
       "section": "Wear",
       "title": "Rolex Submariner Date 126610LN",
       "ask_usd": 11350,
-      "ask_note": "US suggested retail (Official Rolex Jeweler). Allocation/waitlist typical. Secondary market asks higher \u2014 see tiers.",
+      "ask_note": "US suggested retail (Official Rolex Jeweler). Allocation/waitlist typical. Secondary market asks higher — see tiers.",
       "unlock_rule": "watches_toys",
-      "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/submariner/m126610ln-0001/m126610ln-0001_v01.jpg",
+      "photo_url": "https://precisionwatches.com/wp-content/uploads/2026/05/m126610ln-0001.webp",
       "source_url": "https://precisionwatches.com/rolex/watches/submariner-m126610ln-0001/",
-      "source_label": "Precision Watches (Official Rolex Jeweler) \u00b7 retail $11,350",
+      "source_label": "Precision Watches (Official Rolex Jeweler) · retail $11,350",
       "date_seen": "2026-09-14",
       "n": 1,
       "specs": {
@@ -107,19 +107,19 @@
           "price_type": "retail",
           "note": "US suggested retail before tax",
           "source_url": "https://www.rolex.com/en-us/watches/explorer/m124270-0001",
-          "source_label": "Rolex.com US \u00b7 Explorer 36 $7,900",
-          "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/explorer/m124270-0001/m124270-0001_v01.jpg",
+          "source_label": "Rolex.com US · Explorer 36 $7,900",
+          "photo_url": "https://precisionwatches.com/wp-content/uploads/2026/05/m124270-0001.webp",
           "date_seen": "2026-09-14"
         },
         {
           "label": "mid",
-          "title": "Submariner Date 126610LN \u00b7 secondary",
+          "title": "Submariner Date 126610LN · secondary",
           "ask_usd": 14895,
           "price_type": "secondary",
           "note": "Chrono24 new 2024 full set listing ask (example; market moves)",
           "source_url": "https://www.chrono24.com/rolex/rolex-submariner-date-41mm-black-dial-126610ln-new-2024--id19779712.htm",
-          "source_label": "Chrono24 listing \u00b7 $14,895",
-          "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/submariner/m126610ln-0001/m126610ln-0001_v01.jpg",
+          "source_label": "Chrono24 listing · $14,895",
+          "photo_url": "https://precisionwatches.com/wp-content/uploads/2026/05/m126610ln-0001.webp",
           "date_seen": "2026-09-14"
         },
         {
@@ -129,8 +129,8 @@
           "price_type": "retail",
           "note": "US suggested retail (Tourneau / Bucherer AD). Secondary typically much higher.",
           "source_url": "https://www.tourneau.com/watches/rolex/cosmograph-daytona-m126500lnz0001.html",
-          "source_label": "Tourneau | Bucherer \u00b7 Daytona steel $16,900 retail",
-          "photo_url": "https://www.rolex.com/content/dam/rolexcom/classic-models/cosmograph-daytona/m126500ln-0001/m126500ln-0001_v01.jpg",
+          "source_label": "Tourneau | Bucherer · Daytona steel $16,900 retail",
+          "photo_url": "https://asset.bucherer.com/image/upload/Assets/Watches/ROLEX/Rolex/Automatic/m126500ln-0001_FP.jpg",
           "date_seen": "2026-09-14"
         }
       ]
@@ -140,11 +140,11 @@
       "section": "Build",
       "title": "Tesla Optimus (humanoid)",
       "ask_usd": 25000,
-      "ask_note": "ESTIMATE only \u2014 NOT for sale / no Tesla consumer cart. Musk long-term at-scale target roughly $20k\u2013$30k (half a car / less over time). ask_usd midpoints the band. Peers with public buy buttons for comparison only.",
+      "ask_note": "ESTIMATE only — NOT for sale / no Tesla consumer cart. Musk long-term at-scale target roughly $20k–$30k (half a car / less over time). ask_usd midpoints the band. Peers with public buy buttons for comparison only.",
       "unlock_rule": "watches_toys",
-      "photo_url": "https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Optimus-Main-Hero-Desktop.jpg",
+      "photo_url": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Latest_Tesla_Optimus_Humanoid_Robot.jpg",
       "source_url": "https://www.teslarati.com/tesla-optimus-price-less-than-25k-30k-elon-musk/",
-      "source_label": "Teslarati \u00b7 Musk Optimus price target (not retail)",
+      "source_label": "Teslarati · Musk Optimus price target (not retail)",
       "date_seen": "2026-09-14",
       "n": 1,
       "specs": {
@@ -159,23 +159,26 @@
             "ask_usd": 20000,
             "alt": "$499/mo",
             "url": "https://www.1x.tech/order",
-            "note": "Public buy / order page (peer, not Optimus)"
+            "note": "Public buy / order page (peer, not Optimus)",
+            "photo_url": "https://cdn.sanity.io/images/qka6yvsc/production/379c65ed7a4a564858a3d27a07db9497b26ca32d-2400x1260.jpg"
           },
           {
             "name": "Unitree H2",
             "ask_usd": 29900,
             "url": "https://shop.unitree.com/products/unitree-h2",
-            "note": "List; tax/shipping extra"
+            "note": "List; tax/shipping extra",
+            "photo_url": "https://www.unitree.com/images/a89249d4e2284243b8379205259bcd0c_1920x1877.png"
           },
           {
             "name": "Unitree G1",
             "ask_usd": 13500,
             "url": "https://shop.unitree.com/products/unitree-g1",
-            "note": "Just under band; backordered"
+            "note": "Just under band; backordered",
+            "photo_url": "https://www.unitree.com/images/773f6a21c6764bc8bfd9da5f9d714ecf_3840x3600.jpg"
           }
         ]
       },
-      "badge": "TARGET \u00b7 NOT RETAIL"
+      "badge": "TARGET · NOT RETAIL"
     }
   ]
 }
