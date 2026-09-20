@@ -56,9 +56,10 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .wish{background:var(--card);border-radius:24px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:12px;transition:transform .35s ease, box-shadow .35s ease}
 .wish.youcan{box-shadow:0 0 0 2px rgba(47,158,143,.35), 0 1px 3px rgba(0,0,0,.05)}
 .wish.flip{animation:unlockPop .55s ease}
-.wish-photo{height:140px;background:#ddd center/cover no-repeat;position:relative}
-.wish-photo .stamp{position:absolute;top:10px;left:10px;font:700 9px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;color:#9A6B00;background:rgba(255,244,224,.95)}
-.wish-photo .target{position:absolute;top:10px;right:10px;font:700 9px/1 var(--font);letter-spacing:.05em;text-transform:uppercase;padding:5px 8px;border-radius:999px;color:#fff;background:#0A0A0A}
+.wish-photo{height:148px;background:#1a1a1a;position:relative;overflow:hidden}
+.wish-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.wish-photo .stamp{position:absolute;top:10px;left:10px;z-index:2;font:700 9px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;color:#9A6B00;background:rgba(255,244,224,.95);border:1px solid rgba(245,217,138,.8)}
+.wish-photo .target{position:absolute;top:10px;right:10px;z-index:2;font:800 10px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;padding:7px 10px;border-radius:999px;color:#fff;background:#0A0A0A;border:2px solid #FFD166;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 .wish-body{padding:14px 16px 16px}
 .wish-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .wish-title{font:700 16px/1.25 var(--font);margin:0}
@@ -72,8 +73,20 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .bar{height:5px;background:#EFEFEF;border-radius:99px;overflow:hidden;margin-top:10px}
 .bar > span{display:block;height:100%;background:linear-gradient(90deg,#E8C56A,var(--gold));border-radius:99px;width:0;transition:width .4s ease}
 .wish.youcan .bar > span{background:var(--teal)}
-.tiers{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
-.tier{display:flex;justify-content:space-between;gap:8px;font:500 12px/1.3 var(--font);color:#444}
+.target-box{margin-top:12px;padding:12px 12px 10px;border-radius:16px;background:#FFF8E8;border:1.5px solid #E8C56A;color:#3A2E00}
+.target-box .tb-k{font:800 11px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;color:#9A6B00;margin-bottom:6px}
+.target-box .tb-v{font:600 13px/1.4 var(--font);color:#2A2200}
+.target-box .tb-note{font:500 12px/1.4 var(--font);color:#6A5A20;margin-top:6px}
+.peers{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.peer{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;padding:8px;border-radius:12px;background:#fff;border:1px solid #EAD9A0}
+.peer img{width:44px;height:44px;object-fit:cover;border-radius:10px;background:#eee;border:1px solid #E8E8E8}
+.peer .ph{width:44px;height:44px;border-radius:10px;background:#F0E6C8;display:grid;place-items:center;font:800 10px/1 var(--font);color:#9A6B00}
+.peer .pn{font:700 12px/1.2 var(--font);color:#1a1a1a}
+.peer .ps{font:500 11px/1.3 var(--font);color:#6A5A20;margin-top:2px}
+.tiers{display:flex;flex-direction:column;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.tier{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;font:500 12px/1.3 var(--font);color:#444}
+.tier img{width:44px;height:44px;object-fit:cover;border-radius:10px;background:#eee;border:1px solid var(--line)}
+.tier .th{width:44px;height:44px;border-radius:10px;background:var(--pill);display:grid;place-items:center;font:800 10px/1 var(--font);color:var(--mute)}
 .tier b{font-weight:700}
 .tier .note{color:var(--mute);font-weight:500}
 .source{margin-top:12px;font:500 11px/1.35 var(--font);color:var(--mute)}
@@ -98,7 +111,7 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
 .fund-row .plus{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--pill);display:grid;place-items:center;font:700 18px var(--font);border:0}
 
 @keyframes unlockPop{0%{transform:scale(.97)}40%{transform:scale(1.02)}100%{transform:none}}
-@media (min-width:640px){#app{max-width:560px}.funds-card{max-width:560px}.wish-photo{height:180px}}
+@media (min-width:640px){#app{max-width:560px}.funds-card{max-width:560px}.wish-photo{height:200px}}
 </style>
 </head>
 <body>
@@ -311,15 +324,19 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
     prev[w.id] = st.kind;
     const go = st.kind === "youcan" ? '<span class="wish-chip go">You can</span>' : "";
     const target = w.badge ? '<span class="target">' + w.badge + "</span>" : "";
-    const photo = w.photo_url
-      ? 'style="background-image:url(\'' + w.photo_url + '\')"'
-      : 'style="background:#d8d8d8"';
+    const hero = w.photo_url
+      ? '<img src="' + w.photo_url + '" alt="" loading="lazy" referrerpolicy="no-referrer"/>'
+      : '<img alt="" style="background:#222"/>';
     let tiers = "";
     if (w.tiers && w.tiers.length) {
       tiers = '<div class="tiers">' + w.tiers.map(function (t) {
         const name = t.title || t.label;
         const tag = t.title && t.label ? ' <span class="note">(' + t.label + ")</span>" : "";
-        return '<div class="tier"><span><b>' + name + "</b>" + tag + " · " + fmt(t.ask_usd) +
+        const thumb = t.photo_url
+          ? '<img src="' + t.photo_url + '" alt="" loading="lazy" referrerpolicy="no-referrer"/>'
+          : '<div class="th">' + String(t.label || "?").slice(0, 3).toUpperCase() + "</div>";
+        return '<div class="tier">' + thumb +
+          '<span><b>' + name + "</b>" + tag + " · " + fmt(t.ask_usd) +
           (t.note ? ' <span class="note">· ' + t.note + "</span>" : "") +
           "</span></div>";
       }).join("") + "</div>";
@@ -330,24 +347,34 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-fa
       if (cap) extra = '<p class="wish-meta" style="margin-top:8px">' + cap + "</p>";
     }
     if (w.id === "build-optimus") {
-      const peers = (w.specs && w.specs.peers) || [];
-      const peerLine = peers.length
-        ? peers.map(function (p) {
-            const alt = p.alt ? " / " + p.alt : "";
-            return p.name + " " + fmt(p.ask_usd) + alt;
-          }).join(" · ")
-        : "";
-      extra = '<p class="wish-meta" style="margin-top:8px">' +
-        (w.ask_note || "NOT for sale. Manufacturer target only.") +
-        (peerLine ? "</p><p class=\"wish-meta\"><b>Peers (public carts):</b> " + peerLine : "") +
-        "</p>";
+      const s = w.specs || {};
+      const peers = s.peers || [];
+      const band = (s.target_low_usd != null && s.target_high_usd != null)
+        ? ("Target " + fmt(s.target_low_usd) + "–" + fmt(s.target_high_usd) + " · not for sale")
+        : "Target only · not for sale";
+      const peerRows = peers.map(function (p) {
+        const alt = p.alt ? " / " + p.alt : "";
+        const thumb = p.photo_url
+          ? '<img src="' + p.photo_url + '" alt="" loading="lazy" referrerpolicy="no-referrer"/>'
+          : '<div class="ph">' + String(p.name || "?").slice(0, 2).toUpperCase() + "</div>";
+        return '<div class="peer">' + thumb +
+          '<div><div class="pn">' + p.name + " · " + fmt(p.ask_usd) + alt + "</div>" +
+          '<div class="ps">' + (p.note || "Peer with public cart — not Optimus") + "</div></div></div>";
+      }).join("");
+      extra =
+        '<div class="target-box">' +
+        '<div class="tb-k">TARGET · NOT RETAIL</div>' +
+        '<div class="tb-v">' + band + "</div>" +
+        '<div class="tb-note">' + (w.ask_note || "Estimate only. No Tesla consumer cart.") + "</div>" +
+        (peerRows ? '<div class="peers">' + peerRows + "</div>" : "") +
+        "</div>";
     }
     const src = w.source_url
       ? '<div class="source"><a href="' + w.source_url + '" target="_blank" rel="noopener">Source: ' + (w.source_label || w.source_url) + "</a></div>"
       : '<div class="source">Source: ' + (w.source_label || "cited") + "</div>";
 
     return '<article class="wish ' + st.kind + (flip ? " flip" : "") + '" data-id="' + w.id + '">' +
-      '<div class="wish-photo" ' + photo + '><span class="stamp">Cited · TEST DATA</span>' + target + "</div>" +
+      '<div class="wish-photo">' + hero + '<span class="stamp">Cited · TEST DATA</span>' + target + "</div>" +
       '<div class="wish-body">' +
       '<div class="wish-top"><div><h4 class="wish-title">' + w.title + "</h4>" +
       '<p class="wish-meta">' + fmt(w.ask_usd) + " USD · " + specsLine(w) + "</p></div>" + go + "</div>" +
